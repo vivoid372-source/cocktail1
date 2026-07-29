@@ -2070,20 +2070,37 @@ function App() {
               <FlavorRadar flavor={userFlavor} />
             </section>
 
-            <section className="result-card compare-card-v8">
-              <div className="result-card-heading">
+            <section className="result-card compare-card-v13">
+              <div className="compare-heading-v13">
                 <div>
                   <small>CLASSIC VS YOUR DRINK</small>
                   <h3>最像的经典酒 vs 我的配方</h3>
                 </div>
+
+                <div className="similarity-badge-v13">
+                  <small>SIMILARITY</small>
+                  <strong>{similarity}%</strong>
+                  <span>
+                    {similarity >= 85
+                      ? '非常接近经典范式'
+                      : similarity >= 70
+                        ? '能明显喝出经典影子'
+                        : '有经典轮廓，更偏个人版本'}
+                  </span>
+                </div>
               </div>
 
-              <div className="recipe-compare-grid">
-                <article className="recipe-compare-column">
-                  <small>CLASSIC</small>
-                  <h4>{resultCocktail.chinese} · {resultCocktail.name}</h4>
-                  <p>{resultCocktail.description}</p>
-                  <ul className="recipe-compare-list">
+              <div className="recipe-compare-grid-v13">
+                <article className="recipe-compare-column-v13 classic">
+                  <div className="compare-column-head-v13">
+                    <small>CLASSIC</small>
+                    <h4>
+                      {resultCocktail.chinese} · {resultCocktail.name}
+                    </h4>
+                    <p>{resultCocktail.description}</p>
+                  </div>
+
+                  <ul className="recipe-compare-list-v13">
                     {resultCocktail.ingredients.map((id) => (
                       <li key={id}>
                         <span>{ingredientMap[id]?.icon ?? '•'}</span>
@@ -2095,29 +2112,32 @@ function App() {
                     ))}
                   </ul>
 
-                  <div className="compare-meta">
+                  <div className="compare-meta-v13">
                     <span>
                       <small>工艺</small>
-                      {classicTechnique?.chinese} · {classicTechnique?.name}
+                      <strong>
+                        {classicTechnique?.chinese} · {classicTechnique?.name}
+                      </strong>
                     </span>
                     <span>
                       <small>杯型</small>
-                      {classicGlasses.map((item) => item.chinese).join(' / ')}
+                      <strong>
+                        {classicGlasses
+                          .map((item) => item.chinese)
+                          .join(' / ')}
+                      </strong>
                     </span>
                   </div>
                 </article>
 
-                <article className="recipe-compare-column mine">
-                  <div className="similarity-badge">
-                    <small>SIMILARITY</small>
-                    <strong>{similarity}%</strong>
-                    <em>{similarity >= 85 ? '已经非常接近经典范式' : similarity >= 70 ? '能明显喝出经典影子' : '有经典轮廓，但更偏你的个人版本'}</em>
+                <article className="recipe-compare-column-v13 mine">
+                  <div className="compare-column-head-v13">
+                    <small>MINE</small>
+                    <h4>{creativeReview.title}</h4>
+                    <p>{creativeReview.shortIntro}</p>
                   </div>
 
-                  <small>MINE</small>
-                  <h4>{creativeReview.title}</h4>
-                  <p>{creativeReview.shortIntro}</p>
-                  <ul className="recipe-compare-list">
+                  <ul className="recipe-compare-list-v13">
                     {selectedIngredients.map((ingredient) => (
                       <li key={ingredient.id}>
                         <span>{ingredient.icon}</span>
@@ -2137,14 +2157,18 @@ function App() {
                     ))}
                   </ul>
 
-                  <div className="compare-meta">
+                  <div className="compare-meta-v13">
                     <span>
                       <small>基酒</small>
-                      {selectedSpirit.chinese} · {selectedSpirit.name}
+                      <strong>
+                        {selectedSpirit.chinese} · {selectedSpirit.name}
+                      </strong>
                     </span>
                     <span>
                       <small>工艺 / 杯型</small>
-                      {selectedTechnique.chinese} · {selectedGlass.chinese}
+                      <strong>
+                        {selectedTechnique.chinese} · {selectedGlass.chinese}
+                      </strong>
                     </span>
                   </div>
                 </article>

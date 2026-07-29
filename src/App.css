@@ -5651,3 +5651,216 @@ button {
     height: 540px;
   }
 }
+
+
+/* =========================================================
+   V13.1 - 经典酒与我的配方对齐修正版
+   ========================================================= */
+
+.compare-card-v13 {
+  grid-column: 1 / -1;
+}
+
+.compare-heading-v13 {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.compare-heading-v13 > div:first-child {
+  min-width: 0;
+}
+
+.compare-heading-v13 small,
+.compare-column-head-v13 > small {
+  color: #e2b875;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.compare-heading-v13 h3 {
+  margin: 8px 0 0;
+  color: #fff8ed;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+.similarity-badge-v13 {
+  flex: 0 0 220px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(228, 189, 126, 0.18);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(228, 189, 126, 0.12), transparent 42%),
+    rgba(255, 255, 255, 0.035);
+}
+
+.similarity-badge-v13 small {
+  color: rgba(255, 248, 237, 0.56);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.similarity-badge-v13 strong {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  color: #f1c982;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.similarity-badge-v13 span {
+  grid-column: 1;
+  color: rgba(255, 248, 237, 0.62);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.recipe-compare-grid-v13 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.recipe-compare-column-v13 {
+  display: grid;
+  grid-template-rows: minmax(166px, auto) 1fr auto;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid rgba(255, 239, 211, 0.1);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.recipe-compare-column-v13.mine {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(228, 189, 126, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.compare-column-head-v13 {
+  display: grid;
+  align-content: start;
+}
+
+.compare-column-head-v13 h4 {
+  margin: 12px 0 10px;
+  color: #fff8ed;
+  font-size: 27px;
+  line-height: 1.25;
+}
+
+.compare-column-head-v13 p {
+  margin: 0;
+  color: rgba(255, 248, 237, 0.66);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.recipe-compare-list-v13 {
+  display: grid;
+  align-content: start;
+  gap: 0;
+  padding: 0;
+  margin: 18px 0 0;
+  list-style: none;
+}
+
+.recipe-compare-list-v13 li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 72px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 239, 211, 0.08);
+}
+
+.recipe-compare-list-v13 li:first-child {
+  border-top: 0;
+}
+
+.recipe-compare-list-v13 li > span {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.055);
+  font-size: 19px;
+}
+
+.recipe-compare-list-v13 strong {
+  display: block;
+  color: #fff8ed;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.recipe-compare-list-v13 small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 248, 237, 0.52);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.compare-meta-v13 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 239, 211, 0.1);
+}
+
+.compare-meta-v13 span {
+  min-width: 0;
+}
+
+.compare-meta-v13 small {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(255, 248, 237, 0.46);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.compare-meta-v13 strong {
+  color: #fff8ed;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .compare-heading-v13 {
+    display: grid;
+  }
+
+  .similarity-badge-v13 {
+    width: 100%;
+    box-sizing: border-box;
+    flex-basis: auto;
+  }
+
+  .recipe-compare-grid-v13 {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-compare-column-v13 {
+    grid-template-rows: auto auto auto;
+  }
+
+  .compare-meta-v13 {
+    grid-template-columns: 1fr;
+  }
+}
