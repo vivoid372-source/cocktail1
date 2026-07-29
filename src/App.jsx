@@ -1643,6 +1643,828 @@ function buildCreativeReview(selection, flavor, classicReference) {
 
 
 
+
+const flavorChineseMap = {
+  sweet: '甜感',
+  sour: '酸度',
+  bitter: '苦韵',
+  spirit: '酒感',
+  fruity: '果香',
+  herbal: '草本香料',
+}
+
+const flavorShortMap = {
+  sweet: '甜润',
+  sour: '明亮酸度',
+  bitter: '苦韵',
+  spirit: '酒体',
+  fruity: '果香',
+  herbal: '草本',
+}
+
+function stableTextIndex(seed, length, salt = '') {
+  const value = `${seed ?? ''}:${salt}`
+    .split('')
+    .reduce((sum, character, index) => {
+      return (sum * 31 + character.charCodeAt(0) + index) >>> 0
+    }, 7)
+
+  return length > 0 ? value % length : 0
+}
+
+function chooseStableText(options, seed, salt) {
+  if (!options.length) return ''
+  return options[stableTextIndex(seed, options.length, salt)]
+}
+
+function getFlavorLevel(value) {
+  if (value >= 70) return 'veryHigh'
+  if (value >= 52) return 'high'
+  if (value >= 34) return 'medium'
+  if (value >= 18) return 'low'
+  return 'veryLow'
+}
+
+function getSortedFlavorAxes(flavor) {
+  return flavorAxes
+    .map(([key, label]) => ({
+      key,
+      label,
+      value: flavor?.[key] ?? 0,
+      level: getFlavorLevel(flavor?.[key] ?? 0),
+    }))
+    .sort((a, b) => b.value - a.value)
+}
+
+function buildFlavorTags(flavor, ingredients) {
+  const axes = getSortedFlavorAxes(flavor)
+  const ids = ingredients.map((item) => item.id)
+  const tags = []
+
+  axes.slice(0, 3).forEach((axis) => {
+    const tagMap = {
+      sweet: axis.value >= 52 ? '甜润突出' : '甜感克制',
+      sour: axis.value >= 52 ? '酸度明亮' : '酸感轻柔',
+      bitter: axis.value >= 52 ? '苦韵鲜明' : '轻微苦韵',
+      spirit: axis.value >= 52 ? '酒感清晰' : '酒体轻盈',
+      fruity: axis.value >= 52 ? '果香饱满' : '淡雅果香',
+      herbal: axis.value >= 52 ? '草本主导' : '草本点缀',
+    }
+    tags.push(tagMap[axis.key])
+  })
+
+  if (ids.includes('cola')) tags.push('深色气泡')
+  if (ids.includes('egg-white')) tags.push('绵密泡沫')
+  if (ids.includes('cream')) tags.push('奶油质地')
+  if (ids.includes('mint')) tags.push('清凉薄荷')
+  if (ids.includes('ginger-beer')) tags.push('辛香气泡')
+  if (ids.includes('grenadine')) tags.push('红果渐层')
+  if (ids.includes('tonic-water')) tags.push('清苦气泡')
+  if (ids.includes('soda-water')) tags.push('轻盈长饮')
+
+  return [...new Set(tags)].slice(0, 5)
+}
+
+function buildAxisSentence(axis, position, seed) {
+  const phraseBank = {
+    sweet: {
+      veryHigh: [
+        '甜味占据明显主导，入口圆润，风味更偏甜点型。',
+        '甜感饱满而直接，会让其他细节显得更柔和。',
+        '糖感存在感很强，酒体显得厚实、亲和，但也更容易产生腻感。',
+      ],
+      high: [
+        '甜感较为明显，给酒体增加了圆润度和包裹感。',
+        '甜味承担了主要的衔接作用，让入口更顺滑。',
+        '甜度偏高，但还没有完全盖住其他风味。',
+      ],
+      medium: [
+        '甜感处于中间位置，主要负责连接酸、苦与酒感。',
+        '甜味存在但不抢戏，整体更容易保持平衡。',
+        '甜度适中，入口有柔和感，同时保留一定轮廓。',
+      ],
+      low: [
+        '甜感较低，整体风格更干爽、利落。',
+        '糖感被控制得比较克制，其他风味会显得更清楚。',
+        '甜味只起到轻微修饰作用，酒体偏干。',
+      ],
+      veryLow: [
+        '几乎没有明显甜感，风格非常干。',
+        '甜味支撑很弱，酸、苦或酒感会更容易被放大。',
+        '缺少甜味缓冲，整体线条会显得偏锐利。',
+      ],
+    },
+    sour: {
+      veryHigh: [
+        '酸度非常突出，入口会迅速收紧口腔，清爽但攻击性较强。',
+        '酸感成为最先被感知的部分，明亮、有张力，也容易显尖。',
+        '高酸让酒体非常活跃，适合追求清冽感，但需要留意失衡。',
+      ],
+      high: [
+        '酸度明亮，能有效拉开甜味并提升新鲜感。',
+        '酸感清楚，入口有明显提神效果。',
+        '酸度偏高，为整杯酒提供了清晰骨架。',
+      ],
+      medium: [
+        '酸度适中，主要负责提亮果香和整理收口。',
+        '酸感有存在感，但不会压过其他风味。',
+        '适中的酸度让酒体保持轻快，又不至于过于锐利。',
+      ],
+      low: [
+        '酸度偏低，整体会显得更柔和、圆润。',
+        '酸感只做轻微提亮，酒体不会特别紧致。',
+        '缺少明显酸度，甜味或酒感会更容易停留。',
+      ],
+      veryLow: [
+        '几乎没有酸度支撑，整体可能偏平或偏厚。',
+        '酸感非常弱，风味少了提亮和收紧的力量。',
+        '缺少酸度后，甜味与厚重感更容易堆积。',
+      ],
+    },
+    bitter: {
+      veryHigh: [
+        '苦韵非常明显，会从中段持续到收尾，风格成熟而强硬。',
+        '高苦度让整杯酒拥有强烈成人感，但耐受度要求较高。',
+        '苦味成为主轴，余味长而干，适合偏好复杂苦香的人。',
+      ],
+      high: [
+        '苦韵清楚，为甜味和果香增加了成熟感。',
+        '苦味偏高，能形成有力收口，也会提高辨识度。',
+        '中后段的苦感较明显，让风格显得更克制。',
+      ],
+      medium: [
+        '苦韵适中，主要负责增加层次和延长尾韵。',
+        '苦味不重，但能让酒体不至于过甜或过于单薄。',
+        '适度苦感给整杯酒增加了一点成熟轮廓。',
+      ],
+      low: [
+        '苦韵较轻，整体更容易入口。',
+        '苦味只是背景修饰，不会明显影响饮用门槛。',
+        '收尾里的苦感很克制，风格偏柔和。',
+      ],
+      veryLow: [
+        '几乎没有苦味，整体会更直白、亲和。',
+        '苦韵缺席，尾段少了一点收束和复杂度。',
+        '缺少苦味支撑，风格更偏果汁感或甜饮感。',
+      ],
+    },
+    spirit: {
+      veryHigh: [
+        '酒感非常强，基酒存在感贯穿始终，入口与尾韵都有明显热度。',
+        '高酒精感让结构非常硬朗，风味会围绕基酒展开。',
+        '烈酒感占据主导，适合慢饮，但对平衡要求更高。',
+      ],
+      high: [
+        '酒感清楚，基酒的个性没有被辅料遮住。',
+        '酒体偏强，入口有力度，收尾也比较干净。',
+        '基酒存在感较高，让整杯酒拥有明确骨架。',
+      ],
+      medium: [
+        '酒感适中，既能感受到基酒，又不会显得过冲。',
+        '酒体强度处于舒适区间，辅料和基酒能彼此看见。',
+        '酒感有支撑但不压人，整体比较均衡。',
+      ],
+      low: [
+        '酒感偏轻，整体更接近轻松长饮。',
+        '基酒被辅料柔化，入口门槛较低。',
+        '烈酒存在感不强，风格更轻盈、更容易连续饮用。',
+      ],
+      veryLow: [
+        '酒感非常弱，整体更像风味饮料。',
+        '基酒轮廓不明显，辅料几乎占据全部注意力。',
+        '缺少酒体支撑，可能显得轻薄或缺少尾韵。',
+      ],
+    },
+    fruity: {
+      veryHigh: [
+        '果香非常饱满，成为最直观的第一印象。',
+        '果味占据中心位置，香气外放，风格鲜明而讨喜。',
+        '高果香让整杯酒充满新鲜感，但也可能掩盖基酒细节。',
+      ],
+      high: [
+        '果香明显，入口和鼻后香都有较强存在感。',
+        '果味偏突出，让整杯酒更亲和、更容易理解。',
+        '果香为酒体带来鲜活感，并能柔化部分酒精刺激。',
+      ],
+      medium: [
+        '果香适中，负责提亮整体，但不会完全主导。',
+        '果味与基酒保持平衡，香气有层次而不夸张。',
+        '果香处于舒适位置，既有新鲜感，也保留其他细节。',
+      ],
+      low: [
+        '果香较轻，整体更强调基酒、草本或苦韵。',
+        '果味只做背景点缀，风格偏克制。',
+        '果香不强，酒体会显得更干、更成熟。',
+      ],
+      veryLow: [
+        '几乎没有果香，整体风格偏冷峻、干燥。',
+        '果味支撑很弱，其他轴向会显得更加突出。',
+        '缺少果香后，酒体更强调烈酒、草本或苦感。',
+      ],
+    },
+    herbal: {
+      veryHigh: [
+        '草本与香料感非常突出，香气复杂，风格偏冷峻。',
+        '高草本度让整杯酒具有鲜明植物气息和强烈辨识度。',
+        '草本香料成为主轴，入口清凉或辛香，尾韵偏干。',
+      ],
+      high: [
+        '草本香料感清楚，能够明显提升复杂度。',
+        '植物气息偏强，让酒体更有个性和层次。',
+        '草本风味较突出，整体显得干练而成熟。',
+      ],
+      medium: [
+        '草本感适中，为酒体增加香气层次，但不会喧宾夺主。',
+        '植物香气在中段出现，承担连接基酒和尾韵的作用。',
+        '适度草本让整杯酒更耐闻，也增加了一点复杂度。',
+      ],
+      low: [
+        '草本感较轻，主要作为背景修饰。',
+        '植物气息不强，整体更强调果香、酸甜或基酒。',
+        '草本只留下轻微轮廓，风格相对直白。',
+      ],
+      veryLow: [
+        '几乎没有草本香料感，香气结构比较简单直接。',
+        '植物气息缺席，整杯酒更偏果味或基础酸甜。',
+        '草本维度很低，复杂度更多需要由其他风味提供。',
+      ],
+    },
+  }
+
+  const levelOptions = phraseBank[axis.key]?.[axis.level] ?? []
+  return chooseStableText(levelOptions, seed, `${axis.key}-${position}`)
+}
+
+function buildPairInterpretation(first, second, seed) {
+  const key = [first.key, second.key].sort().join('-')
+  const pairBank = {
+    'fruity-sweet': [
+      '果香与甜感共同构成圆润、讨喜的主体，整体更接近轻松易饮型。',
+      '甜味托住果香，使香气更饱满，但需要酸度防止口感发腻。',
+      '果甜组合让第一印象非常友好，适合偏好柔和风格的人。',
+    ],
+    'sour-sweet': [
+      '酸甜形成直接对比，决定这杯酒是清爽还是偏甜的关键。',
+      '酸与甜互相拉扯，平衡得好会非常活泼，失衡时则容易显尖或显腻。',
+      '这是一杯以酸甜结构为核心的酒，入口节奏会比较清楚。',
+    ],
+    'herbal-spirit': [
+      '草本与酒感叠加后，基酒轮廓会更硬朗，整体偏干、偏成熟。',
+      '植物香气包裹烈酒感，形成冷峻、清晰、辨识度高的风格。',
+      '草本和酒体共同主导，适合慢饮，香气会比甜味更重要。',
+    ],
+    'bitter-spirit': [
+      '苦韵与酒感共同增强成熟度，收尾会偏干、偏长。',
+      '烈酒和苦味形成硬朗骨架，饮用门槛较高，但个性清楚。',
+      '苦味放大了基酒的力量，整体更像餐后慢饮型鸡尾酒。',
+    ],
+    'bitter-herbal': [
+      '苦韵与草本叠加，香气复杂，尾段偏干，成人感明显。',
+      '植物香料与苦味共同延长余韵，风格克制而有辨识度。',
+      '这是偏草本苦香的组合，香气比甜度更值得关注。',
+    ],
+    'fruity-sour': [
+      '果香被酸度提亮，整体会显得新鲜、轻快、有活力。',
+      '果味和酸感共同构成明亮主体，适合做成清爽型长饮。',
+      '酸度让果香更加立体，入口会比单纯果甜组合更利落。',
+    ],
+    'sour-spirit': [
+      '酸度把酒感切得更清楚，入口有力度，收口也更利落。',
+      '高酸与烈酒形成锐利结构，清爽但可能略显尖锐。',
+      '酸感负责提亮，酒感负责骨架，整体轮廓非常直接。',
+    ],
+    'herbal-sour': [
+      '酸度提亮草本香气，带来清凉、干爽的植物感。',
+      '草本与酸感结合后，整体偏清冽，香气有明显上扬感。',
+      '植物气息被酸度拉开，适合追求清新、低甜风格。',
+    ],
+    'bitter-sweet': [
+      '甜味包裹苦韵，形成先柔后苦的层次。',
+      '苦甜平衡决定了整杯酒是成熟顺口，还是厚重黏腻。',
+      '甜感让苦味更容易入口，苦韵则负责避免口感单调。',
+    ],
+    'fruity-spirit': [
+      '果香柔化酒感，但基酒仍提供明确支撑。',
+      '果味和烈酒并存，既有亲和力，也保留一定力量。',
+      '基酒骨架托住果香，整体会比纯果汁型鸡尾酒更完整。',
+    ],
+    'fruity-herbal': [
+      '果香与草本形成清新对比，香气层次丰富。',
+      '植物气息让果味不至于过甜，整体更有自然感。',
+      '果香负责亲和，草本负责个性，两者形成鲜明对照。',
+    ],
+  }
+
+  return chooseStableText(
+    pairBank[key] ?? [
+      `${flavorChineseMap[first.key]}与${flavorChineseMap[second.key]}共同构成这杯酒的主要轮廓。`,
+      `整杯酒主要围绕${flavorChineseMap[first.key]}和${flavorChineseMap[second.key]}展开。`,
+      `${flavorChineseMap[first.key]}提供第一印象，${flavorChineseMap[second.key]}负责支撑后续层次。`,
+    ],
+    seed,
+    `pair-${key}`,
+  )
+}
+
+function getIngredientContribution(ingredient, amountLevel, seed) {
+  const amountText =
+    amountLevel === 'high' ? '用量偏高' : amountLevel === 'low' ? '用量克制' : '标准用量'
+
+  const ingredientBank = {
+    'lemon-juice': [
+      '柠檬汁提供清晰酸度和明亮香气，使收口更利落。',
+      '柠檬汁会抬高新鲜感，并削弱甜味的黏滞感。',
+      '柠檬酸香负责打开入口，让酒体显得更轻快。',
+    ],
+    'lime-juice': [
+      '青柠汁带来更锋利的酸度和轻微青绿香气。',
+      '青柠的酸感比柠檬更紧致，会让酒体显得更干爽。',
+      '青柠汁在入口形成明亮切口，同时强化热带气息。',
+    ],
+    'orange-juice': [
+      '橙汁增加果肉感、甜香和自然浑浊度。',
+      '橙汁让酒体更圆润，并带来温暖柑橘香。',
+      '橙汁提供柔和果甜，使烈酒感更容易入口。',
+    ],
+    'cranberry-juice': [
+      '蔓越莓汁带来红果酸香，让颜色和果味都更鲜明。',
+      '蔓越莓的酸甜感会增加清爽度，同时留下轻微涩感。',
+      '莓果香气提升亲和力，也让酒体更偏现代果味风格。',
+    ],
+    grenadine: [
+      '红石榴糖浆增加甜度、红果香和视觉渐层。',
+      '石榴糖浆会明显圆润口感，用量过高时容易压住基酒。',
+      '红石榴糖浆提供浓缩果甜，使尾韵更厚。',
+    ],
+    mint: [
+      '薄荷带来清凉草本香，主要作用在鼻后香和收尾。',
+      '薄荷让香气更上扬，也能降低甜饮的厚重感。',
+      '薄荷提供鲜明清凉感，使整体更像夏季长饮。',
+    ],
+    cola: [
+      '可乐带来深色焦糖、香料和气泡，同时明显增加甜度。',
+      '可乐会柔化烈酒刺激，并留下焦糖与香料尾韵。',
+      '可乐提供甜苦交织的深色气泡结构，基酒会更易入口。',
+    ],
+    'soda-water': [
+      '苏打水稀释酒体并增加气泡，使香气更轻盈。',
+      '苏打水拉长饮用长度，同时降低甜度和酒精刺激。',
+      '气泡水负责打开香气，让整体更清爽、更适合连续饮用。',
+    ],
+    'tonic-water': [
+      '汤力水增加气泡和奎宁苦感，收尾更干。',
+      '汤力水会强化清苦感，并突出金酒或草本基酒的植物香。',
+      '细密气泡和轻苦尾韵让酒体显得更成熟。',
+    ],
+    'ginger-beer': [
+      '姜汁啤酒带来辛香、甜感和强烈气泡。',
+      '姜味会在中后段形成温热刺激，与酸味形成鲜明对比。',
+      '姜汁气泡增加活力，同时让收尾带有辛辣感。',
+    ],
+    'egg-white': [
+      '蛋清带来细腻泡沫和丝滑触感，但不会明显增加味道。',
+      '蛋清会软化酸度与酒精刺激，使口感更绵密。',
+      '泡沫层让香气释放更缓慢，整体更像经典酸酒。',
+    ],
+    cream: [
+      '奶油增加厚度和不透明质地，使口感更像甜点。',
+      '奶油会显著降低刺激感，同时放大甜润和饱满感。',
+      '乳脂质地让酒体更顺滑，但也容易遮盖清新香气。',
+    ],
+    'cacao-liqueur': [
+      '可可利口酒带来巧克力、烘焙和甜点气息。',
+      '可可风味增加厚重度，并让尾韵更温暖。',
+      '巧克力香会主导中后段，适合与奶油或白兰地搭配。',
+    ],
+    campari: [
+      '金巴利提供柑橘苦香和红色草本气息。',
+      '金巴利让苦韵更清楚，也延长了尾段复杂度。',
+      '红色苦味酒增加成熟感，并能平衡较高甜度。',
+    ],
+    'triple-sec': [
+      '橙味利口酒增加橙皮甜香，并连接酸味与基酒。',
+      '橙味利口酒让柑橘香更完整，同时略微增加甜度。',
+      '橙皮香气会在中段出现，使酸酒结构更圆润。',
+    ],
+    'sweet-vermouth': [
+      '甜味美思带来香草、香料和葡萄酒甜润感。',
+      '甜味美思增加草本复杂度，并柔化烈酒边缘。',
+      '香料葡萄酒风味让中段更厚，尾韵更长。',
+    ],
+    'dry-vermouth': [
+      '干味美思增加干燥草本、白花和淡酒香。',
+      '干味美思会拉长金酒或伏特加的线条，使风格更冷冽。',
+      '干型强化酒体的清晰度，同时降低甜感。',
+    ],
+    'aromatic-bitters': [
+      '苦精用量虽少，但能显著增加香料感和尾韵。',
+      '苦精负责把甜味、果香和基酒连接起来。',
+      '香料苦精让收尾更完整，也增加了成熟度。',
+    ],
+    'sugar-syrup': [
+      '糖浆直接增加甜度和圆润感，并缓冲酸味。',
+      '糖浆让口感更顺，但过量时会降低清晰度。',
+      '糖浆承担平衡酸度的作用，使入口更柔和。',
+    ],
+    'honey-syrup': [
+      '蜂蜜糖浆增加花香、黏度和温暖甜感。',
+      '蜂蜜比普通糖浆更有香气，会让酒体显得更厚。',
+      '蜂蜜甜感能柔化烈酒，同时留下较长余韵。',
+    ],
+  }
+
+  const base = chooseStableText(
+    ingredientBank[ingredient.id] ?? [
+      `${ingredient.chinese}为这杯酒增加了自己的主要风味。`,
+      `${ingredient.chinese}参与构成了中段层次和整体风格。`,
+      `${ingredient.chinese}改变了酒体的香气、甜酸或质地表现。`,
+    ],
+    seed,
+    `ingredient-${ingredient.id}`,
+  )
+
+  return {
+    name: ingredient.chinese,
+    amountText,
+    text: base,
+  }
+}
+
+function buildBalanceDiagnosis(flavor, seed) {
+  const sweet = flavor.sweet ?? 0
+  const sour = flavor.sour ?? 0
+  const bitter = flavor.bitter ?? 0
+  const spirit = flavor.spirit ?? 0
+  const fruity = flavor.fruity ?? 0
+  const herbal = flavor.herbal ?? 0
+  const spread = Math.max(sweet, sour, bitter, spirit, fruity, herbal) -
+    Math.min(sweet, sour, bitter, spirit, fruity, herbal)
+
+  if (spread <= 18) {
+    return chooseStableText([
+      '六个维度分布接近，整体属于均衡型，几乎没有单一风味完全压过其他部分。',
+      '雷达图较为收拢，说明各风味彼此制约，结构稳定、饮用门槛较低。',
+      '风味分布相对平均，优势是完整，代价是个性可能不够尖锐。',
+    ], seed, 'balance-even')
+  }
+
+  if (sweet - sour >= 28) {
+    return chooseStableText([
+      '甜度明显高于酸度，口感会偏圆润，但需要留意后段发腻。',
+      '甜感缺少足够酸度牵制，整体可能显得厚、软、收口偏慢。',
+      '当前结构偏甜，酸度不足以完全拉开酒体。',
+    ], seed, 'balance-sweet')
+  }
+
+  if (sour - sweet >= 28) {
+    return chooseStableText([
+      '酸度明显高于甜度，入口会偏尖锐，清爽感强但缓冲不足。',
+      '酸感缺少甜味包裹，酒体会显得紧、直、刺激感较明显。',
+      '当前结构偏酸，优点是利落，缺点是圆润度不足。',
+    ], seed, 'balance-sour')
+  }
+
+  if (spirit >= 55 && sweet <= 25 && sour <= 25) {
+    return chooseStableText([
+      '酒感缺少酸甜缓冲，基酒力量会被直接感知，适合慢饮。',
+      '这是明显的烈酒主导结构，轮廓清楚，但入口门槛较高。',
+      '酒体强而修饰少，风格硬朗，适合偏好纯粹基酒感的人。',
+    ], seed, 'balance-spirit')
+  }
+
+  if (herbal >= 55 && fruity <= 25) {
+    return chooseStableText([
+      '草本香料远高于果香，整体偏干、偏冷峻，复杂度高于亲和力。',
+      '植物气息主导，果香缓冲不足，风格会显得成熟而克制。',
+      '香气重心明显落在草本一侧，辨识度高，但不是甜美路线。',
+    ], seed, 'balance-herbal')
+  }
+
+  if (bitter >= 45 && sweet <= 25) {
+    return chooseStableText([
+      '苦韵缺少甜味缓冲，尾段会偏干、偏硬。',
+      '苦味结构清楚，但甜度不足时容易显得锋利。',
+      '当前苦感较突出，适合偏好成熟苦香的人。',
+    ], seed, 'balance-bitter')
+  }
+
+  return chooseStableText([
+    '风味存在明显主次，但仍保留基础平衡，属于有个性的偏科型结构。',
+    '雷达图有清楚方向性，优势风味突出，同时仍有其他维度提供支撑。',
+    '这杯酒并非平均分布，而是主动强调某些风味，因此辨识度较高。',
+  ], seed, 'balance-general')
+}
+
+function buildAdjustmentSuggestions(flavor, ingredients, amounts, seed) {
+  const sweet = flavor.sweet ?? 0
+  const sour = flavor.sour ?? 0
+  const bitter = flavor.bitter ?? 0
+  const spirit = flavor.spirit ?? 0
+  const fruity = flavor.fruity ?? 0
+  const herbal = flavor.herbal ?? 0
+  const ids = ingredients.map((item) => item.id)
+  const suggestions = []
+
+  if (sweet >= 55 && sour <= 28) {
+    suggestions.push('减少糖浆、石榴糖浆或甜味利口酒，或增加少量柠檬汁/青柠汁。')
+  }
+  if (sour >= 52 && sweet <= 25) {
+    suggestions.push('补少量糖浆或蜂蜜糖浆，让酸度更圆润，入口不那么尖。')
+  }
+  if (spirit >= 55) {
+    suggestions.push('增加少量苏打水、果汁或冰融水，可以降低酒精刺激并拉长饮用。')
+  }
+  if (spirit <= 22) {
+    suggestions.push('减少无酒精辅料，或提高基酒比例，让尾韵和骨架更清楚。')
+  }
+  if (bitter >= 48 && sweet <= 30) {
+    suggestions.push('降低苦味酒/苦精比例，或补一点甜味，让收尾更易接受。')
+  }
+  if (herbal >= 58 && fruity <= 30) {
+    suggestions.push('补少量柑橘汁或橙味利口酒，可以让草本香气更明亮、更亲和。')
+  }
+  if (fruity >= 58 && bitter <= 18 && herbal <= 20) {
+    suggestions.push('加入极少量苦精或干味美思，可增加骨架，避免风味过于果汁化。')
+  }
+  if (ids.includes('cream') && sour >= 35) {
+    suggestions.push('奶油与高酸组合容易出现口感冲突，建议降低柑橘汁或调整加入顺序。')
+  }
+  if (ids.includes('egg-white') && !ids.some((id) => ['lemon-juice', 'lime-juice'].includes(id))) {
+    suggestions.push('蛋清需要一定酸度帮助形成稳定泡沫，可增加少量柠檬汁或青柠汁。')
+  }
+  if (ids.includes('cola') && sweet >= 50) {
+    suggestions.push('可乐已经提供较多甜度，其他糖浆建议降低或取消。')
+  }
+  if (ids.includes('mint') && amounts.mint === 'high') {
+    suggestions.push('薄荷用量较高时容易产生青涩味，建议轻拍而不是过度捣碎。')
+  }
+
+  if (!suggestions.length) {
+    suggestions.push(
+      chooseStableText([
+        '当前结构没有明显短板，建议先保持比例，只通过冰量和稀释度微调。',
+        '这杯酒的主要风味已经清楚，不必继续增加辅料，避免信息过载。',
+        '整体结构较完整，可以尝试改变杯型或工艺，而不是继续堆叠味道。',
+      ], seed, 'suggestion-balanced'),
+    )
+  }
+
+  if (suggestions.length === 1) {
+    suggestions.push(
+      chooseStableText([
+        '下一版只调整一个变量，便于判断风味变化来自哪里。',
+        '建议以 5–10 mL 为步进修改比例，不要一次改变多个辅料。',
+        '先充分冰镇并控制稀释，再判断配方本身是否需要修改。',
+      ], seed, 'suggestion-method'),
+    )
+  }
+
+  return suggestions.slice(0, 2)
+}
+
+function buildTastingInterpretation({
+  flavor,
+  spirit,
+  ingredients,
+  amounts,
+  technique,
+  glass,
+  signature,
+}) {
+  const axes = getSortedFlavorAxes(flavor)
+  const dominant = axes[0]
+  const secondary = axes[1]
+  const lowest = [...axes].sort((a, b) => a.value - b.value)[0]
+  const ids = ingredients.map((item) => item.id)
+
+  const openingBank = {
+    sweet: [
+      '第一口会先感受到圆润甜味，随后其他风味才逐渐展开。',
+      '入口柔和，甜感先包住舌面，再释放基酒和辅料香气。',
+      '开场偏顺滑，甜度降低了酒精刺激，也让风味显得更亲和。',
+    ],
+    sour: [
+      '第一口酸度迅速提亮口腔，整体节奏清楚而有冲击力。',
+      '入口先出现明亮酸感，唾液感被迅速唤起，清爽度很高。',
+      '酸味负责开场，风味一开始就显得紧致、活跃。',
+    ],
+    bitter: [
+      '入口已经能感受到轻微苦香，中段后苦韵会继续放大。',
+      '开场偏成熟，苦感不是最后才出现，而是从第一口就参与结构。',
+      '入口克制、不甜腻，苦香很早就建立了这杯酒的基调。',
+    ],
+    spirit: [
+      '第一口基酒存在感直接，酒精热度和香气同时出现。',
+      '入口力量感较强，基酒先建立骨架，辅料随后补充细节。',
+      '酒感从开场就很清楚，适合小口慢饮，而不是快速畅饮。',
+    ],
+    fruity: [
+      '第一口由果香打开，香气直观、鲜活，饮用门槛较低。',
+      '入口先感受到果味的新鲜感，基酒被包裹得更柔和。',
+      '果香是最容易识别的开场，整体显得明亮而友好。',
+    ],
+    herbal: [
+      '入口先出现植物与香料气息，风格干爽而有辨识度。',
+      '草本香气在第一口就很清楚，甜味退居背景。',
+      '开场偏冷冽，植物气息比果味更先被感知。',
+    ],
+  }
+
+  let middle = buildPairInterpretation(dominant, secondary, signature)
+  let finish = buildAxisSentence(
+    axes.find((axis) => ['bitter', 'spirit', 'herbal'].includes(axis.key)) ??
+      secondary,
+    'finish',
+    signature,
+  )
+
+  if (ids.includes('egg-white')) {
+    middle += ' 蛋清泡沫会把酸感和酒感磨得更细，口感从尖锐转为绵密。'
+  } else if (ids.includes('cream')) {
+    middle += ' 奶油让中段更厚、更顺滑，也会降低香气的锐利度。'
+  } else if (ids.some((id) => ['soda-water', 'tonic-water', 'ginger-beer', 'cola'].includes(id))) {
+    middle += ' 气泡会把香气向上推，使中段更轻快，并减少停滞感。'
+  }
+
+  if (technique?.id === 'shake') {
+    finish += ' 摇和带来的稀释与低温会让收尾更紧致。'
+  } else if (technique?.id === 'stir') {
+    finish += ' 搅拌保留了较高透明度和基酒轮廓，尾段更干净。'
+  } else if (technique?.id === 'build') {
+    finish += ' 直调使各辅料边界较清楚，随着冰块融化会逐渐柔和。'
+  }
+
+  const styleTitles = {
+    sweet: ['甜润柔和型', '圆润果甜型', '顺滑易饮型'],
+    sour: ['明亮酸爽型', '清冽酸感型', '高张力清爽型'],
+    bitter: ['成熟苦香型', '干苦慢饮型', '复杂苦韵型'],
+    spirit: ['烈酒骨架型', '强酒体慢饮型', '基酒主导型'],
+    fruity: ['鲜活果香型', '明亮果味型', '亲和果香型'],
+    herbal: ['草本香料型', '冷冽植物型', '干爽草本型'],
+  }
+
+  const drinkability =
+    (flavor.spirit ?? 0) >= 55
+      ? '建议小口慢饮'
+      : (flavor.sweet ?? 0) >= 55
+        ? '易入口但注意甜腻'
+        : (flavor.sour ?? 0) >= 55
+          ? '清爽但酸感突出'
+          : '整体饮用节奏适中'
+
+  const glassNoteMap = {
+    highball: '高球杯让香气和气泡向上延伸，更适合轻松长饮。',
+    'old-fashioned': '古典杯强调酒体和冰块融化，适合慢慢观察风味变化。',
+    martini: '马天尼杯放大香气与低温感，入口会更直接、更冷冽。',
+    coupe: '浅碟杯让香气更柔和地展开，适合细腻泡沫或酸酒结构。',
+  }
+
+  const contributions = ingredients
+    .map((ingredient) =>
+      getIngredientContribution(
+        ingredient,
+        amounts[ingredient.id] ?? 'standard',
+        signature,
+      ),
+    )
+    .sort((a, b) => {
+      const amountRank = { '用量偏高': 3, '标准用量': 2, '用量克制': 1 }
+      return amountRank[b.amountText] - amountRank[a.amountText]
+    })
+    .slice(0, 3)
+
+  return {
+    title: chooseStableText(
+      styleTitles[dominant.key],
+      signature,
+      `style-${dominant.key}`,
+    ),
+    summary: `${dominant.label}是最突出的维度（${dominant.value}），其次是${secondary.label}（${secondary.value}）；${lowest.label}最低（${lowest.value}）。`,
+    tags: buildFlavorTags(flavor, ingredients),
+    opening: chooseStableText(
+      openingBank[dominant.key],
+      signature,
+      `opening-${dominant.key}`,
+    ),
+    middle,
+    finish,
+    balance: buildBalanceDiagnosis(flavor, signature),
+    drinkability,
+    glassNote:
+      glassNoteMap[glass?.id] ??
+      '当前杯型会影响香气释放、温度保持和饮用节奏。',
+    contributions,
+    suggestions: buildAdjustmentSuggestions(
+      flavor,
+      ingredients,
+      amounts,
+      signature,
+    ),
+  }
+}
+
+function FlavorInterpretationCard({
+  flavor,
+  spirit,
+  ingredients,
+  amounts,
+  technique,
+  glass,
+  signature,
+}) {
+  const interpretation = buildTastingInterpretation({
+    flavor,
+    spirit,
+    ingredients,
+    amounts,
+    technique,
+    glass,
+    signature,
+  })
+
+  return (
+    <section className="result-card flavor-interpretation-card">
+      <div className="result-card-heading interpretation-heading">
+        <div>
+          <small>TASTING INTERPRETATION</small>
+          <h3>风味解读</h3>
+        </div>
+        <span className="interpretation-style-badge">
+          {interpretation.title}
+        </span>
+      </div>
+
+      <p className="interpretation-summary">{interpretation.summary}</p>
+
+      <div className="interpretation-tags">
+        {interpretation.tags.map((tag) => (
+          <span key={tag}>{tag}</span>
+        ))}
+      </div>
+
+      <div className="tasting-timeline">
+        <article>
+          <span>01</span>
+          <div>
+            <small>入口</small>
+            <p>{interpretation.opening}</p>
+          </div>
+        </article>
+        <article>
+          <span>02</span>
+          <div>
+            <small>中段</small>
+            <p>{interpretation.middle}</p>
+          </div>
+        </article>
+        <article>
+          <span>03</span>
+          <div>
+            <small>收尾</small>
+            <p>{interpretation.finish}</p>
+          </div>
+        </article>
+      </div>
+
+      <div className="balance-diagnosis">
+        <small>BALANCE DIAGNOSIS</small>
+        <h4>平衡诊断</h4>
+        <p>{interpretation.balance}</p>
+        <div>
+          <span>{interpretation.drinkability}</span>
+          <span>{interpretation.glassNote}</span>
+        </div>
+      </div>
+
+      <div className="ingredient-contribution-section">
+        <small>INGREDIENT CONTRIBUTION</small>
+        <h4>关键辅料贡献</h4>
+        <div className="ingredient-contribution-list">
+          {interpretation.contributions.map((item) => (
+            <article key={item.name}>
+              <div>
+                <strong>{item.name}</strong>
+                <span>{item.amountText}</span>
+              </div>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="adjustment-suggestion-box">
+        <small>NEXT VERSION</small>
+        <h4>下一版怎么调</h4>
+        <ul>
+          {interpretation.suggestions.map((suggestion) => (
+            <li key={suggestion}>{suggestion}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
 function FlavorRadar({ flavor }) {
   const size = 320
   const center = size / 2
@@ -2069,6 +2891,16 @@ function App() {
               </div>
               <FlavorRadar flavor={userFlavor} />
             </section>
+
+            <FlavorInterpretationCard
+              flavor={userFlavor}
+              spirit={selectedSpirit}
+              ingredients={selectedIngredients}
+              amounts={ingredientAmounts}
+              technique={selectedTechnique}
+              glass={selectedGlass}
+              signature={creativeReview.signature}
+            />
 
             <section className="result-card compare-card-v13">
               <div className="compare-heading-v13">
