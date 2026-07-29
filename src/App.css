@@ -7194,3 +7194,223 @@ button {
     padding: 24px;
   }
 }
+
+
+/* =========================================================
+   V15 - 轻量成长 / 首杯仪式 / 都市夜色叙事
+   ========================================================= */
+
+.simple-explorer-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  padding: 8px 13px;
+  border: 1px solid rgba(228, 189, 126, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.simple-explorer-level span {
+  color: rgba(255, 248, 237, 0.42);
+  font-size: 10px;
+}
+
+.simple-explorer-level strong {
+  color: #e6bd7b;
+  font-size: 12px;
+}
+
+.simple-gallery-button {
+  margin-top: 12px;
+}
+
+.cinematic-summary-copy h3 {
+  max-width: 640px;
+  margin-top: 18px;
+  color: #fff7eb;
+  font-family: Georgia, 'Songti SC', 'STSong', serif;
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.015em;
+}
+
+.cinematic-summary-copy > p {
+  max-width: 680px;
+  color: rgba(255, 248, 237, 0.68);
+  font-family: Georgia, 'Songti SC', 'STSong', serif;
+  font-size: 16px;
+  line-height: 2.05;
+  letter-spacing: 0.02em;
+}
+
+.cinematic-story-tags span {
+  border-color: rgba(228, 189, 126, 0.17);
+  background: rgba(228, 189, 126, 0.06);
+  color: #dfb97a;
+  font-family: Georgia, 'Songti SC', 'STSong', serif;
+}
+
+.first-creation-overlay {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(150, 82, 33, 0.18), transparent 32%),
+    rgba(7, 5, 4, 0.88);
+  backdrop-filter: blur(14px);
+}
+
+.first-creation-card {
+  position: relative;
+  overflow: hidden;
+  width: min(520px, 100%);
+  padding: 42px 38px 34px;
+  border: 1px solid rgba(235, 194, 123, 0.18);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(228, 189, 126, 0.11), transparent 38%),
+    linear-gradient(160deg, rgba(48, 31, 23, 0.98), rgba(22, 15, 12, 0.98));
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.52);
+  text-align: center;
+}
+
+.first-creation-card::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+  border: 1px solid rgba(235, 194, 123, 0.045);
+  border-radius: 22px;
+}
+
+.first-creation-symbol {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 22px;
+  border: 1px solid rgba(235, 194, 123, 0.18);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 38px;
+}
+
+.first-creation-card > small {
+  position: relative;
+  z-index: 1;
+  color: #d9ad71;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.first-creation-card h2 {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0;
+  color: #fff8ed;
+  font-size: 30px;
+}
+
+.first-creation-card > p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: rgba(255, 248, 237, 0.62);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.first-creation-name {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 7px;
+  margin: 25px 0 16px;
+  padding: 18px;
+  border: 1px solid rgba(255, 239, 211, 0.08);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.024);
+}
+
+.first-creation-name span {
+  color: rgba(255, 248, 237, 0.42);
+  font-size: 10px;
+}
+
+.first-creation-name strong {
+  color: #f0cc91;
+  font-family: Georgia, 'Songti SC', 'STSong', serif;
+  font-size: 26px;
+  font-weight: 500;
+}
+
+.first-creation-rewards {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.first-creation-rewards span {
+  padding: 7px 10px;
+  border: 1px solid rgba(228, 189, 126, 0.13);
+  border-radius: 999px;
+  background: rgba(228, 189, 126, 0.055);
+  color: #dfb879;
+  font-size: 10px;
+}
+
+.first-creation-card .primary-button {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.collection-level-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 8px 11px;
+  border: 1px solid rgba(228, 189, 126, 0.11);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.collection-level-chip span,
+.collection-level-chip small {
+  color: rgba(255, 248, 237, 0.42);
+  font-size: 10px;
+}
+
+.collection-level-chip strong {
+  color: #e4bd7e;
+  font-size: 12px;
+}
+
+@media (max-width: 560px) {
+  .first-creation-card {
+    padding: 34px 24px 26px;
+  }
+
+  .first-creation-card h2 {
+    font-size: 26px;
+  }
+
+  .cinematic-summary-copy > p {
+    font-size: 15px;
+    line-height: 1.95;
+  }
+}

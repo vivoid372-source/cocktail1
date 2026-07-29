@@ -1477,6 +1477,157 @@ function getFlavorSummary(flavor) {
 }
 
 
+
+const explorerLevels = [
+  { min: 0, title: '风味来客' },
+  { min: 2, title: '调酒学徒' },
+  { min: 5, title: '风味探索者' },
+  { min: 10, title: '灵感酒保' },
+  { min: 18, title: '招牌调酒师' },
+  { min: 30, title: '风味收藏家' },
+  { min: 50, title: '调酒艺术家' },
+]
+
+function getExplorerLevel(count) {
+  return [...explorerLevels]
+    .reverse()
+    .find((level) => count >= level.min) ?? explorerLevels[0]
+}
+
+function chooseNarrative(options, signature, salt) {
+  return chooseStableText(options, signature, salt)
+}
+
+function buildCinematicNarrative(selection, flavor, signature) {
+  const ingredientIds = selection.ingredients.map((item) => item.id)
+  const hasBubbles = ingredientIds.some((id) =>
+    ['soda-water', 'tonic-water', 'cola', 'ginger-beer'].includes(id),
+  )
+  const hasCream = ingredientIds.includes('cream')
+  const hasCacao = ingredientIds.includes('cacao-liqueur')
+  const hasMint = ingredientIds.includes('mint')
+  const hasBerry = ingredientIds.some((id) =>
+    ['cranberry-juice', 'grenadine'].includes(id),
+  )
+  const hasCitrus = ingredientIds.some((id) =>
+    ['lemon-juice', 'lime-juice', 'orange-juice'].includes(id),
+  )
+
+  let chapterTitles = [
+    '这一杯，发生在夜里',
+    '杯里的冰，比告别融化得更慢',
+    '凌晨以后，故事才开始有味道',
+    '有些夜晚，适合把答案留在杯底',
+  ]
+
+  let paragraphs = [
+    '夜已经很深了。吧台上的灯只照亮杯口，剩下的事情，都藏在冰块慢慢融化的声音里。',
+    '这杯酒没有急着解释自己。它只是停在那里，像一段没有说完的话，等你在某个安静的时刻重新想起。',
+  ]
+
+  let moodTags = ['夜色', '旧故事', '适合独饮']
+
+  if (selection.spirit?.id === 'tequila') {
+    chapterTitles = [
+      '这条公路，没有回程',
+      '傍晚的热气还没有散',
+      '有人在日落前离开了城市',
+    ]
+    paragraphs = [
+      '傍晚的公路还带着热气。车窗外的灯一盏一盏退后，像一些来不及告别的人。',
+      '龙舌兰把夜色拉得很长。你没有问终点，因为有些远行，本来就不是为了回来。',
+    ]
+    moodTags = ['公路', '远行', '未完成的告别']
+  } else if (selection.spirit?.id === 'whisky') {
+    chapterTitles = [
+      '那封旧信，后来没有寄出',
+      '琥珀色的夜，比往事更慢',
+      '有些事情，只适合在午夜想起',
+    ]
+    paragraphs = [
+      '他总在午夜以后点这一杯。灯光落在琥珀色酒液里，旧事忽然显得没有那么锋利。',
+      '杯底还留着一点温度。有人说时间会让一切过去，可有些味道，只是学会了不再开口。',
+    ]
+    moodTags = ['旧信', '琥珀灯光', '迟来的原谅']
+  } else if (selection.spirit?.id === 'gin') {
+    chapterTitles = [
+      '雨停以前，她没有离开',
+      '植物在夜里交换秘密',
+      '月光落进了空房间',
+    ]
+    paragraphs = [
+      '窗外下着一场很轻的雨。植物的气息从杯口经过，没有留下脚步。',
+      '房间里很安静，只有冰块偶尔碰一下杯壁。像某个人走了很久以后，空气还记得她来过。',
+    ]
+    moodTags = ['雨夜', '植物', '冷静的浪漫']
+  } else if (selection.spirit?.id === 'rum') {
+    chapterTitles = [
+      '夏天不应该用来等待',
+      '海风吹走了最后一句话',
+      '日落以后，岛屿还醒着',
+    ]
+    paragraphs = [
+      '海风从很远的地方来，带着一点潮湿和没有完成的夏天。',
+      '他喝完以后笑了一下，像是终于想起，有些晚上不必等谁，只需要让风继续吹。',
+    ]
+    moodTags = ['海风', '盛夏', '重新出发']
+  } else if (selection.spirit?.id === 'vodka') {
+    chapterTitles = [
+      '凌晨两点，城市仍然清醒',
+      '霓虹熄灭以前，谁也没有回头',
+      '她把答案留在了末班车上',
+    ]
+    paragraphs = [
+      '城市到了凌晨才显出真正的样子。街灯很冷，玻璃窗里的人看起来都像在等一条不会来的消息。',
+      '这杯酒很安静，也很直接。像一句删掉了很多次，最后还是没有发送的话。',
+    ]
+    moodTags = ['霓虹', '末班车', '克制']
+  } else if (selection.spirit?.id === 'brandy') {
+    chapterTitles = [
+      '店要打烊的时候，她又点了一杯',
+      '旧唱片转到最后一首',
+      '暖灯下面，时间走得很慢',
+    ]
+    paragraphs = [
+      '店要打烊的时候，她又点了一杯。灯光很暖，唱片也快转到最后一首。',
+      '她并不是在庆祝什么，只是今晚还不想回家。有些温柔，只够陪人坐到门外天亮。',
+    ]
+    moodTags = ['暖灯', '旧唱片', '不想回家']
+  }
+
+  if (hasBerry) {
+    paragraphs = [
+      '她把最后一颗红色果实留在杯底，像留下一条没有发送的消息。',
+      '城市的灯很亮，可那天晚上，他们谁也没有真正看清对方。',
+    ]
+    moodTags = ['粉色霓虹', '短暂心动', '未发送的消息']
+  }
+
+  if (hasCream || hasCacao) {
+    paragraphs = [
+      '店里只剩最后一盏灯。奶油与可可让夜晚显得温柔，像一段被刻意放慢的时间。',
+      '她没有急着离开。杯子里的甜意很短，足够让人暂时忘记，门外还是同一座城市。',
+    ]
+    moodTags = ['午夜甜点', '暖灯', '不想回家']
+  }
+
+  if (hasMint && selection.spirit?.id !== 'gin') {
+    moodTags = ['薄荷夜风', '空房间', '短暂清醒']
+  }
+
+  if (hasBubbles) {
+    moodTags = [...moodTags.slice(0, 2), '灯光里的气泡']
+  } else if (hasCitrus) {
+    moodTags = [...moodTags.slice(0, 2), '一瞬明亮']
+  }
+
+  return {
+    chapterTitle: chooseNarrative(chapterTitles, signature, 'chapter-title'),
+    story: paragraphs.join(' '),
+    moodTags: [...new Set(moodTags)].slice(0, 3),
+  }
+}
+
 function buildCreativeReview(selection, flavor, classicReference) {
   const ingredientCount = selection.ingredients.length
   const values = flavorAxes.map(([key]) => flavor[key] ?? 0)
@@ -1593,6 +1744,21 @@ function buildCreativeReview(selection, flavor, classicReference) {
   const praise = `${opening}${middle}${finish}${mood}`
   const shortIntro = `${briefNote}${classicLine}`
 
+  const signature = [
+    selection.spirit?.id,
+    ...selection.ingredients
+      .map((item) => `${item.id}:${selection.amounts?.[item.id] ?? 'standard'}`)
+      .sort(),
+    selection.technique?.id,
+    selection.glass?.id,
+  ].join('|')
+
+  const cinematicNarrative = buildCinematicNarrative(
+    selection,
+    flavor,
+    signature,
+  )
+
   const tags = Array.from(
     new Set([
       dominant.label,
@@ -1630,14 +1796,10 @@ function buildCreativeReview(selection, flavor, classicReference) {
       creativity: expressionScore,
       atmosphere: finishScore,
     },
-    signature: [
-      selection.spirit?.id,
-      ...selection.ingredients
-        .map((item) => `${item.id}:${selection.amounts?.[item.id] ?? 'standard'}`)
-        .sort(),
-      selection.technique?.id,
-      selection.glass?.id,
-    ].join('|'),
+    signature,
+    chapterTitle: cinematicNarrative.chapterTitle,
+    cinematicStory: cinematicNarrative.story,
+    moodTags: cinematicNarrative.moodTags,
   }
 }
 
@@ -3298,6 +3460,18 @@ function App() {
     }
   })
 
+  const [explorerProfile, setExplorerProfile] = useState(() => {
+    try {
+      return JSON.parse(
+        localStorage.getItem('cocktail-explorer-profile') ??
+          '{"creations":0,"firstRevealSeen":false}',
+      )
+    } catch {
+      return { creations: 0, firstRevealSeen: false }
+    }
+  })
+  const [showFirstCreationReveal, setShowFirstCreationReveal] = useState(false)
+
   const glassCarouselRef = useRef(null)
   const glassCardRefs = useRef([])
   const scrollTimerRef = useRef(null)
@@ -3514,7 +3688,38 @@ function App() {
       persistChallengeProgress(nextProgress)
     }
 
+    const nextCreations = (explorerProfile.creations ?? 0) + 1
+    const nextProfile = {
+      ...explorerProfile,
+      creations: nextCreations,
+    }
+    setExplorerProfile(nextProfile)
+    localStorage.setItem(
+      'cocktail-explorer-profile',
+      JSON.stringify(nextProfile),
+    )
+
+    if (
+      nextCreations === 1 &&
+      !explorerProfile.firstRevealSeen
+    ) {
+      setShowFirstCreationReveal(true)
+    }
+
     setPage('result')
+  }
+
+  function closeFirstCreationReveal() {
+    const nextProfile = {
+      ...explorerProfile,
+      firstRevealSeen: true,
+    }
+    setExplorerProfile(nextProfile)
+    localStorage.setItem(
+      'cocktail-explorer-profile',
+      JSON.stringify(nextProfile),
+    )
+    setShowFirstCreationReveal(false)
   }
 
   function chooseGlass(index) {
@@ -3712,14 +3917,14 @@ function App() {
                 <span>{creativeReview.scoreLabel}</span>
               </div>
 
-              <div className="result-summary-copy">
+              <div className="result-summary-copy cinematic-summary-copy">
                 <small>ORIGINAL DRINK</small>
                 <h2>{creativeReview.title}</h2>
-                <h3>这一口喝下去是什么感觉</h3>
-                <p>{creativeReview.praise}</p>
+                <h3>{creativeReview.chapterTitle}</h3>
+                <p>{creativeReview.cinematicStory}</p>
 
-                <div className="story-tags">
-                  {creativeReview.tags.map((tag) => (
+                <div className="story-tags cinematic-story-tags">
+                  {creativeReview.moodTags.map((tag) => (
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
@@ -4377,6 +4582,13 @@ function App() {
             <p className="eyebrow">COCKTAIL ARCHIVE</p>
             <h2>我的调酒图鉴</h2>
             <p>这里保存你收藏过的原创作品印章。</p>
+            <div className="collection-level-chip">
+              <span>当前身份</span>
+              <strong>
+                {getExplorerLevel(explorerProfile.creations ?? 0).title}
+              </strong>
+              <small>已完成 {explorerProfile.creations ?? 0} 次风味探索</small>
+            </div>
           </div>
 
           {collection.length > 0 ? (
@@ -4763,6 +4975,13 @@ function App() {
               {todayBartenderCompleted ? '今日已完成 ✓' : '接受任务 →'}
             </strong>
           </button>
+        </div>
+
+        <div className="simple-explorer-level">
+          <span>当前身份</span>
+          <strong>
+            {getExplorerLevel(explorerProfile.creations ?? 0).title}
+          </strong>
         </div>
 
         <button
