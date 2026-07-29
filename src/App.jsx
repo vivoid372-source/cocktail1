@@ -4712,186 +4712,65 @@ function App() {
     challengeProgress.bartender?.[activeBartenderChallenge.id]?.completed,
   )
 
-  const bestClassicScore = Object.values(
-    challengeProgress.classic ?? {},
-  ).reduce((best, item) => Math.max(best, item.best ?? 0), 0)
-
   return (
-    <main className="app v14-home-app v143-home-app">
-      <section className="hero v14-home-hero v143-home-hero">
-        <div className="v143-brand-lockup">
-          <div className="v143-brand-mark">
-            <span>🍸</span>
-          </div>
-
-          <div className="v143-brand-copy">
-            <p className="eyebrow">COCKTAIL DISCOVERY GAME</p>
-            <h1>风味调酒室</h1>
-            <small>COCKTAIL ODYSSEY</small>
-          </div>
+    <main className="app simple-home-app">
+      <section className="hero simple-home-hero">
+        <div className="simple-brand">
+          <div className="simple-brand-icon">🍸</div>
+          <p className="eyebrow">COCKTAIL DISCOVERY GAME</p>
+          <h1>风味调酒室</h1>
+          <small>COCKTAIL ODYSSEY</small>
+          <p className="simple-home-subtitle">
+            今晚，你想怎么调？
+          </p>
         </div>
 
-        <div className="v143-intro">
-          <h2>今晚，你想怎么调？</h2>
-          <p>自由创作、复刻经典，或接受今日酒保任务。</p>
-        </div>
-
-        <div className="v143-mode-layout">
+        <div className="simple-mode-grid">
           <button
             type="button"
-            className="v143-mode-card v143-free-card"
+            className="simple-mode-card simple-free-card"
             onClick={() => startMode('free')}
           >
-            <div className="v143-card-glow" />
-            <div className="v143-card-visual">
-              <span className="v143-glass-symbol">🥃</span>
-              <span className="v143-orbit v143-orbit-one" />
-              <span className="v143-orbit v143-orbit-two" />
-            </div>
-
-            <div className="v143-card-content">
-              <div className="v143-card-kicker">
-                <small>FREE CREATION</small>
-                <span>主玩法</span>
-              </div>
-
-              <h3>自由创作</h3>
-              <p>没有标准答案，从基酒开始，调出只属于你的作品。</p>
-
-              <div className="v143-card-status">
-                <span>已收藏</span>
-                <strong>{collection.length} 杯</strong>
-              </div>
-
-              <div className="v143-card-action">
-                <span>开始自由调酒</span>
-                <b>→</b>
-              </div>
-            </div>
+            <span className="simple-mode-icon">🥃</span>
+            <small>FREE CREATION</small>
+            <h2>自由创作</h2>
+            <p>没有标准答案，随心搭配，调出只属于你的作品。</p>
+            <strong>开始创作 →</strong>
           </button>
 
-          <div className="v143-side-stack">
-            <button
-              type="button"
-              className="v143-mode-card v143-classic-card"
-              onClick={() => startMode('classic')}
-            >
-              <div className="v143-card-glow" />
-
-              <div className="v143-side-card-top">
-                <div className="v143-side-icon">📜</div>
-                <div className="v143-card-kicker">
-                  <small>CLASSIC CHALLENGE</small>
-                  <span>复刻模式</span>
-                </div>
-              </div>
-
-              <div className="v143-side-card-body">
-                <div>
-                  <h3>经典挑战</h3>
-                  <p>根据线索，复刻 12 杯世界经典鸡尾酒。</p>
-                </div>
-
-                <div className="v143-side-metrics">
-                  <span>
-                    <small>通关进度</small>
-                    <strong>
-                      {classicCompletedCount}/{cocktails.length}
-                    </strong>
-                  </span>
-                  <span>
-                    <small>最高复刻</small>
-                    <strong>{bestClassicScore}%</strong>
-                  </span>
-                </div>
-              </div>
-
-              <div className="v143-card-action">
-                <span>进入经典挑战</span>
-                <b>→</b>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              className="v143-mode-card v143-bartender-card"
-              onClick={() => startMode('bartender')}
-            >
-              <div className="v143-card-glow" />
-
-              <div className="v143-side-card-top">
-                <div className="v143-side-icon">🎯</div>
-                <div className="v143-card-kicker">
-                  <small>DAILY BARTENDER</small>
-                  <span>每日任务</span>
-                </div>
-              </div>
-
-              <div className="v143-side-card-body">
-                <div>
-                  <h3>酒保挑战</h3>
-                  <p>
-                    {activeBartenderChallenge.icon}{' '}
-                    {activeBartenderChallenge.title}
-                  </p>
-                </div>
-
-                <div className="v143-daily-status">
-                  <span
-                    className={
-                      todayBartenderCompleted
-                        ? 'v143-status-done'
-                        : 'v143-status-pending'
-                    }
-                  >
-                    {todayBartenderCompleted ? '今日已完成 ✓' : '今日未完成'}
-                  </span>
-                  <small>
-                    难度 · {activeBartenderChallenge.difficulty}
-                  </small>
-                </div>
-              </div>
-
-              <div className="v143-card-action">
-                <span>接受今日任务</span>
-                <b>→</b>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <div className="v143-home-footer">
           <button
-            className="v143-gallery-entry"
-            onClick={() => setPage('collection')}
+            type="button"
+            className="simple-mode-card simple-classic-card"
+            onClick={() => startMode('classic')}
           >
-            <span className="v143-gallery-icon">◫</span>
-            <div>
-              <small>MY COLLECTION</small>
-              <strong>我的调酒图鉴</strong>
-            </div>
-            <b>→</b>
+            <span className="simple-mode-icon">📜</span>
+            <small>CLASSIC CHALLENGE</small>
+            <h2>经典挑战</h2>
+            <p>根据线索，复刻世界经典鸡尾酒。</p>
+            <strong>进入挑战 →</strong>
           </button>
 
-          <div className="v143-progress-strip">
-            <article>
-              <span>原创作品</span>
-              <strong>{collection.length}</strong>
-            </article>
-            <i />
-            <article>
-              <span>经典通关</span>
-              <strong>
-                {classicCompletedCount}/{cocktails.length}
-              </strong>
-            </article>
-            <i />
-            <article>
-              <span>酒保任务</span>
-              <strong>{bartenderCompletedCount}</strong>
-            </article>
-          </div>
+          <button
+            type="button"
+            className="simple-mode-card simple-bartender-card"
+            onClick={() => startMode('bartender')}
+          >
+            <span className="simple-mode-icon">🎯</span>
+            <small>DAILY BARTENDER</small>
+            <h2>酒保挑战</h2>
+            <p>接受限定条件，完成今天的调酒任务。</p>
+            <strong>
+              {todayBartenderCompleted ? '今日已完成 ✓' : '接受任务 →'}
+            </strong>
+          </button>
         </div>
+
+        <button
+          className="simple-gallery-button"
+          onClick={() => setPage('collection')}
+        >
+          我的调酒图鉴
+        </button>
       </section>
     </main>
   )
