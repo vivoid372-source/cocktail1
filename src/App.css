@@ -6079,3 +6079,572 @@ button {
     white-space: normal;
   }
 }
+
+
+/* =========================================================
+   V14 - 三模式首页 / 经典挑战 / 酒保挑战
+   ========================================================= */
+
+.result-v14-panel {
+  max-width: 1120px;
+}
+
+.v14-home-hero {
+  width: min(1120px, 100%);
+  max-width: 1120px;
+}
+
+.v14-home-hero > h1 {
+  font-size: clamp(48px, 7vw, 82px);
+}
+
+.game-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+  margin: 34px 0 22px;
+}
+
+.game-mode-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+  padding: 28px;
+  border: 1px solid rgba(255, 239, 211, 0.1);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 90% 5%, rgba(228, 189, 126, 0.09), transparent 34%),
+    rgba(255, 255, 255, 0.027);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.24s ease,
+    border-color 0.24s ease,
+    box-shadow 0.24s ease;
+}
+
+.game-mode-card::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  bottom: -55px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(228, 189, 126, 0.045);
+}
+
+.game-mode-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(228, 189, 126, 0.36);
+  box-shadow: 0 28px 55px rgba(0, 0, 0, 0.28);
+}
+
+.mode-card-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 26px;
+  border: 1px solid rgba(255, 239, 211, 0.1);
+  border-radius: 20px;
+  background: rgba(255,255,255,0.035);
+  font-size: 31px;
+}
+
+.game-mode-card small {
+  color: #d9ad71;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.game-mode-card h2 {
+  margin: 9px 0 12px;
+  color: #fff8ed;
+  font-size: 29px;
+}
+
+.game-mode-card p {
+  min-height: 76px;
+  margin: 0;
+  color: rgba(255, 248, 237, 0.64);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.game-mode-card > strong {
+  display: inline-block;
+  margin-top: 22px;
+  color: #edc681;
+  font-size: 14px;
+}
+
+.free-mode-card:hover {
+  background:
+    radial-gradient(circle at 90% 5%, rgba(210, 151, 69, 0.15), transparent 36%),
+    rgba(255,255,255,0.035);
+}
+
+.classic-mode-card:hover {
+  background:
+    radial-gradient(circle at 90% 5%, rgba(169, 110, 67, 0.16), transparent 36%),
+    rgba(255,255,255,0.035);
+}
+
+.bartender-mode-card:hover {
+  background:
+    radial-gradient(circle at 90% 5%, rgba(143, 121, 58, 0.16), transparent 36%),
+    rgba(255,255,255,0.035);
+}
+
+.v14-gallery-button {
+  width: min(360px, 100%);
+}
+
+.v14-progress-card {
+  margin-top: 16px;
+}
+
+.challenge-page-app {
+  align-items: flex-start;
+}
+
+.challenge-select-panel,
+.bartender-brief-panel {
+  max-width: 1120px;
+}
+
+.challenge-page-heading {
+  max-width: 720px;
+}
+
+.classic-challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.classic-challenge-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 310px;
+  padding: 23px;
+  border: 1px solid rgba(255, 239, 211, 0.09);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(228, 189, 126, 0.07), transparent 34%),
+    rgba(255,255,255,0.025);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.classic-challenge-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(228, 189, 126, 0.3);
+}
+
+.challenge-card-number {
+  position: absolute;
+  right: 17px;
+  top: 14px;
+  color: rgba(255, 248, 237, 0.06);
+  font-family: Georgia, serif;
+  font-size: 56px;
+  font-weight: 700;
+}
+
+.challenge-card-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.challenge-card-top > span {
+  font-size: 30px;
+}
+
+.challenge-card-top small {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(228,189,126,0.08);
+  color: #e0ba7b;
+  font-size: 11px;
+}
+
+.classic-challenge-card h3 {
+  margin: 22px 0 4px;
+  color: #fff8ed;
+  font-size: 25px;
+}
+
+.classic-challenge-card > strong {
+  color: rgba(255,248,237,0.48);
+  font-size: 13px;
+}
+
+.classic-challenge-card ul {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 21px 0;
+  list-style: none;
+}
+
+.classic-challenge-card li {
+  position: relative;
+  padding-left: 15px;
+  color: rgba(255,248,237,0.63);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.classic-challenge-card li::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d9ad71;
+}
+
+.challenge-card-action {
+  color: #e8c17f;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.bartender-brief-hero {
+  display: grid;
+  justify-items: center;
+  max-width: 700px;
+  margin: 18px auto 26px;
+  text-align: center;
+}
+
+.bartender-challenge-icon {
+  display: grid;
+  place-items: center;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(228,189,126,0.16);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle, rgba(228,189,126,0.12), transparent 66%),
+    rgba(255,255,255,0.025);
+  font-size: 48px;
+}
+
+.bartender-brief-hero h2 {
+  margin: 8px 0 12px;
+  color: #fff8ed;
+  font-size: clamp(38px, 6vw, 62px);
+}
+
+.bartender-brief-hero > p:last-of-type {
+  color: rgba(255,248,237,0.68);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.challenge-difficulty-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.challenge-difficulty-row span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(228,189,126,0.08);
+  color: #e6bd7b;
+  font-size: 12px;
+}
+
+.bartender-rule-preview {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid rgba(255,239,211,0.1);
+  border-radius: 25px;
+  background: rgba(255,255,255,0.025);
+}
+
+.bartender-rule-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.bartender-rule-heading small {
+  color: #d9ad71;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.bartender-rule-heading h3 {
+  margin: 7px 0 0;
+  color: #fff8ed;
+  font-size: 24px;
+}
+
+.bartender-rule-heading button {
+  padding: 10px 14px;
+  border: 1px solid rgba(228,189,126,0.18);
+  border-radius: 999px;
+  background: rgba(228,189,126,0.06);
+  color: #e8c17f;
+  cursor: pointer;
+}
+
+.bartender-rule-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.bartender-rule-chips span {
+  padding: 9px 12px;
+  border: 1px solid rgba(255,239,211,0.075);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.025);
+  color: rgba(255,248,237,0.72);
+  font-size: 13px;
+}
+
+.bartender-start-button {
+  display: block;
+  width: min(420px, 100%);
+  margin: 24px auto 0;
+}
+
+.mode-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin: 8px 0 23px;
+  padding: 15px 18px;
+  border: 1px solid rgba(228,189,126,0.14);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(228,189,126,0.08), transparent 35%),
+    rgba(255,255,255,0.025);
+}
+
+.mode-banner > div {
+  display: grid;
+  gap: 4px;
+}
+
+.mode-banner small {
+  color: #d9ad71;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.mode-banner strong {
+  color: #fff8ed;
+  font-size: 15px;
+}
+
+.mode-banner > span {
+  color: rgba(255,248,237,0.55);
+  font-size: 12px;
+  text-align: right;
+}
+
+.challenge-result-card {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 22px;
+  margin: 18px 0 24px;
+  padding: 22px;
+  border: 1px solid rgba(228,189,126,0.14);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 0 0, rgba(228,189,126,0.09), transparent 34%),
+    rgba(255,255,255,0.025);
+}
+
+.challenge-result-score {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  min-height: 185px;
+  padding: 20px;
+  border-radius: 21px;
+  background: rgba(10,7,6,0.35);
+  text-align: center;
+}
+
+.challenge-result-score small {
+  color: rgba(255,248,237,0.48);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.challenge-result-score strong {
+  margin: 10px 0 7px;
+  color: #f0c982;
+  font-size: 51px;
+  line-height: 1;
+}
+
+.challenge-result-score span {
+  color: #fff8ed;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.challenge-result-content {
+  min-width: 0;
+}
+
+.challenge-result-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.challenge-result-title small {
+  color: #d9ad71;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.challenge-result-title h2 {
+  margin: 6px 0 0;
+  color: #fff8ed;
+  font-size: 25px;
+}
+
+.challenge-result-title > span {
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: rgba(228,189,126,0.08);
+  color: #e4bd7e;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.challenge-check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.challenge-check-grid article {
+  display: grid;
+  grid-template-columns: 27px minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+  padding: 11px 12px;
+  border: 1px solid rgba(255,239,211,0.07);
+  border-radius: 13px;
+  background: rgba(255,255,255,0.02);
+}
+
+.challenge-check-grid article b {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.challenge-check-grid article.passed b {
+  background: rgba(110,180,113,0.14);
+  color: #a6d49d;
+}
+
+.challenge-check-grid article.failed b {
+  background: rgba(194,90,78,0.14);
+  color: #df958a;
+}
+
+.challenge-check-grid strong {
+  color: #fff8ed;
+  font-size: 12px;
+}
+
+.challenge-check-grid p {
+  margin: 4px 0 0;
+  color: rgba(255,248,237,0.52);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.challenge-check-grid.compact article {
+  align-items: center;
+}
+
+.challenge-check-grid.compact article > strong {
+  align-self: center;
+}
+
+@media (max-width: 900px) {
+  .game-mode-grid,
+  .classic-challenge-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-mode-card {
+    min-height: 0;
+  }
+
+  .game-mode-card p {
+    min-height: 0;
+  }
+
+  .challenge-result-card {
+    grid-template-columns: 1fr;
+  }
+
+  .challenge-result-score {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .mode-banner,
+  .bartender-rule-heading,
+  .challenge-result-title {
+    display: grid;
+  }
+
+  .mode-banner > span {
+    text-align: left;
+  }
+
+  .challenge-check-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bartender-rule-heading button {
+    width: 100%;
+  }
+}

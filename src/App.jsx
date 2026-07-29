@@ -2585,8 +2585,512 @@ function FlavorRadar({ flavor }) {
   )
 }
 
+
+const bartenderChallenges = [
+  {
+    id: 'summer-breeze',
+    title: '夏夜微风',
+    icon: '🌬️',
+    difficulty: '入门',
+    description: '做一杯清爽、带气泡、适合夏夜慢慢喝的长饮。',
+    requiredSpirit: 'rum',
+    requiredAny: ['lemon-juice', 'lime-juice', 'orange-juice'],
+    requireBubbles: true,
+    flavorMax: { sweet: 48 },
+    minScore: 72,
+  },
+  {
+    id: 'pink-party',
+    title: '粉红派对',
+    icon: '🩷',
+    difficulty: '入门',
+    description: '做一杯果香明显、酒感柔和的粉红色作品。',
+    requiredAny: ['cranberry-juice', 'grenadine'],
+    flavorMin: { fruity: 48 },
+    flavorMax: { spirit: 48 },
+    forbidden: ['cream'],
+    minScore: 70,
+  },
+  {
+    id: 'botanical-night',
+    title: '植物夜航',
+    icon: '🌿',
+    difficulty: '进阶',
+    description: '突出草本香料，但不能让甜度抢走注意力。',
+    requiredSpirit: 'gin',
+    flavorMin: { herbal: 55 },
+    flavorMax: { sweet: 38 },
+    minScore: 74,
+  },
+  {
+    id: 'dark-and-bubbly',
+    title: '深色气泡',
+    icon: '🌑',
+    difficulty: '入门',
+    description: '以深色气泡为主题，做一杯有烈酒骨架的长饮。',
+    requiredAny: ['cola'],
+    flavorMin: { spirit: 30 },
+    requiredGlass: 'highball',
+    minScore: 68,
+  },
+  {
+    id: 'citrus-sharp',
+    title: '柑橘锋线',
+    icon: '🍋',
+    difficulty: '进阶',
+    description: '做一杯酸度明亮但不过分尖锐的柑橘型鸡尾酒。',
+    requiredAny: ['lemon-juice', 'lime-juice'],
+    flavorMin: { sour: 42 },
+    flavorMax: { sour: 72, sweet: 48 },
+    minScore: 74,
+  },
+  {
+    id: 'low-sweet-high-spirit',
+    title: '干爽烈酒',
+    icon: '🧊',
+    difficulty: '困难',
+    description: '甜度必须克制，同时保持清楚的基酒存在感。',
+    flavorMin: { spirit: 52 },
+    flavorMax: { sweet: 25 },
+    forbidden: ['grenadine', 'cream'],
+    minScore: 75,
+  },
+  {
+    id: 'tropical-bubbles',
+    title: '热带气泡',
+    icon: '🏝️',
+    difficulty: '进阶',
+    description: '做一杯有热带果香、气泡和轻快节奏的作品。',
+    requiredSpirit: 'rum',
+    requiredAny: ['orange-juice', 'lime-juice'],
+    requireBubbles: true,
+    flavorMin: { fruity: 42 },
+    minScore: 72,
+  },
+  {
+    id: 'bitter-adult',
+    title: '成熟苦香',
+    icon: '🟥',
+    difficulty: '困难',
+    description: '苦韵要清楚，但整杯酒仍然需要可饮用。',
+    requiredAny: ['campari', 'aromatic-bitters'],
+    flavorMin: { bitter: 42 },
+    flavorMax: { bitter: 82 },
+    minScore: 74,
+  },
+  {
+    id: 'soft-foam',
+    title: '丝绒泡沫',
+    icon: '☁️',
+    difficulty: '进阶',
+    description: '使用蛋清做出柔和泡沫，同时保留酸甜结构。',
+    requiredAll: ['egg-white'],
+    requiredAny: ['lemon-juice', 'lime-juice'],
+    requiredTechnique: 'shake',
+    minScore: 73,
+  },
+  {
+    id: 'dessert-cocktail',
+    title: '午夜甜点',
+    icon: '🍫',
+    difficulty: '进阶',
+    description: '做一杯浓郁、柔滑，但不能只有甜味的餐后酒。',
+    requiredAny: ['cream', 'cacao-liqueur'],
+    flavorMin: { sweet: 35 },
+    flavorMax: { sweet: 72 },
+    minScore: 70,
+  },
+  {
+    id: 'tequila-sunset',
+    title: '龙舌兰落日',
+    icon: '🌅',
+    difficulty: '入门',
+    description: '使用龙舌兰和暖色果香，完成一杯视觉鲜明的酒。',
+    requiredSpirit: 'tequila',
+    requiredAny: ['orange-juice', 'grenadine'],
+    flavorMin: { fruity: 40 },
+    minScore: 70,
+  },
+  {
+    id: 'mint-no-sugar',
+    title: '无糖薄荷',
+    icon: '🍃',
+    difficulty: '困难',
+    description: '使用薄荷，但禁止糖浆，仍要维持平衡。',
+    requiredAll: ['mint'],
+    forbidden: ['sugar-syrup', 'honey-syrup', 'grenadine'],
+    flavorMax: { sweet: 35 },
+    minScore: 72,
+  },
+  {
+    id: 'brandy-fruit',
+    title: '暖果白兰地',
+    icon: '🍇',
+    difficulty: '进阶',
+    description: '让白兰地保持温暖果香，同时避免酒体过重。',
+    requiredSpirit: 'brandy',
+    flavorMin: { fruity: 35 },
+    flavorMax: { spirit: 62 },
+    minScore: 72,
+  },
+  {
+    id: 'vodka-clean',
+    title: '纯净伏特加',
+    icon: '❄️',
+    difficulty: '进阶',
+    description: '使用伏特加，配方不超过三种辅料，风格干净。',
+    requiredSpirit: 'vodka',
+    maxIngredients: 3,
+    minScore: 74,
+  },
+  {
+    id: 'whisky-orange',
+    title: '橙香威士忌',
+    icon: '🍊',
+    difficulty: '入门',
+    description: '让威士忌与橙香形成清晰而成熟的组合。',
+    requiredSpirit: 'whisky',
+    requiredAny: ['orange-juice', 'triple-sec', 'aromatic-bitters'],
+    minScore: 72,
+  },
+  {
+    id: 'highball-only',
+    title: '高球练习',
+    icon: '🥂',
+    difficulty: '入门',
+    description: '只使用高球杯，完成一杯轻盈且有气泡的长饮。',
+    requiredGlass: 'highball',
+    requireBubbles: true,
+    flavorMax: { spirit: 52 },
+    minScore: 70,
+  },
+  {
+    id: 'three-ingredient',
+    title: '三材料极简',
+    icon: '3️⃣',
+    difficulty: '困难',
+    description: '最多三种辅料，做出清楚、完整、有辨识度的结构。',
+    maxIngredients: 3,
+    minScore: 78,
+  },
+  {
+    id: 'sweet-sour-balance',
+    title: '酸甜等高',
+    icon: '⚖️',
+    difficulty: '困难',
+    description: '甜感与酸度差距不能超过 12，考验比例控制。',
+    customRule: 'sweetSourGap',
+    minScore: 76,
+  },
+  {
+    id: 'herbal-fruity',
+    title: '果香与草本',
+    icon: '🌱',
+    difficulty: '进阶',
+    description: '果香和草本都要出现，且不能由单一维度完全主导。',
+    flavorMin: { fruity: 32, herbal: 32 },
+    flavorMax: { fruity: 72, herbal: 72 },
+    minScore: 73,
+  },
+  {
+    id: 'bartender-signature',
+    title: '酒保招牌',
+    icon: '🏅',
+    difficulty: '大师',
+    description: '不限制原料，但评分需达到 85，且五项特点都不低于 14。',
+    minScore: 85,
+    requireDimensionsMin: 14,
+  },
+]
+
+function getTodayChallengeIndex() {
+  const now = new Date()
+  const dayKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+  return dayKey
+    .split('')
+    .reduce((sum, character) => sum + character.charCodeAt(0), 0) %
+    bartenderChallenges.length
+}
+
+function getClassicDifficulty(cocktail) {
+  const complexity = cocktail.ingredients.length
+  if (complexity <= 1) return '入门'
+  if (complexity <= 2) return '进阶'
+  return '困难'
+}
+
+function getClassicClues(cocktail) {
+  const topAxes = Object.entries(cocktail.flavor)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([key]) => flavorChineseMap[key])
+
+  const techniqueClue = {
+    shake: '需要充分降温与融合',
+    stir: '强调清澈和基酒轮廓',
+    build: '适合直接在杯中完成',
+  }[cocktail.technique]
+
+  return [
+    `主导风味：${topAxes.join('、')}`,
+    techniqueClue,
+    `经典结构包含 ${cocktail.ingredients.length} 种关键辅料`,
+  ]
+}
+
+function evaluateClassicChallenge(target, selection, flavor) {
+  if (!target) return null
+
+  const score = scoreCocktail(target, selection)
+  const chosenIds = selection.ingredients.map((item) => item.id)
+  const matched = target.ingredients.filter((id) => chosenIds.includes(id))
+  const missing = target.ingredients.filter((id) => !chosenIds.includes(id))
+  const extras = chosenIds.filter((id) => !target.ingredients.includes(id))
+
+  const flavorDistance = flavorAxes.reduce((sum, [key]) => {
+    return sum + Math.abs((flavor[key] ?? 0) - (target.flavor[key] ?? 0))
+  }, 0)
+  const flavorSimilarity = Math.max(
+    0,
+    Math.round(100 - flavorDistance / flavorAxes.length),
+  )
+
+  const checks = [
+    {
+      label: '基酒',
+      passed: target.spirit === selection.spirit?.id,
+      detail:
+        target.spirit === selection.spirit?.id
+          ? '基酒选择正确'
+          : `标准答案是${spiritName(target.spirit)}`,
+    },
+    {
+      label: '关键辅料',
+      passed: missing.length === 0,
+      detail:
+        missing.length === 0
+          ? `命中 ${matched.length} 种关键辅料`
+          : `还缺少：${missing.map(ingredientName).join('、')}`,
+    },
+    {
+      label: '额外辅料',
+      passed: extras.length === 0,
+      detail:
+        extras.length === 0
+          ? '没有加入偏离经典结构的辅料'
+          : `额外加入：${extras.map(ingredientName).join('、')}`,
+    },
+    {
+      label: '调制工艺',
+      passed: target.technique === selection.technique?.id,
+      detail:
+        target.technique === selection.technique?.id
+          ? '工艺匹配'
+          : `经典工艺是${techniqueName(target.technique)}`,
+    },
+    {
+      label: '杯型',
+      passed: target.glasses.includes(selection.glass?.id),
+      detail:
+        target.glasses.includes(selection.glass?.id)
+          ? '杯型匹配'
+          : `推荐杯型：${target.glasses
+              .map((id) => glasses.find((glass) => glass.id === id)?.chinese)
+              .filter(Boolean)
+              .join(' / ')}`,
+    },
+    {
+      label: '风味轮廓',
+      passed: flavorSimilarity >= 72,
+      detail: `与标准六维风味相似度 ${flavorSimilarity}%`,
+    },
+  ]
+
+  return {
+    score,
+    flavorSimilarity,
+    matched,
+    missing,
+    extras,
+    checks,
+    passedCount: checks.filter((item) => item.passed).length,
+    badge:
+      score >= 90
+        ? '经典复刻大师'
+        : score >= 78
+          ? '高度还原'
+          : score >= 62
+            ? '抓住轮廓'
+            : '继续练习',
+  }
+}
+
+function evaluateBartenderChallenge(challenge, selection, flavor, review) {
+  if (!challenge) return null
+
+  const ids = selection.ingredients.map((item) => item.id)
+  const checks = []
+
+  if (challenge.requiredSpirit) {
+    checks.push({
+      label: `使用${spiritName(challenge.requiredSpirit)}`,
+      passed: selection.spirit?.id === challenge.requiredSpirit,
+    })
+  }
+
+  if (challenge.requiredAll) {
+    challenge.requiredAll.forEach((id) => {
+      checks.push({
+        label: `必须加入${ingredientName(id)}`,
+        passed: ids.includes(id),
+      })
+    })
+  }
+
+  if (challenge.requiredAny) {
+    checks.push({
+      label: `至少加入：${challenge.requiredAny
+        .filter((id) => ingredients.some((item) => item.id === id))
+        .map(ingredientName)
+        .join(' / ')}`,
+      passed: challenge.requiredAny.some((id) => ids.includes(id)),
+    })
+  }
+
+  if (challenge.forbidden) {
+    challenge.forbidden.forEach((id) => {
+      checks.push({
+        label: `禁止使用${ingredientName(id)}`,
+        passed: !ids.includes(id),
+      })
+    })
+  }
+
+  if (challenge.requireBubbles) {
+    checks.push({
+      label: '必须带气泡',
+      passed: ids.some((id) =>
+        ['soda-water', 'tonic-water', 'cola', 'ginger-beer'].includes(id),
+      ),
+    })
+  }
+
+  if (challenge.requiredTechnique) {
+    checks.push({
+      label: `工艺：${techniqueName(challenge.requiredTechnique)}`,
+      passed: selection.technique?.id === challenge.requiredTechnique,
+    })
+  }
+
+  if (challenge.requiredGlass) {
+    checks.push({
+      label: `杯型：${glasses.find((item) => item.id === challenge.requiredGlass)?.chinese}`,
+      passed: selection.glass?.id === challenge.requiredGlass,
+    })
+  }
+
+  if (challenge.maxIngredients) {
+    checks.push({
+      label: `辅料不超过 ${challenge.maxIngredients} 种`,
+      passed: selection.ingredients.length <= challenge.maxIngredients,
+    })
+  }
+
+  Object.entries(challenge.flavorMin ?? {}).forEach(([key, value]) => {
+    checks.push({
+      label: `${flavorChineseMap[key]}不低于 ${value}`,
+      passed: (flavor[key] ?? 0) >= value,
+    })
+  })
+
+  Object.entries(challenge.flavorMax ?? {}).forEach(([key, value]) => {
+    checks.push({
+      label: `${flavorChineseMap[key]}不高于 ${value}`,
+      passed: (flavor[key] ?? 0) <= value,
+    })
+  })
+
+  if (challenge.customRule === 'sweetSourGap') {
+    checks.push({
+      label: '甜感与酸度差距不超过 12',
+      passed: Math.abs((flavor.sweet ?? 0) - (flavor.sour ?? 0)) <= 12,
+    })
+  }
+
+  if (challenge.requireDimensionsMin) {
+    const dimensionValues = Object.values(review.dimensions)
+    checks.push({
+      label: `五项特点均不低于 ${challenge.requireDimensionsMin}`,
+      passed: dimensionValues.every(
+        (value) => value >= challenge.requireDimensionsMin,
+      ),
+    })
+  }
+
+  checks.push({
+    label: `创作评分达到 ${challenge.minScore}`,
+    passed: review.score >= challenge.minScore,
+  })
+
+  const passedCount = checks.filter((item) => item.passed).length
+  const completion = Math.round((passedCount / checks.length) * 100)
+
+  return {
+    checks,
+    passedCount,
+    completion,
+    badge:
+      completion === 100
+        ? '完美完成'
+        : completion >= 80
+          ? '优秀酒保'
+          : completion >= 60
+            ? '接近成功'
+            : '挑战未完成',
+  }
+}
+
+function ModeBanner({ mode, classicTarget, bartenderChallenge }) {
+  if (mode === 'free') return null
+
+  if (mode === 'classic' && classicTarget) {
+    return (
+      <aside className="mode-banner classic-mode-banner">
+        <div>
+          <small>CLASSIC CHALLENGE</small>
+          <strong>
+            正在复刻：{classicTarget.chinese} · {classicTarget.name}
+          </strong>
+        </div>
+        <span>不要偷看答案，凭风味线索完成配方</span>
+      </aside>
+    )
+  }
+
+  if (mode === 'bartender' && bartenderChallenge) {
+    return (
+      <aside className="mode-banner bartender-mode-banner">
+        <div>
+          <small>BARTENDER CHALLENGE</small>
+          <strong>
+            {bartenderChallenge.icon} {bartenderChallenge.title}
+          </strong>
+        </div>
+        <span>{bartenderChallenge.description}</span>
+      </aside>
+    )
+  }
+
+  return null
+}
+
 function App() {
   const [page, setPage] = useState('home')
+  const [gameMode, setGameMode] = useState('free')
+  const [classicTarget, setClassicTarget] = useState(null)
+  const [bartenderChallengeIndex, setBartenderChallengeIndex] = useState(
+    getTodayChallengeIndex,
+  )
   const [selectedSpirit, setSelectedSpirit] = useState(null)
   const [selectedIngredients, setSelectedIngredients] = useState([])
   const [ingredientAmounts, setIngredientAmounts] = useState({})
@@ -2606,6 +3110,10 @@ function App() {
   const glassCarouselRef = useRef(null)
   const glassCardRefs = useRef([])
   const scrollTimerRef = useRef(null)
+
+  const activeBartenderChallenge =
+    bartenderChallenges[bartenderChallengeIndex] ?? bartenderChallenges[0]
+
 
   const drinkAppearance = useMemo(
     () => getDrinkAppearance(selectedSpirit, selectedIngredients, selectedTechnique),
@@ -2716,8 +3224,7 @@ function App() {
     }))
   }
 
-  function goHome() {
-    setPage('home')
+  function resetRecipeSelection() {
     setSelectedSpirit(null)
     setSelectedIngredients([])
     setIngredientAmounts({})
@@ -2725,6 +3232,32 @@ function App() {
     setSelectedTechnique(null)
     setSelectedGlass(null)
     setActiveGlassIndex(0)
+  }
+
+  function startMode(mode) {
+    resetRecipeSelection()
+    setGameMode(mode)
+
+    if (mode === 'classic') {
+      setClassicTarget(null)
+      setPage('classic-select')
+      return
+    }
+
+    if (mode === 'bartender') {
+      setPage('bartender-brief')
+      return
+    }
+
+    setClassicTarget(null)
+    setPage('spirits')
+  }
+
+  function goHome() {
+    setPage('home')
+    setGameMode('free')
+    setClassicTarget(null)
+    resetRecipeSelection()
   }
 
   function chooseGlass(index) {
@@ -2787,25 +3320,124 @@ function App() {
   if (page === 'result' && resultCocktail && creativeReview) {
     const isCollected = collection.includes(creativeReview.signature)
     const colorPoetry = getColorPoetry(drinkAppearance)
+    const selection = {
+      spirit: selectedSpirit,
+      ingredients: selectedIngredients,
+      amounts: ingredientAmounts,
+      technique: selectedTechnique,
+      glass: selectedGlass,
+    }
+    const displayClassic =
+      gameMode === 'classic' && classicTarget ? classicTarget : resultCocktail
     const classicTechnique = techniques.find(
-      (item) => item.id === resultCocktail.technique,
+      (item) => item.id === displayClassic.technique,
     )
     const classicGlasses = glasses.filter((item) =>
-      resultCocktail.glasses.includes(item.id),
+      displayClassic.glasses.includes(item.id),
     )
-    const similarity = resultCocktail.score ?? 0
+    const similarity =
+      gameMode === 'classic'
+        ? scoreCocktail(displayClassic, selection)
+        : resultCocktail.score ?? 0
+    const classicChallengeResult =
+      gameMode === 'classic'
+        ? evaluateClassicChallenge(displayClassic, selection, userFlavor)
+        : null
+    const bartenderChallengeResult =
+      gameMode === 'bartender'
+        ? evaluateBartenderChallenge(
+            activeBartenderChallenge,
+            selection,
+            userFlavor,
+            creativeReview,
+          )
+        : null
 
     return (
-      <main className="app result-page-app result-v13-page">
-        <section className="mixing-panel result-panel result-v13-panel">
+      <main className="app result-page-app result-v14-page">
+        <section className="mixing-panel result-panel result-v14-panel">
           <div className="top-bar">
             <button className="back-button" onClick={() => setPage('glasses')}>
               ← 返回杯型
             </button>
-            <span className="step-label">RESULT V13</span>
+            <span className="step-label">RESULT V14</span>
           </div>
 
-          <section className="result-v8-hero result-v13-hero">
+          {classicChallengeResult && (
+            <section className="challenge-result-card classic-result-card">
+              <div className="challenge-result-score">
+                <small>REPLICA ACCURACY</small>
+                <strong>{classicChallengeResult.score}%</strong>
+                <span>{classicChallengeResult.badge}</span>
+              </div>
+              <div className="challenge-result-content">
+                <div className="challenge-result-title">
+                  <div>
+                    <small>CLASSIC CHALLENGE RESULT</small>
+                    <h2>
+                      {displayClassic.chinese} · {displayClassic.name}
+                    </h2>
+                  </div>
+                  <span>
+                    达成 {classicChallengeResult.passedCount} /{' '}
+                    {classicChallengeResult.checks.length}
+                  </span>
+                </div>
+                <div className="challenge-check-grid">
+                  {classicChallengeResult.checks.map((check) => (
+                    <article
+                      key={check.label}
+                      className={check.passed ? 'passed' : 'failed'}
+                    >
+                      <b>{check.passed ? '✓' : '×'}</b>
+                      <div>
+                        <strong>{check.label}</strong>
+                        <p>{check.detail}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          {bartenderChallengeResult && (
+            <section className="challenge-result-card bartender-result-card">
+              <div className="challenge-result-score">
+                <small>CHALLENGE COMPLETION</small>
+                <strong>{bartenderChallengeResult.completion}%</strong>
+                <span>{bartenderChallengeResult.badge}</span>
+              </div>
+              <div className="challenge-result-content">
+                <div className="challenge-result-title">
+                  <div>
+                    <small>BARTENDER CHALLENGE RESULT</small>
+                    <h2>
+                      {activeBartenderChallenge.icon}{' '}
+                      {activeBartenderChallenge.title}
+                    </h2>
+                  </div>
+                  <span>
+                    达成 {bartenderChallengeResult.passedCount} /{' '}
+                    {bartenderChallengeResult.checks.length}
+                  </span>
+                </div>
+                <div className="challenge-check-grid compact">
+                  {bartenderChallengeResult.checks.map((check) => (
+                    <article
+                      key={check.label}
+                      className={check.passed ? 'passed' : 'failed'}
+                    >
+                      <b>{check.passed ? '✓' : '×'}</b>
+                      <strong>{check.label}</strong>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
+          <section className="result-v8-hero result-v14-hero">
             <div className="hero-visual-column">
               <CocktailPhotoResult
                 drinkName={creativeReview.title}
@@ -2927,13 +3559,13 @@ function App() {
                   <div className="compare-column-head-v13">
                     <small>CLASSIC</small>
                     <h4>
-                      {resultCocktail.chinese} · {resultCocktail.name}
+                      {displayClassic.chinese} · {displayClassic.name}
                     </h4>
-                    <p>{resultCocktail.description}</p>
+                    <p>{displayClassic.description}</p>
                   </div>
 
                   <ul className="recipe-compare-list-v13">
-                    {resultCocktail.ingredients.map((id) => (
+                    {displayClassic.ingredients.map((id) => (
                       <li key={id}>
                         <span>{ingredientMap[id]?.icon ?? '•'}</span>
                         <div>
@@ -3012,16 +3644,23 @@ function App() {
             <button
               className="secondary-button"
               onClick={() => {
-                setSelectedIngredients([])
-                setIngredientAmounts({})
-                setSelectedTechnique(null)
-                setSelectedGlass(null)
-                setActiveGlassIndex(0)
+                resetRecipeSelection()
                 setActiveResultPhotoIndex(0)
-                setPage('spirits')
+
+                if (gameMode === 'classic') {
+                  setPage('classic-select')
+                } else if (gameMode === 'bartender') {
+                  setPage('bartender-brief')
+                } else {
+                  setPage('spirits')
+                }
               }}
             >
-              再创作一杯
+              {gameMode === 'classic'
+                ? '挑战另一杯经典'
+                : gameMode === 'bartender'
+                  ? '再接一个挑战'
+                  : '再创作一杯'}
             </button>
 
             <button
@@ -3047,6 +3686,12 @@ function App() {
             </button>
             <span className="step-label">STEP 4 / 4</span>
           </div>
+
+          <ModeBanner
+            mode={gameMode}
+            classicTarget={classicTarget}
+            bartenderChallenge={activeBartenderChallenge}
+          />
 
           <div className="section-heading glass-section-heading">
             <p className="eyebrow">CHOOSE THE GLASS</p>
@@ -3183,6 +3828,12 @@ function App() {
             <span className="step-label">STEP 3 / 4</span>
           </div>
 
+          <ModeBanner
+            mode={gameMode}
+            classicTarget={classicTarget}
+            bartenderChallenge={activeBartenderChallenge}
+          />
+
           <div className="section-heading">
             <p className="eyebrow">CHOOSE THE METHOD</p>
             <h2>选择调酒工艺</h2>
@@ -3275,6 +3926,12 @@ function App() {
             </button>
             <span className="step-label">STEP 2 / 4</span>
           </div>
+
+          <ModeBanner
+            mode={gameMode}
+            classicTarget={classicTarget}
+            bartenderChallenge={activeBartenderChallenge}
+          />
 
           <div className="section-heading">
             <p className="eyebrow">BUILD THE FLAVOR</p>
@@ -3427,6 +4084,166 @@ function App() {
     )
   }
 
+  if (page === 'classic-select') {
+    return (
+      <main className="app challenge-page-app">
+        <section className="mixing-panel challenge-select-panel">
+          <div className="top-bar">
+            <button className="back-button" onClick={goHome}>← 返回首页</button>
+            <span className="step-label">CLASSIC CHALLENGE</span>
+          </div>
+
+          <div className="section-heading challenge-page-heading">
+            <p className="eyebrow">RECREATE A CLASSIC</p>
+            <h2>选择你要复刻的经典酒</h2>
+            <p>
+              系统只提供风味线索，不直接公布完整答案。完成后将解锁标准配方和复刻报告。
+            </p>
+          </div>
+
+          <div className="classic-challenge-grid">
+            {cocktails.map((cocktail, index) => {
+              const clues = getClassicClues(cocktail)
+
+              return (
+                <button
+                  type="button"
+                  key={cocktail.id}
+                  className="classic-challenge-card"
+                  onClick={() => {
+                    setClassicTarget(cocktail)
+                    resetRecipeSelection()
+                    setPage('spirits')
+                  }}
+                >
+                  <div className="challenge-card-number">
+                    {String(index + 1).padStart(2, '0')}
+                  </div>
+                  <div className="challenge-card-top">
+                    <span>{spirits.find((item) => item.id === cocktail.spirit)?.icon}</span>
+                    <small>{getClassicDifficulty(cocktail)}</small>
+                  </div>
+                  <h3>{cocktail.chinese}</h3>
+                  <strong>{cocktail.name}</strong>
+                  <ul>
+                    {clues.map((clue) => (
+                      <li key={clue}>{clue}</li>
+                    ))}
+                  </ul>
+                  <span className="challenge-card-action">接受挑战 →</span>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+      </main>
+    )
+  }
+
+  if (page === 'bartender-brief') {
+    return (
+      <main className="app challenge-page-app">
+        <section className="mixing-panel bartender-brief-panel">
+          <div className="top-bar">
+            <button className="back-button" onClick={goHome}>← 返回首页</button>
+            <span className="step-label">BARTENDER CHALLENGE</span>
+          </div>
+
+          <div className="bartender-brief-hero">
+            <div className="bartender-challenge-icon">
+              {activeBartenderChallenge.icon}
+            </div>
+            <p className="eyebrow">TODAY'S BARTENDER MISSION</p>
+            <h2>{activeBartenderChallenge.title}</h2>
+            <p>{activeBartenderChallenge.description}</p>
+            <div className="challenge-difficulty-row">
+              <span>难度 · {activeBartenderChallenge.difficulty}</span>
+              <span>今日第 {bartenderChallengeIndex + 1} 号任务</span>
+            </div>
+          </div>
+
+          <div className="bartender-rule-preview">
+            <div className="bartender-rule-heading">
+              <div>
+                <small>MISSION RULES</small>
+                <h3>任务条件</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setBartenderChallengeIndex((current) =>
+                    (current + 1) % bartenderChallenges.length
+                  )
+                }
+              >
+                换一个随机挑战
+              </button>
+            </div>
+
+            <div className="bartender-rule-chips">
+              {activeBartenderChallenge.requiredSpirit && (
+                <span>基酒：{spiritName(activeBartenderChallenge.requiredSpirit)}</span>
+              )}
+              {activeBartenderChallenge.requiredAny && (
+                <span>
+                  至少选择：
+                  {activeBartenderChallenge.requiredAny
+                    .filter((id) => ingredients.some((item) => item.id === id))
+                    .map(ingredientName)
+                    .join(' / ')}
+                </span>
+              )}
+              {activeBartenderChallenge.requiredAll?.map((id) => (
+                <span key={id}>必须加入：{ingredientName(id)}</span>
+              ))}
+              {activeBartenderChallenge.requireBubbles && <span>必须带气泡</span>}
+              {activeBartenderChallenge.requiredTechnique && (
+                <span>工艺：{techniqueName(activeBartenderChallenge.requiredTechnique)}</span>
+              )}
+              {activeBartenderChallenge.requiredGlass && (
+                <span>
+                  杯型：
+                  {glasses.find((item) => item.id === activeBartenderChallenge.requiredGlass)?.chinese}
+                </span>
+              )}
+              {activeBartenderChallenge.maxIngredients && (
+                <span>辅料≤{activeBartenderChallenge.maxIngredients}种</span>
+              )}
+              {Object.entries(activeBartenderChallenge.flavorMin ?? {}).map(
+                ([key, value]) => (
+                  <span key={`min-${key}`}>
+                    {flavorChineseMap[key]}≥{value}
+                  </span>
+                ),
+              )}
+              {Object.entries(activeBartenderChallenge.flavorMax ?? {}).map(
+                ([key, value]) => (
+                  <span key={`max-${key}`}>
+                    {flavorChineseMap[key]}≤{value}
+                  </span>
+                ),
+              )}
+              {activeBartenderChallenge.customRule === 'sweetSourGap' && (
+                <span>甜感与酸度差≤12</span>
+              )}
+              <span>创作评分≥{activeBartenderChallenge.minScore}</span>
+            </div>
+          </div>
+
+          <button
+            className="primary-button bartender-start-button"
+            onClick={() => {
+              resetRecipeSelection()
+              setPage('spirits')
+            }}
+          >
+            接受任务，开始调酒
+          </button>
+        </section>
+      </main>
+    )
+  }
+
   if (page === 'spirits') {
     return (
       <main className="app">
@@ -3435,6 +4252,12 @@ function App() {
             <button className="back-button" onClick={goHome}>← 返回</button>
             <span className="step-label">STEP 1 / 4</span>
           </div>
+
+          <ModeBanner
+            mode={gameMode}
+            classicTarget={classicTarget}
+            bartenderChallenge={activeBartenderChallenge}
+          />
 
           <div className="section-heading">
             <p className="eyebrow">CHOOSE YOUR BASE</p>
@@ -3490,20 +4313,58 @@ function App() {
   }
 
   return (
-    <main className="app">
-      <section className="hero">
+    <main className="app v14-home-app">
+      <section className="hero v14-home-hero">
         <div className="glass-icon">🍸</div>
         <p className="eyebrow">COCKTAIL DISCOVERY GAME</p>
         <h1>Cocktail Odyssey</h1>
-        <p className="subtitle">探索配方，分析风味，点亮属于你的鸡尾酒图鉴。</p>
+        <p className="subtitle">
+          选择你今天的调酒方式：自由探索、复刻经典，或者接受酒保任务。
+        </p>
 
-        <button className="primary-button" onClick={() => setPage('spirits')}>
-          开始调酒
+        <div className="game-mode-grid">
+          <button
+            type="button"
+            className="game-mode-card free-mode-card"
+            onClick={() => startMode('free')}
+          >
+            <span className="mode-card-icon">🥃</span>
+            <small>FREE CREATION</small>
+            <h2>自由创作</h2>
+            <p>没有标准答案，随心搭配，调出只属于你的作品。</p>
+            <strong>开始自由调酒 →</strong>
+          </button>
+
+          <button
+            type="button"
+            className="game-mode-card classic-mode-card"
+            onClick={() => startMode('classic')}
+          >
+            <span className="mode-card-icon">📜</span>
+            <small>CLASSIC CHALLENGE</small>
+            <h2>经典挑战</h2>
+            <p>凭风味线索复刻 12 杯世界经典鸡尾酒。</p>
+            <strong>选择经典酒 →</strong>
+          </button>
+
+          <button
+            type="button"
+            className="game-mode-card bartender-mode-card"
+            onClick={() => startMode('bartender')}
+          >
+            <span className="mode-card-icon">🎯</span>
+            <small>DAILY BARTENDER</small>
+            <h2>酒保挑战</h2>
+            <p>接受限定条件，在规则之内完成今天的任务。</p>
+            <strong>查看今日挑战 →</strong>
+          </button>
+        </div>
+
+        <button className="secondary-button v14-gallery-button">
+          查看我的图鉴
         </button>
 
-        <button className="secondary-button">查看图鉴</button>
-
-        <div className="progress-card">
+        <div className="progress-card v14-progress-card">
           <span>原创作品收藏</span>
           <strong>{collection.length} 杯</strong>
         </div>
