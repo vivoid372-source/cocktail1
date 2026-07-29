@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { generateCocktailPhoto } from './services/cocktailImageService'
 
 const spirits = [
   { id: 'gin', name: 'Gin', chinese: '金酒', icon: '🌿', description: '杜松子、草本、柑橘' },
@@ -444,83 +443,175 @@ function GlassPreview({ type, color, effects }) {
 }
 
 
+const localCocktailPhotos = [
+  {
+    id: 'amber-orange',
+    src: '/cocktails/amber-orange-cocktail-glass.png',
+    spiritAny: ['whisky', 'brandy', 'rum'],
+    ingredientAny: ['aromatic-bitters', 'sweet-vermouth', 'orange-juice', 'triple-sec'],
+    families: ['amber', 'gold', 'citrus'],
+  },
+  {
+    id: 'martini',
+    src: '/cocktails/classic-olive-martini.png',
+    spiritAny: ['gin', 'vodka'],
+    ingredientAny: ['dry-vermouth'],
+    families: ['crystal'],
+    glasses: ['martini'],
+  },
+  {
+    id: 'mule',
+    src: '/cocktails/copper-mint-lime-cocktail.png',
+    spiritAny: ['vodka', 'rum', 'tequila'],
+    ingredientAny: ['ginger-beer', 'lime-juice', 'mint'],
+    families: ['spice', 'herbal'],
+  },
+  {
+    id: 'champagne-citrus',
+    src: '/cocktails/lemon-champagne-bar.png',
+    spiritAny: ['gin', 'vodka', 'rum', 'tequila'],
+    ingredientAny: ['lemon-juice', 'soda-water', 'tonic-water'],
+    families: ['citrus', 'crystal', 'gold'],
+  },
+  {
+    id: 'mojito',
+    src: '/cocktails/mojito-highball-bar.png',
+    spiritAny: ['rum', 'gin', 'vodka'],
+    ingredientAny: ['mint', 'lime-juice', 'soda-water'],
+    ingredientAll: ['mint', 'lime-juice'],
+    families: ['herbal'],
+    glasses: ['highball'],
+  },
+  {
+    id: 'berry',
+    src: '/cocktails/pastel-berry-cocktail.png',
+    spiritAny: ['vodka', 'gin', 'rum', 'tequila'],
+    ingredientAny: ['cranberry-juice', 'grenadine'],
+    families: ['berry', 'sunrise', 'ruby'],
+  },
+  {
+    id: 'margarita',
+    src: '/cocktails/salt-rim-lime-margarita.png',
+    spiritAny: ['tequila'],
+    ingredientAny: ['lime-juice', 'triple-sec'],
+    ingredientAll: ['lime-juice', 'triple-sec'],
+    families: ['citrus', 'herbal'],
+    glasses: ['coupe', 'martini'],
+  },
+  {
+    id: 'whisky-orange',
+    src: '/cocktails/whisky-orange-closeup.png',
+    spiritAny: ['whisky', 'brandy'],
+    ingredientAny: ['orange-juice', 'aromatic-bitters', 'cola'],
+    families: ['amber', 'cola'],
+    glasses: ['old-fashioned'],
+  },
+]
+
+function hashLocalPhoto(value) {
+  return String(value || '')
+    .split('')
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0)
+}
+
+function pickLocalCocktailPhoto({
+  spirit,
+  ingredients,
+  appearance,
+  glass,
+  signature,
+}) {
+  const ingredientIds = ingredients.map((item) => item.id)
+
+  const ranked = localCocktailPhotos
+    .map((photo) => {
+      let score = 0
+
+      if (photo.spiritAny?.includes(spirit?.id)) score += 9
+      if (photo.families?.includes(appearance?.family)) score += 9
+      if (photo.glasses?.includes(glass?.id)) score += 8
+
+      if (photo.ingredientAny) {
+        score +=
+          photo.ingredientAny.filter((id) => ingredientIds.includes(id)).length *
+          5
+      }
+
+      if (
+        photo.ingredientAll &&
+        photo.ingredientAll.every((id) => ingredientIds.includes(id))
+      ) {
+        score += photo.ingredientAll.length * 8
+      }
+
+      if (photo.id === 'whisky-orange' && ingredientIds.includes('cola')) {
+        score += 14
+      }
+
+      if (
+        photo.id === 'berry' &&
+        ingredientIds.some((id) =>
+          ['cranberry-juice', 'grenadine'].includes(id),
+        )
+      ) {
+        score += 12
+      }
+
+      if (
+        photo.id === 'mojito' &&
+        ingredientIds.includes('mint') &&
+        ingredientIds.includes('lime-juice')
+      ) {
+        score += 14
+      }
+
+      if (
+        photo.id === 'margarita' &&
+        spirit?.id === 'tequila' &&
+        ingredientIds.includes('lime-juice')
+      ) {
+        score += 12
+      }
+
+      return { ...photo, score }
+    })
+    .sort((a, b) => b.score - a.score)
+
+  const topScore = ranked[0]?.score ?? 0
+  const finalists = ranked.filter((photo) => photo.score >= topScore - 2)
+  return (
+    finalists[hashLocalPhoto(signature) % Math.max(finalists.length, 1)] ??
+    ranked[0]
+  )
+}
+
 function CocktailPhotoResult({
-  imageUrl,
-  status,
-  error,
   drinkName,
   appearance,
   glass,
-  effects,
   spirit,
-  onRetry,
+  ingredients,
+  signature,
 }) {
-  if (status === 'success' && imageUrl) {
-    return (
-      <div className="real-photo-result">
-        <img src={imageUrl} alt={`${drinkName}的真实酒吧成品照`} />
-        <div className="real-photo-overlay" />
-        <div className="real-photo-caption">
-          <small>AI COCKTAIL PHOTO</small>
-          <strong>{drinkName}</strong>
-        </div>
-        <p className="real-photo-disclaimer">
-          AI 成品视觉示意，实际外观会受原料品牌、比例和操作影响。
-        </p>
-      </div>
-    )
-  }
-
-  if (status === 'error') {
-    return (
-      <div className="photo-generation-state photo-error-state">
-        <div className="photo-state-fallback">
-          <div className="fallback-glass">
-            <GlassPreview
-              type={glass?.id ?? 'coupe'}
-              color={appearance}
-              effects={effects}
-            />
-          </div>
-        </div>
-        <div className="photo-state-copy">
-          <small>PHOTO GENERATION FAILED</small>
-          <h3>成品照暂时没有生成成功</h3>
-          <p>{error || '配方分析与风味结果不受影响。'}</p>
-          <button type="button" className="photo-retry-button" onClick={onRetry}>
-            重新生成成品照
-          </button>
-        </div>
-      </div>
-    )
-  }
+  const photo = pickLocalCocktailPhoto({
+    spirit,
+    ingredients,
+    appearance,
+    glass,
+    signature,
+  })
 
   return (
-    <div className="photo-generation-state photo-loading-state">
-      <div className="photo-loading-scene">
-        <span className="loading-bokeh bokeh-one" />
-        <span className="loading-bokeh bokeh-two" />
-        <span className="loading-bokeh bokeh-three" />
-        <div className="loading-counter" />
-        <div className="loading-glass">
-          <GlassPreview
-            type={glass?.id ?? 'coupe'}
-            color={appearance}
-            effects={effects}
-          />
-        </div>
-        <div className="loading-shimmer" />
+    <div className={`real-photo-result local-photo-result scene-${appearance.family}`}>
+      <img src={photo.src} alt={`${drinkName}的酒吧成品照`} />
+      <div className="real-photo-overlay" />
+      <div className="real-photo-caption">
+        <small>LOCAL BAR PHOTO</small>
+        <strong>{drinkName}</strong>
       </div>
-      <div className="photo-state-copy">
-        <small>GENERATING COCKTAIL PHOTO</small>
-        <h3>酒保正在完成你的成品照</h3>
-        <p>
-          正在根据{spirit?.chinese}、辅料、杯型和酒液质地生成真实酒吧摄影图……
-        </p>
-        <div className="photo-progress-bar">
-          <span />
-        </div>
-      </div>
+      <p className="real-photo-disclaimer">
+        配方视觉示意，实际外观会受原料品牌、比例和操作影响。
+      </p>
     </div>
   )
 }
@@ -1682,9 +1773,6 @@ function App() {
   const [selectedGlass, setSelectedGlass] = useState(null)
   const [activeGlassIndex, setActiveGlassIndex] = useState(0)
   const [activeResultPhotoIndex, setActiveResultPhotoIndex] = useState(0)
-  const [generatedCocktailImage, setGeneratedCocktailImage] = useState('')
-  const [cocktailImageStatus, setCocktailImageStatus] = useState('idle')
-  const [cocktailImageError, setCocktailImageError] = useState('')
   const [collection, setCollection] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('cocktail-collection') ?? '[]')
@@ -1775,77 +1863,6 @@ function App() {
     })
   }, [page, activeGlassIndex])
 
-  function buildCocktailImagePayload() {
-    return {
-      signature: creativeReview?.signature,
-      drinkName: creativeReview?.title,
-      spirit: {
-        id: selectedSpirit?.id,
-        name: selectedSpirit?.name,
-        chinese: selectedSpirit?.chinese,
-      },
-      ingredients: selectedIngredients.map((ingredient) => ({
-        id: ingredient.id,
-        name: ingredient.name,
-        chinese: ingredient.chinese,
-        amount: ingredientAmounts[ingredient.id] ?? 'standard',
-        amountLabel: amountLabel(
-          ingredient.id,
-          ingredientAmounts[ingredient.id] ?? 'standard',
-        ),
-      })),
-      technique: {
-        id: selectedTechnique?.id,
-        name: selectedTechnique?.name,
-        chinese: selectedTechnique?.chinese,
-      },
-      glass: {
-        id: selectedGlass?.id,
-        name: selectedGlass?.name,
-        chinese: selectedGlass?.chinese,
-      },
-      appearance: drinkAppearance,
-      flavor: userFlavor,
-    }
-  }
-
-  async function requestCocktailPhoto({ force = false } = {}) {
-    if (!creativeReview || !selectedSpirit || !selectedGlass) return
-
-    const cacheKey = `cocktail-photo:${creativeReview.signature}`
-
-    if (!force) {
-      const cached = window.localStorage.getItem(cacheKey)
-      if (cached) {
-        setGeneratedCocktailImage(cached)
-        setCocktailImageStatus('success')
-        setCocktailImageError('')
-        return
-      }
-    }
-
-    setCocktailImageStatus('loading')
-    setCocktailImageError('')
-
-    try {
-      const result = await generateCocktailPhoto(buildCocktailImagePayload())
-      setGeneratedCocktailImage(result.imageUrl)
-      setCocktailImageStatus('success')
-
-      try {
-        window.localStorage.setItem(cacheKey, result.imageUrl)
-      } catch {
-        // 图片较大时浏览器缓存可能失败，不影响当前展示。
-      }
-    } catch (error) {
-      setGeneratedCocktailImage('')
-      setCocktailImageStatus('error')
-      setCocktailImageError(
-        error instanceof Error ? error.message : '成品照生成失败，请稍后再试。',
-      )
-    }
-  }
-
   function toggleIngredient(ingredient) {
     const exists = selectedIngredients.some((item) => item.id === ingredient.id)
 
@@ -1927,16 +1944,9 @@ function App() {
 
 
   useEffect(() => {
-    if (page !== 'result' || !creativeReview) return
-
-    setActiveResultPhotoIndex(0)
-    setGeneratedCocktailImage('')
-    setCocktailImageStatus('idle')
-    setCocktailImageError('')
-
-    requestCocktailPhoto()
-    // 每次进入新的配方结果页，只生成或读取这一张确定的成品照。
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (page === 'result') {
+      setActiveResultPhotoIndex(0)
+    }
   }, [page, creativeReview?.signature])
 
   function addResultToCollection() {
@@ -1964,27 +1974,24 @@ function App() {
     const similarity = resultCocktail.score ?? 0
 
     return (
-      <main className="app result-page-app result-v12-page">
-        <section className="mixing-panel result-panel result-v12-panel">
+      <main className="app result-page-app result-v13-page">
+        <section className="mixing-panel result-panel result-v13-panel">
           <div className="top-bar">
             <button className="back-button" onClick={() => setPage('glasses')}>
               ← 返回杯型
             </button>
-            <span className="step-label">RESULT V12</span>
+            <span className="step-label">RESULT V13</span>
           </div>
 
-          <section className="result-v8-hero result-v12-hero">
+          <section className="result-v8-hero result-v13-hero">
             <div className="hero-visual-column">
               <CocktailPhotoResult
-                imageUrl={generatedCocktailImage}
-                status={cocktailImageStatus}
-                error={cocktailImageError}
                 drinkName={creativeReview.title}
                 appearance={drinkAppearance}
                 glass={selectedGlass}
-                effects={drinkEffects}
                 spirit={selectedSpirit}
-                onRetry={() => requestCocktailPhoto({ force: true })}
+                ingredients={selectedIngredients}
+                signature={creativeReview.signature}
               />
             </div>
 

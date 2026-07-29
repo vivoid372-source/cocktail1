@@ -5596,3 +5596,58 @@ button {
     transform: scale(1.34);
   }
 }
+
+
+/* =========================================================
+   结果页 V13 - 免费真实照片库版
+   ========================================================= */
+
+.result-v13-panel {
+  max-width: 1120px;
+}
+
+.local-photo-result {
+  min-height: 650px;
+  background: #17100d;
+}
+
+.local-photo-result img {
+  width: 100%;
+  height: 650px;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.03) contrast(1.03);
+}
+
+.local-photo-result.scene-cola img {
+  filter: saturate(0.94) contrast(1.1) brightness(0.84);
+}
+
+.local-photo-result.scene-berry img,
+.local-photo-result.scene-sunrise img,
+.local-photo-result.scene-ruby img {
+  filter: saturate(1.12) contrast(1.03);
+}
+
+.local-photo-result.scene-herbal img {
+  filter: saturate(1.06) contrast(1.02);
+}
+
+.local-photo-result.scene-velvet img,
+.local-photo-result.scene-foam img {
+  filter: saturate(0.88) contrast(0.98) brightness(1.03);
+}
+
+.local-photo-result .real-photo-caption small::after {
+  content: ' · FREE EDITION';
+}
+
+@media (max-width: 560px) {
+  .local-photo-result {
+    min-height: 540px;
+  }
+
+  .local-photo-result img {
+    height: 540px;
+  }
+}
