@@ -3108,33 +3108,155 @@ function evaluateBartenderChallenge(challenge, selection, flavor, review) {
   }
 }
 
-function ModeBanner({ mode, classicTarget, bartenderChallenge }) {
+function ModeBanner({
+  mode,
+  classicTarget,
+  bartenderChallenge,
+  spirit,
+  selectedIngredients,
+  technique,
+  glass,
+  flavor,
+}) {
   if (mode === 'free') return null
 
+  const selectedIds = selectedIngredients?.map((item) => item.id) ?? []
+
   if (mode === 'classic' && classicTarget) {
+    const clues = getClassicClues(classicTarget)
+    const clueItems = [
+      `基酒：${clues.spirit}`,
+      `口味：${clues.taste}`,
+      `气泡：${clues.bubbles}`,
+      `颜色：${clues.color}`,
+    ]
+
     return (
-      <aside className="mode-banner classic-mode-banner">
-        <div>
+      <aside className="mode-banner classic-mode-banner persistent-mode-banner">
+        <div className="mode-banner-main">
           <small>CLASSIC CHALLENGE</small>
           <strong>
             正在复刻：{classicTarget.chinese} · {classicTarget.name}
           </strong>
+          <div className="persistent-clue-chips">
+            {clueItems.map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </div>
         </div>
-        <span>不要偷看答案，凭风味线索完成配方</span>
+        <details className="mode-banner-details">
+          <summary>全部线索</summary>
+          <p>{clues.strength}</p>
+          <p>{clues.glass}</p>
+          <p>{clues.technique}</p>
+          <p>{clues.complexity}</p>
+        </details>
       </aside>
     )
   }
 
   if (mode === 'bartender' && bartenderChallenge) {
+    const statusItems = []
+
+    if (bartenderChallenge.requiredSpirit) {
+      statusItems.push({
+        label: `使用${spiritName(bartenderChallenge.requiredSpirit)}`,
+        passed: spirit?.id === bartenderChallenge.requiredSpirit,
+      })
+    }
+
+    if (bartenderChallenge.requiredAll) {
+      bartenderChallenge.requiredAll.forEach((id) => {
+        statusItems.push({
+          label: `加入${ingredientName(id)}`,
+          passed: selectedIds.includes(id),
+        })
+      })
+    }
+
+    if (bartenderChallenge.requiredAny) {
+      statusItems.push({
+        label: `指定辅料任选其一`,
+        passed: bartenderChallenge.requiredAny.some((id) =>
+          selectedIds.includes(id),
+        ),
+      })
+    }
+
+    if (bartenderChallenge.requireBubbles) {
+      statusItems.push({
+        label: '加入气泡',
+        passed: selectedIds.some((id) =>
+          ['soda-water', 'tonic-water', 'cola', 'ginger-beer'].includes(id),
+        ),
+      })
+    }
+
+    if (bartenderChallenge.requiredTechnique) {
+      statusItems.push({
+        label: technique
+          ? `工艺：${technique.chinese}`
+          : `工艺：${techniqueName(bartenderChallenge.requiredTechnique)}`,
+        passed: technique?.id === bartenderChallenge.requiredTechnique,
+      })
+    }
+
+    if (bartenderChallenge.requiredGlass) {
+      statusItems.push({
+        label: glass
+          ? `杯型：${glass.chinese}`
+          : `杯型：${glasses.find((item) => item.id === bartenderChallenge.requiredGlass)?.chinese}`,
+        passed: glass?.id === bartenderChallenge.requiredGlass,
+      })
+    }
+
+    if (bartenderChallenge.maxIngredients) {
+      statusItems.push({
+        label: `辅料≤${bartenderChallenge.maxIngredients}种`,
+        passed:
+          selectedIngredients?.length > 0 &&
+          selectedIngredients.length <= bartenderChallenge.maxIngredients,
+      })
+    }
+
+    Object.entries(bartenderChallenge.flavorMin ?? {}).forEach(([key, value]) => {
+      statusItems.push({
+        label: `${flavorChineseMap[key]}≥${value}`,
+        passed: (flavor?.[key] ?? 0) >= value,
+      })
+    })
+
+    Object.entries(bartenderChallenge.flavorMax ?? {}).forEach(([key, value]) => {
+      statusItems.push({
+        label: `${flavorChineseMap[key]}≤${value}`,
+        passed:
+          selectedIngredients?.length > 0 && (flavor?.[key] ?? 0) <= value,
+      })
+    })
+
     return (
-      <aside className="mode-banner bartender-mode-banner">
-        <div>
+      <aside className="mode-banner bartender-mode-banner persistent-mode-banner">
+        <div className="mode-banner-main">
           <small>BARTENDER CHALLENGE</small>
           <strong>
             {bartenderChallenge.icon} {bartenderChallenge.title}
           </strong>
+          <div className="live-condition-row">
+            {statusItems.slice(0, 6).map((item) => (
+              <span
+                key={item.label}
+                className={item.passed ? 'condition-passed' : 'condition-pending'}
+              >
+                {item.passed ? '✓' : '○'} {item.label}
+              </span>
+            ))}
+          </div>
         </div>
-        <span>{bartenderChallenge.description}</span>
+        <details className="mode-banner-details">
+          <summary>任务说明</summary>
+          <p>{bartenderChallenge.description}</p>
+          <p>最终评分需达到 {bartenderChallenge.minScore}</p>
+        </details>
       </aside>
     )
   }
@@ -3162,6 +3284,17 @@ function App() {
       return JSON.parse(localStorage.getItem('cocktail-collection') ?? '[]')
     } catch {
       return []
+    }
+  })
+
+  const [challengeProgress, setChallengeProgress] = useState(() => {
+    try {
+      return JSON.parse(
+        localStorage.getItem('cocktail-challenge-progress') ??
+          '{"classic":{},"bartender":{}}',
+      )
+    } catch {
+      return { classic: {}, bartender: {} }
     }
   })
 
@@ -3316,6 +3449,72 @@ function App() {
     setGameMode('free')
     setClassicTarget(null)
     resetRecipeSelection()
+  }
+
+  function persistChallengeProgress(nextProgress) {
+    setChallengeProgress(nextProgress)
+    localStorage.setItem(
+      'cocktail-challenge-progress',
+      JSON.stringify(nextProgress),
+    )
+  }
+
+  function finishMixing() {
+    if (!selectedGlass || !creativeReview || !resultCocktail) return
+
+    const selection = {
+      spirit: selectedSpirit,
+      ingredients: selectedIngredients,
+      amounts: ingredientAmounts,
+      technique: selectedTechnique,
+      glass: selectedGlass,
+    }
+
+    if (gameMode === 'classic' && classicTarget) {
+      const result = evaluateClassicChallenge(
+        classicTarget,
+        selection,
+        userFlavor,
+      )
+      const previous = challengeProgress.classic?.[classicTarget.id]
+      const nextProgress = {
+        ...challengeProgress,
+        classic: {
+          ...challengeProgress.classic,
+          [classicTarget.id]: {
+            best: Math.max(previous?.best ?? 0, result.score),
+            completed: Boolean(previous?.completed || result.score >= 70),
+            attempts: (previous?.attempts ?? 0) + 1,
+          },
+        },
+      }
+      persistChallengeProgress(nextProgress)
+    }
+
+    if (gameMode === 'bartender') {
+      const result = evaluateBartenderChallenge(
+        activeBartenderChallenge,
+        selection,
+        userFlavor,
+        creativeReview,
+      )
+      const previous =
+        challengeProgress.bartender?.[activeBartenderChallenge.id]
+      const nextProgress = {
+        ...challengeProgress,
+        bartender: {
+          ...challengeProgress.bartender,
+          [activeBartenderChallenge.id]: {
+            best: Math.max(previous?.best ?? 0, result.completion),
+            completed: Boolean(previous?.completed || result.completion === 100),
+            attempts: (previous?.attempts ?? 0) + 1,
+          },
+        },
+      }
+      persistChallengeProgress(nextProgress)
+    }
+
+    setPage('result')
   }
 
   function chooseGlass(index) {
@@ -3699,6 +3898,14 @@ function App() {
           </div>
 
           <div className="result-actions result-v8-actions">
+            {gameMode !== 'free' && (
+              <button
+                className="secondary-button challenge-edit-button"
+                onClick={() => setPage('ingredients')}
+              >
+                返回修改配方
+              </button>
+            )}
             <button
               className="secondary-button"
               onClick={() => {
@@ -3749,6 +3956,11 @@ function App() {
             mode={gameMode}
             classicTarget={classicTarget}
             bartenderChallenge={activeBartenderChallenge}
+            spirit={selectedSpirit}
+            selectedIngredients={selectedIngredients}
+            technique={selectedTechnique}
+            glass={selectedGlass}
+            flavor={userFlavor}
           />
 
           <div className="section-heading glass-section-heading">
@@ -3866,7 +4078,7 @@ function App() {
           <button
             className="primary-button glass-confirm-button"
             disabled={!selectedGlass}
-            onClick={() => setPage('result')}
+            onClick={finishMixing}
           >
             调制并查看结果
           </button>
@@ -3890,6 +4102,11 @@ function App() {
             mode={gameMode}
             classicTarget={classicTarget}
             bartenderChallenge={activeBartenderChallenge}
+            spirit={selectedSpirit}
+            selectedIngredients={selectedIngredients}
+            technique={selectedTechnique}
+            glass={selectedGlass}
+            flavor={userFlavor}
           />
 
           <div className="section-heading">
@@ -3989,6 +4206,11 @@ function App() {
             mode={gameMode}
             classicTarget={classicTarget}
             bartenderChallenge={activeBartenderChallenge}
+            spirit={selectedSpirit}
+            selectedIngredients={selectedIngredients}
+            technique={selectedTechnique}
+            glass={selectedGlass}
+            flavor={userFlavor}
           />
 
           <div className="section-heading">
@@ -4142,6 +4364,51 @@ function App() {
     )
   }
 
+  if (page === 'collection') {
+    return (
+      <main className="app collection-page-app">
+        <section className="mixing-panel collection-panel-v14">
+          <div className="top-bar">
+            <button className="back-button" onClick={goHome}>← 返回首页</button>
+            <span className="step-label">MY COLLECTION</span>
+          </div>
+
+          <div className="section-heading">
+            <p className="eyebrow">COCKTAIL ARCHIVE</p>
+            <h2>我的调酒图鉴</h2>
+            <p>这里保存你收藏过的原创作品印章。</p>
+          </div>
+
+          {collection.length > 0 ? (
+            <div className="collection-stamp-grid">
+              {collection.map((signature, index) => (
+                <article className="collection-stamp-card" key={signature}>
+                  <div className="collection-stamp-icon">🍸</div>
+                  <small>ORIGINAL #{String(index + 1).padStart(2, '0')}</small>
+                  <h3>原创配方印章</h3>
+                  <p>{String(signature).slice(0, 28)}</p>
+                  <span>已收藏</span>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-collection-v14">
+              <span>🍹</span>
+              <h3>图鉴还是空的</h3>
+              <p>完成一杯作品后，点击“收藏这杯酒”即可加入图鉴。</p>
+              <button
+                className="primary-button"
+                onClick={() => startMode('free')}
+              >
+                创作第一杯酒
+              </button>
+            </div>
+          )}
+        </section>
+      </main>
+    )
+  }
+
   if (page === 'classic-select') {
     return (
       <main className="app challenge-page-app">
@@ -4224,6 +4491,23 @@ function App() {
                     <span>{clues.complexity}</span>
                   </div>
 
+                  {challengeProgress.classic?.[cocktail.id] ? (
+                    <div className="challenge-card-progress">
+                      <span>
+                        {challengeProgress.classic[cocktail.id].completed
+                          ? '✓ 已通关'
+                          : '挑战中'}
+                      </span>
+                      <strong>
+                        最高 {challengeProgress.classic[cocktail.id].best}%
+                      </strong>
+                    </div>
+                  ) : (
+                    <div className="challenge-card-progress untouched">
+                      <span>尚未挑战</span>
+                    </div>
+                  )}
+
                   <span className="challenge-card-action">根据线索开始复刻 →</span>
                 </button>
               )
@@ -4264,11 +4548,18 @@ function App() {
               </div>
               <button
                 type="button"
-                onClick={() =>
-                  setBartenderChallengeIndex((current) =>
-                    (current + 1) % bartenderChallenges.length
-                  )
-                }
+                onClick={() => {
+                  let nextIndex = bartenderChallengeIndex
+                  while (
+                    nextIndex === bartenderChallengeIndex &&
+                    bartenderChallenges.length > 1
+                  ) {
+                    nextIndex = Math.floor(
+                      Math.random() * bartenderChallenges.length,
+                    )
+                  }
+                  setBartenderChallengeIndex(nextIndex)
+                }}
               >
                 换一个随机挑战
               </button>
@@ -4351,6 +4642,11 @@ function App() {
             mode={gameMode}
             classicTarget={classicTarget}
             bartenderChallenge={activeBartenderChallenge}
+            spirit={selectedSpirit}
+            selectedIngredients={selectedIngredients}
+            technique={selectedTechnique}
+            glass={selectedGlass}
+            flavor={userFlavor}
           />
 
           <div className="section-heading">
@@ -4406,6 +4702,16 @@ function App() {
     )
   }
 
+  const classicCompletedCount = Object.values(
+    challengeProgress.classic ?? {},
+  ).filter((item) => item.completed).length
+  const bartenderCompletedCount = Object.values(
+    challengeProgress.bartender ?? {},
+  ).filter((item) => item.completed).length
+  const todayBartenderCompleted = Boolean(
+    challengeProgress.bartender?.[activeBartenderChallenge.id]?.completed,
+  )
+
   return (
     <main className="app v14-home-app">
       <section className="hero v14-home-hero">
@@ -4426,6 +4732,9 @@ function App() {
             <small>FREE CREATION</small>
             <h2>自由创作</h2>
             <p>没有标准答案，随心搭配，调出只属于你的作品。</p>
+            <span className="mode-progress-badge">
+              已收藏 {collection.length} 杯
+            </span>
             <strong>开始自由调酒 →</strong>
           </button>
 
@@ -4438,6 +4747,9 @@ function App() {
             <small>CLASSIC CHALLENGE</small>
             <h2>经典挑战</h2>
             <p>凭风味线索复刻 12 杯世界经典鸡尾酒。</p>
+            <span className="mode-progress-badge">
+              已通关 {classicCompletedCount} / {cocktails.length}
+            </span>
             <strong>选择经典酒 →</strong>
           </button>
 
@@ -4450,17 +4762,41 @@ function App() {
             <small>DAILY BARTENDER</small>
             <h2>酒保挑战</h2>
             <p>接受限定条件，在规则之内完成今天的任务。</p>
+            <span
+              className={`mode-progress-badge ${
+                todayBartenderCompleted ? 'completed' : ''
+              }`}
+            >
+              {todayBartenderCompleted
+                ? '今日已完成 ✓'
+                : `累计完成 ${bartenderCompletedCount} 个`}
+            </span>
             <strong>查看今日挑战 →</strong>
           </button>
         </div>
 
-        <button className="secondary-button v14-gallery-button">
+        <button
+          className="secondary-button v14-gallery-button"
+          onClick={() => setPage('collection')}
+        >
           查看我的图鉴
         </button>
 
-        <div className="progress-card v14-progress-card">
-          <span>原创作品收藏</span>
-          <strong>{collection.length} 杯</strong>
+        <div className="v14-progress-overview">
+          <article>
+            <span>原创作品</span>
+            <strong>{collection.length}</strong>
+          </article>
+          <article>
+            <span>经典通关</span>
+            <strong>
+              {classicCompletedCount}/{cocktails.length}
+            </strong>
+          </article>
+          <article>
+            <span>酒保任务</span>
+            <strong>{bartenderCompletedCount}</strong>
+          </article>
         </div>
       </section>
     </main>

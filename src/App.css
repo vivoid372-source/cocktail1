@@ -6733,3 +6733,248 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   V14.2 - 挑战闭环、进度、重试与图鉴
+   ========================================================= */
+
+.persistent-mode-banner {
+  align-items: stretch;
+}
+
+.mode-banner-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.persistent-clue-chips,
+.live-condition-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.persistent-clue-chips span,
+.live-condition-row span {
+  padding: 6px 9px;
+  border: 1px solid rgba(255, 239, 211, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(255, 248, 237, 0.66);
+  font-size: 10px;
+}
+
+.live-condition-row .condition-passed {
+  border-color: rgba(116, 184, 115, 0.22);
+  background: rgba(116, 184, 115, 0.09);
+  color: #add6a4;
+}
+
+.live-condition-row .condition-pending {
+  color: rgba(255, 248, 237, 0.46);
+}
+
+.mode-banner-details {
+  flex: 0 0 150px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 239, 211, 0.07);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.mode-banner-details summary {
+  color: #e5bd7b;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mode-banner-details p {
+  margin: 7px 0 0;
+  color: rgba(255, 248, 237, 0.54);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.challenge-card-progress {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 13px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(116, 184, 115, 0.075);
+  color: #acd4a4;
+  font-size: 10px;
+}
+
+.challenge-card-progress strong {
+  font-size: 10px;
+}
+
+.challenge-card-progress.untouched {
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(255, 248, 237, 0.42);
+}
+
+.challenge-edit-button {
+  border-color: rgba(228, 189, 126, 0.26);
+  color: #edc681;
+}
+
+.mode-progress-badge {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 16px;
+  padding: 7px 10px;
+  border: 1px solid rgba(228, 189, 126, 0.14);
+  border-radius: 999px;
+  background: rgba(228, 189, 126, 0.055);
+  color: #dfb879;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.mode-progress-badge.completed {
+  border-color: rgba(116, 184, 115, 0.2);
+  background: rgba(116, 184, 115, 0.08);
+  color: #acd4a4;
+}
+
+.v14-progress-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: min(520px, 100%);
+  margin-top: 17px;
+}
+
+.v14-progress-overview article {
+  padding: 13px 15px;
+  border: 1px solid rgba(255, 239, 211, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.022);
+  text-align: center;
+}
+
+.v14-progress-overview span {
+  display: block;
+  color: rgba(255, 248, 237, 0.45);
+  font-size: 10px;
+}
+
+.v14-progress-overview strong {
+  display: block;
+  margin-top: 5px;
+  color: #efd09a;
+  font-size: 17px;
+}
+
+.collection-panel-v14 {
+  max-width: 1050px;
+}
+
+.collection-stamp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.collection-stamp-card {
+  min-height: 230px;
+  padding: 24px;
+  border: 1px solid rgba(255, 239, 211, 0.09);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(228, 189, 126, 0.08), transparent 36%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.collection-stamp-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: rgba(228, 189, 126, 0.08);
+  font-size: 25px;
+}
+
+.collection-stamp-card small {
+  color: #d9ad71;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.collection-stamp-card h3 {
+  margin: 8px 0;
+  color: #fff8ed;
+  font-size: 20px;
+}
+
+.collection-stamp-card p {
+  overflow-wrap: anywhere;
+  color: rgba(255, 248, 237, 0.45);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.collection-stamp-card > span {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(116, 184, 115, 0.08);
+  color: #add6a4;
+  font-size: 10px;
+}
+
+.empty-collection-v14 {
+  display: grid;
+  justify-items: center;
+  max-width: 560px;
+  margin: 65px auto;
+  text-align: center;
+}
+
+.empty-collection-v14 > span {
+  font-size: 62px;
+}
+
+.empty-collection-v14 h3 {
+  margin: 20px 0 8px;
+  color: #fff8ed;
+  font-size: 28px;
+}
+
+.empty-collection-v14 p {
+  margin: 0 0 24px;
+  color: rgba(255, 248, 237, 0.56);
+  line-height: 1.7;
+}
+
+@media (max-width: 800px) {
+  .persistent-mode-banner {
+    display: grid;
+  }
+
+  .mode-banner-details {
+    width: auto;
+  }
+
+  .collection-stamp-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .v14-progress-overview,
+  .collection-stamp-grid {
+    grid-template-columns: 1fr;
+  }
+}
