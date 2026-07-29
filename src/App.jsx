@@ -2819,6 +2819,58 @@ function getClassicDifficulty(cocktail) {
   return '困难'
 }
 
+
+function getClassicColor(cocktail) {
+  const ids = cocktail.ingredients
+
+  if (ids.includes('cranberry-juice') || ids.includes('grenadine')) return '粉红至红色'
+  if (ids.includes('campari') || ids.includes('sweet-vermouth')) return '红棕或琥珀红'
+  if (ids.includes('orange-juice')) return '金橙色'
+  if (ids.includes('cola')) return '深棕色'
+  if (ids.includes('cream') || ids.includes('cacao-liqueur')) return '奶油棕或浅咖色'
+  if (ids.includes('mint')) return '浅绿或透明带绿色点缀'
+  if (ids.includes('lemon-juice') || ids.includes('lime-juice')) return '浅黄或淡绿色'
+  return '清澈透明至浅金色'
+}
+
+function getClassicBubbleProfile(cocktail) {
+  const ids = cocktail.ingredients
+
+  if (ids.some((id) => ['soda-water', 'tonic-water', 'ginger-beer', 'cola'].includes(id))) {
+    return '有气泡'
+  }
+
+  return '无气泡'
+}
+
+function getClassicTasteProfile(cocktail) {
+  const sorted = Object.entries(cocktail.flavor)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+
+  const descriptors = sorted.map(([key, value]) => {
+    const level = value >= 60 ? '明显' : value >= 40 ? '中等' : '轻微'
+    return `${level}${flavorChineseMap[key]}`
+  })
+
+  return descriptors.join('、')
+}
+
+function getClassicStrength(cocktail) {
+  const spirit = cocktail.flavor.spirit ?? 0
+  if (spirit >= 65) return '酒感强，适合慢饮'
+  if (spirit >= 45) return '酒感中等，基酒轮廓清楚'
+  return '酒感偏轻，较容易入口'
+}
+
+function getClassicGlassDirection(cocktail) {
+  const names = cocktail.glasses
+    .map((id) => glasses.find((item) => item.id === id)?.chinese)
+    .filter(Boolean)
+
+  return names.length ? names.join(' / ') : '经典鸡尾酒杯'
+}
+
 function getClassicClues(cocktail) {
   const topAxes = Object.entries(cocktail.flavor)
     .sort((a, b) => b[1] - a[1])
@@ -2826,16 +2878,22 @@ function getClassicClues(cocktail) {
     .map(([key]) => flavorChineseMap[key])
 
   const techniqueClue = {
-    shake: '需要充分降温与融合',
-    stir: '强调清澈和基酒轮廓',
-    build: '适合直接在杯中完成',
+    shake: '摇和：需要充分降温与融合',
+    stir: '搅拌：强调清澈与基酒轮廓',
+    build: '直调：适合直接在杯中完成',
   }[cocktail.technique]
 
-  return [
-    `主导风味：${topAxes.join('、')}`,
-    techniqueClue,
-    `经典结构包含 ${cocktail.ingredients.length} 种关键辅料`,
-  ]
+  return {
+    spirit: spiritName(cocktail.spirit),
+    taste: getClassicTasteProfile(cocktail),
+    bubbles: getClassicBubbleProfile(cocktail),
+    color: getClassicColor(cocktail),
+    strength: getClassicStrength(cocktail),
+    technique: techniqueClue,
+    glass: getClassicGlassDirection(cocktail),
+    topAxes,
+    complexity: `包含 ${cocktail.ingredients.length} 种关键辅料`,
+  }
 }
 
 function evaluateClassicChallenge(target, selection, flavor) {
@@ -4097,7 +4155,7 @@ function App() {
             <p className="eyebrow">RECREATE A CLASSIC</p>
             <h2>选择你要复刻的经典酒</h2>
             <p>
-              系统只提供风味线索，不直接公布完整答案。完成后将解锁标准配方和复刻报告。
+              系统会提供基酒、口味、气泡、颜色、酒感和杯型方向，但不会直接公布完整辅料答案。完成后将解锁标准配方和复刻报告。
             </p>
           </div>
 
@@ -4109,7 +4167,7 @@ function App() {
                 <button
                   type="button"
                   key={cocktail.id}
-                  className="classic-challenge-card"
+                  className="classic-challenge-card classic-challenge-card-v14-1"
                   onClick={() => {
                     setClassicTarget(cocktail)
                     resetRecipeSelection()
@@ -4119,18 +4177,54 @@ function App() {
                   <div className="challenge-card-number">
                     {String(index + 1).padStart(2, '0')}
                   </div>
+
                   <div className="challenge-card-top">
                     <span>{spirits.find((item) => item.id === cocktail.spirit)?.icon}</span>
                     <small>{getClassicDifficulty(cocktail)}</small>
                   </div>
+
                   <h3>{cocktail.chinese}</h3>
                   <strong>{cocktail.name}</strong>
-                  <ul>
-                    {clues.map((clue) => (
-                      <li key={clue}>{clue}</li>
+
+                  <div className="classic-keyword-row">
+                    {clues.topAxes.map((axis) => (
+                      <span key={axis}>{axis}</span>
                     ))}
-                  </ul>
-                  <span className="challenge-card-action">接受挑战 →</span>
+                  </div>
+
+                  <div className="classic-clue-grid">
+                    <article>
+                      <small>基酒</small>
+                      <strong>{clues.spirit}</strong>
+                    </article>
+                    <article>
+                      <small>口味</small>
+                      <strong>{clues.taste}</strong>
+                    </article>
+                    <article>
+                      <small>气泡</small>
+                      <strong>{clues.bubbles}</strong>
+                    </article>
+                    <article>
+                      <small>颜色</small>
+                      <strong>{clues.color}</strong>
+                    </article>
+                    <article>
+                      <small>酒感</small>
+                      <strong>{clues.strength}</strong>
+                    </article>
+                    <article>
+                      <small>杯型方向</small>
+                      <strong>{clues.glass}</strong>
+                    </article>
+                  </div>
+
+                  <div className="classic-clue-footer">
+                    <span>{clues.technique}</span>
+                    <span>{clues.complexity}</span>
+                  </div>
+
+                  <span className="challenge-card-action">根据线索开始复刻 →</span>
                 </button>
               )
             })}

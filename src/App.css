@@ -6648,3 +6648,88 @@ button {
     width: 100%;
   }
 }
+
+
+/* =========================================================
+   V14.1 - 经典复刻增强线索卡
+   ========================================================= */
+
+.classic-challenge-card-v14-1 {
+  min-height: 470px;
+  display: flex;
+  flex-direction: column;
+}
+
+.classic-keyword-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 15px 0 14px;
+}
+
+.classic-keyword-row span {
+  padding: 6px 9px;
+  border: 1px solid rgba(228, 189, 126, 0.14);
+  border-radius: 999px;
+  background: rgba(228, 189, 126, 0.065);
+  color: #e3bd7c;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.classic-clue-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 13px;
+}
+
+.classic-clue-grid article {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid rgba(255, 239, 211, 0.07);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.022);
+}
+
+.classic-clue-grid small {
+  display: block;
+  margin-bottom: 5px;
+  color: rgba(255, 248, 237, 0.42);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.classic-clue-grid strong {
+  display: block;
+  color: rgba(255, 248, 237, 0.78);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.classic-clue-footer {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 18px;
+  padding: 11px 12px;
+  border-left: 2px solid rgba(228, 189, 126, 0.45);
+  border-radius: 0 10px 10px 0;
+  background: rgba(228, 189, 126, 0.035);
+}
+
+.classic-clue-footer span {
+  color: rgba(255, 248, 237, 0.58);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.classic-challenge-card-v14-1 .challenge-card-action {
+  margin-top: auto;
+}
+
+@media (max-width: 520px) {
+  .classic-clue-grid {
+    grid-template-columns: 1fr;
+  }
+}
