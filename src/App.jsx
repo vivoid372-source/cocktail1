@@ -3549,7 +3549,187 @@ function recipeAmountLabel(amount) {
       : '标准量'
 }
 
-function buildArchiveRecord({ review, spirit, selectedIngredients, amounts, technique, glass, appearance, photo }) {
+const flavorStyleCatalog = [
+  { id: 'rain-courtyard', name: '雨后庭院', family: '清爽系', clue: '清爽、草本与轻酸' },
+  { id: 'morning-greenhouse', name: '清晨温室', family: '清爽系', clue: '黄瓜、薄荷与透明酒体' },
+  { id: 'seaside-daylight', name: '海边白昼', family: '清爽系', clue: '气泡、柑橘与低甜度' },
+
+  { id: 'tropical-holiday', name: '热带假日', family: '果香系', clue: '朗姆、热带水果与明亮甜酸' },
+  { id: 'orchard-sunset', name: '果园黄昏', family: '果香系', clue: '苹果、桃子与柔和香气' },
+  { id: 'neon-fruit-market', name: '霓虹果市', family: '果香系', clue: '莓果、鲜艳颜色与气泡' },
+
+  { id: 'midnight-lounge', name: '午夜酒廊', family: '深邃系', clue: '深色基酒、苦味与低光氛围' },
+  { id: 'prohibition-room', name: '禁酒令密室', family: '深邃系', clue: '威士忌、苦味酒与搅拌' },
+  { id: 'old-time-ball', name: '旧时代舞会', family: '深邃系', clue: '白兰地、香料与古典杯' },
+
+  { id: 'winter-study', name: '冬夜书房', family: '甜点系', clue: '咖啡、奶油与坚果香' },
+  { id: 'late-dessert', name: '深夜甜点', family: '甜点系', clue: '可可、香草与柔软甜味' },
+  { id: 'warm-lamp-room', name: '暖灯客厅', family: '甜点系', clue: '奶油、肉桂与温暖酒体' },
+
+  { id: 'eastern-aroma', name: '东方香气', family: '东方系', clue: '茶、柚子与克制甜味' },
+  { id: 'moonlit-tea', name: '月下茶席', family: '东方系', clue: '茶香、花香与低酒感' },
+  { id: 'osmanthus-memory', name: '桂花旧梦', family: '东方系', clue: '桂花、梅子与柔和酸度' },
+
+  { id: 'after-hours-florist', name: '花店关门后', family: '浪漫系', clue: '花香、莓果与轻盈酒体' },
+  { id: 'rooftop-breeze', name: '屋顶晚风', family: '浪漫系', clue: '气泡、花香与明亮果味' },
+  { id: 'red-velvet-theatre', name: '红丝绒剧院', family: '浪漫系', clue: '红色果香、甜苦与戏剧感' },
+
+  { id: 'road-movie', name: '公路电影', family: '冒险系', clue: '龙舌兰、姜与锋利酸度' },
+  { id: 'desert-hotel', name: '沙漠旅店', family: '冒险系', clue: '烟熏、香料与深色酒体' },
+  { id: 'harbor-storm', name: '港口风暴', family: '冒险系', clue: '朗姆、苦味与强烈气泡' },
+
+  { id: 'minimal-lounge', name: '极简酒廊', family: '极简系', clue: '少量原料、搅拌与清澈结构' },
+  { id: 'silver-club', name: '银色俱乐部', family: '极简系', clue: '金酒、干味与马天尼杯' },
+  { id: 'black-white-film', name: '黑白胶片', family: '极简系', clue: '伏特加、低甜度与冷冽口感' },
+]
+
+const rareStampCatalog = {
+  common: ['香气主导', '清澈线条', '安静余韵', '果香时刻', '酒保私藏'],
+  rare: ['意外杰作', '午夜限定', '电影感配方', '少见组合', '隐秘菜单'],
+  hidden: ['未公开酒单', '只在今夜出现', '第十三杯', '无名酒保的签名'],
+}
+
+function stableNumberFromText(value) {
+  return Array.from(String(value || '')).reduce(
+    (total, char, index) => total + char.charCodeAt(0) * (index + 7),
+    0,
+  )
+}
+
+function getFlavorStyleFamily({ spirit, ingredients, technique, glass, flavor }) {
+  const ids = ingredients.map((item) => item.id)
+  const has = (...values) => values.some((value) => ids.includes(value))
+  const spiritId = spirit?.id
+  const ingredientCount = ingredients.length
+
+  const eastern = has(
+    'earl-grey-tea',
+    'jasmine-tea',
+    'yuzu',
+    'plum',
+    'osmanthus-syrup',
+    'sesame-syrup',
+  )
+  const dessert = has(
+    'cream',
+    'cacao-liqueur',
+    'coffee-liqueur',
+    'amaretto',
+    'vanilla-syrup',
+    'cinnamon',
+  )
+  const floral = has(
+    'elderflower-liqueur',
+    'violet-liqueur',
+    'rose-syrup',
+    'osmanthus-syrup',
+  )
+  const berries = has(
+    'cranberry-juice',
+    'grenadine',
+    'strawberry',
+    'raspberry',
+    'black-cherry',
+  )
+  const tropical = has('pineapple-juice', 'coconut-milk', 'passion-fruit')
+  const herbal = has('mint', 'cucumber', 'rosemary', 'basil')
+  const bubbles = has(
+    'soda-water',
+    'tonic-water',
+    'ginger-beer',
+    'sparkling-wine',
+    'cola',
+  )
+  const spicy = has('ginger-beer', 'chili', 'cinnamon')
+  const minimal =
+    ingredientCount <= 2 &&
+    technique?.id === 'stir'
+
+  if (minimal || (ingredientCount <= 2 && ['martini', 'coupe'].includes(glass?.id))) {
+    return '极简系'
+  }
+  if (eastern) return '东方系'
+  if (dessert || Number(flavor?.sweet ?? 0) >= 72) return '甜点系'
+  if (floral || (berries && bubbles)) return '浪漫系'
+  if (
+    spiritId === 'tequila' ||
+    spicy ||
+    has('smoked-syrup', 'absinthe')
+  ) {
+    return '冒险系'
+  }
+  if (
+    ['whisky', 'brandy'].includes(spiritId) ||
+    Number(flavor?.bitter ?? 0) >= 62 ||
+    Number(flavor?.alcohol ?? flavor?.body ?? 0) >= 72
+  ) {
+    return '深邃系'
+  }
+  if (
+    tropical ||
+    berries ||
+    has('orange-juice', 'apple-juice', 'peach-liqueur')
+  ) {
+    return '果香系'
+  }
+  if (herbal || bubbles || Number(flavor?.fresh ?? flavor?.refreshing ?? 0) >= 58) {
+    return '清爽系'
+  }
+
+  return '清爽系'
+}
+
+function discoverFlavorStyle(selection, flavor, signature) {
+  const family = getFlavorStyleFamily({
+    spirit: selection.spirit,
+    ingredients: selection.ingredients,
+    technique: selection.technique,
+    glass: selection.glass,
+    flavor,
+  })
+  const candidates = flavorStyleCatalog.filter((item) => item.family === family)
+  const index = stableNumberFromText(`${signature}-${family}`) % candidates.length
+  return candidates[index] ?? flavorStyleCatalog[0]
+}
+
+function discoverRareStamp(selection, flavor, signature) {
+  const score = stableNumberFromText(
+    `${signature}-${selection.spirit?.id}-${selection.ingredients
+      .map((item) => item.id)
+      .join('-')}`,
+  ) % 100
+
+  let rarity = null
+  if (score < 4) rarity = 'hidden'
+  else if (score < 14) rarity = 'rare'
+  else if (score < 38) rarity = 'common'
+
+  if (!rarity) return null
+
+  const pool = rareStampCatalog[rarity]
+  const name = pool[stableNumberFromText(`${signature}-${rarity}`) % pool.length]
+
+  return {
+    id: `${rarity}-${name}`,
+    name,
+    rarity,
+    label:
+      rarity === 'hidden'
+        ? '隐藏印记'
+        : rarity === 'rare'
+          ? '稀有印记'
+          : '风味印记',
+  }
+}
+
+function buildDiscoveryResult(selection, flavor, signature) {
+  return {
+    style: discoverFlavorStyle(selection, flavor, signature),
+    stamp: discoverRareStamp(selection, flavor, signature),
+  }
+}
+
+function buildArchiveRecord({ review, spirit, selectedIngredients, amounts, technique, glass, appearance, photo, discovery }) {
   return {
     id: `${Date.now()}-${review.signature}`,
     signature: review.signature,
@@ -3572,6 +3752,8 @@ function buildArchiveRecord({ review, spirit, selectedIngredients, amounts, tech
     appearance,
     photoSrc: photo?.src ?? '',
     posterPhotoSrc: posterImageSource(photo?.src ?? ''),
+    discoveryStyle: discovery?.style ?? null,
+    rareStamp: discovery?.stamp ?? null,
   }
 }
 
@@ -4063,15 +4245,31 @@ function App() {
 
   const [explorerProfile, setExplorerProfile] = useState(() => {
     try {
-      return JSON.parse(
+      const stored = JSON.parse(
         localStorage.getItem('cocktail-explorer-profile') ??
           '{"creations":0,"firstRevealSeen":false}',
       )
+      return {
+        creations: Number(stored?.creations ?? 0),
+        firstRevealSeen: Boolean(stored?.firstRevealSeen),
+        discoveredStyles: Array.isArray(stored?.discoveredStyles)
+          ? stored.discoveredStyles
+          : [],
+        discoveredStamps: Array.isArray(stored?.discoveredStamps)
+          ? stored.discoveredStamps
+          : [],
+      }
     } catch {
-      return { creations: 0, firstRevealSeen: false }
+      return {
+        creations: 0,
+        firstRevealSeen: false,
+        discoveredStyles: [],
+        discoveredStamps: [],
+      }
     }
   })
   const [showFirstCreationReveal, setShowFirstCreationReveal] = useState(false)
+  const [currentDiscoveryNotice, setCurrentDiscoveryNotice] = useState(null)
 
   const glassCarouselRef = useRef(null)
   const glassCardRefs = useRef([])
@@ -4142,6 +4340,30 @@ function App() {
     selectedGlass,
     userFlavor,
     resultCocktail,
+  ])
+
+  const currentDiscovery = useMemo(() => {
+    if (!creativeReview || !selectedSpirit || !selectedTechnique || !selectedGlass) {
+      return null
+    }
+
+    return buildDiscoveryResult(
+      {
+        spirit: selectedSpirit,
+        ingredients: selectedIngredients,
+        technique: selectedTechnique,
+        glass: selectedGlass,
+      },
+      userFlavor,
+      creativeReview.signature,
+    )
+  }, [
+    creativeReview,
+    selectedSpirit,
+    selectedIngredients,
+    selectedTechnique,
+    selectedGlass,
+    userFlavor,
   ])
 
   useEffect(() => {
@@ -4376,6 +4598,54 @@ function App() {
     }
   }, [page, creativeReview?.signature])
 
+  useEffect(() => {
+    if (
+      page !== 'result' ||
+      !creativeReview ||
+      !currentDiscovery?.style
+    ) {
+      return
+    }
+
+    const styleId = currentDiscovery.style.id
+    const stampId = currentDiscovery.stamp?.id ?? null
+    const knownStyles = explorerProfile.discoveredStyles ?? []
+    const knownStamps = explorerProfile.discoveredStamps ?? []
+    const isNewStyle = !knownStyles.includes(styleId)
+    const isNewStamp = Boolean(stampId && !knownStamps.includes(stampId))
+
+    setCurrentDiscoveryNotice({
+      signature: creativeReview.signature,
+      style: currentDiscovery.style,
+      stamp: currentDiscovery.stamp,
+      isNewStyle,
+      isNewStamp,
+    })
+
+    if (!isNewStyle && !isNewStamp) return
+
+    const nextProfile = {
+      ...explorerProfile,
+      discoveredStyles: isNewStyle
+        ? [...knownStyles, styleId]
+        : knownStyles,
+      discoveredStamps: isNewStamp
+        ? [...knownStamps, stampId]
+        : knownStamps,
+    }
+
+    setExplorerProfile(nextProfile)
+    localStorage.setItem(
+      'cocktail-explorer-profile',
+      JSON.stringify(nextProfile),
+    )
+  }, [
+    page,
+    creativeReview?.signature,
+    currentDiscovery?.style?.id,
+    currentDiscovery?.stamp?.id,
+  ])
+
   function currentArchiveRecord() {
     if (!creativeReview) return null
     const photo = pickLocalCocktailPhoto({
@@ -4394,6 +4664,7 @@ function App() {
       glass: selectedGlass,
       appearance: drinkAppearance,
       photo,
+      discovery: currentDiscovery,
     })
   }
 
@@ -4731,6 +5002,29 @@ function App() {
               ))}
             </div>
           </section>
+
+          {currentDiscoveryNotice?.signature === creativeReview.signature && (
+            <section className="result-discovery-strip">
+              <div className="result-discovery-copy">
+                <small>本次发现</small>
+                <strong>{currentDiscoveryNotice.style.name}</strong>
+                <span>
+                  {currentDiscoveryNotice.isNewStyle
+                    ? '新风格已收入图鉴'
+                    : currentDiscoveryNotice.style.family}
+                </span>
+              </div>
+
+              {currentDiscoveryNotice.stamp && (
+                <div
+                  className={`result-rare-stamp rarity-${currentDiscoveryNotice.stamp.rarity}`}
+                >
+                  <small>{currentDiscoveryNotice.stamp.label}</small>
+                  <strong>✦ {currentDiscoveryNotice.stamp.name}</strong>
+                </div>
+              )}
+            </section>
+          )}
 
           <div className="result-grid result-v8-grid">
             <section className="result-card radar-card radar-card-v8">
@@ -5261,6 +5555,54 @@ function App() {
               </strong>
               <small>已完成 {explorerProfile.creations ?? 0} 次风味探索</small>
             </div>
+            <section className="flavor-exploration-progress">
+              <div className="exploration-progress-head">
+                <div>
+                  <small>FLAVOR MAP</small>
+                  <strong>
+                    已发现 {(explorerProfile.discoveredStyles ?? []).length} / {flavorStyleCatalog.length} 种风格
+                  </strong>
+                </div>
+                <span>
+                  {Math.round(
+                    ((explorerProfile.discoveredStyles ?? []).length /
+                      flavorStyleCatalog.length) *
+                      100,
+                  )}%
+                </span>
+              </div>
+
+              <div className="exploration-progress-track">
+                <i
+                  style={{
+                    width: `${Math.round(
+                      ((explorerProfile.discoveredStyles ?? []).length /
+                        flavorStyleCatalog.length) *
+                        100,
+                    )}%`,
+                  }}
+                />
+              </div>
+
+              <div className="exploration-family-grid">
+                {[...new Set(flavorStyleCatalog.map((item) => item.family))].map(
+                  (family) => {
+                    const familyStyles = flavorStyleCatalog.filter(
+                      (item) => item.family === family,
+                    )
+                    const discoveredCount = familyStyles.filter((item) =>
+                      (explorerProfile.discoveredStyles ?? []).includes(item.id),
+                    ).length
+
+                    return (
+                      <span key={family}>
+                        {family} {discoveredCount}/{familyStyles.length}
+                      </span>
+                    )
+                  },
+                )}
+              </div>
+            </section>
           </div>
 
           {shareNotice && <div className="share-toast collection-toast">{shareNotice}</div>}
@@ -5299,6 +5641,19 @@ function App() {
                 <div className="story-tags cinematic-story-tags">
                   {(selectedArchive.moodTags || []).map((tag) => <span key={tag}>{tag}</span>)}
                 </div>
+                {selectedArchive.discoveryStyle && (
+                  <div className="archive-discovery-meta">
+                    <span>
+                      风格 · <strong>{selectedArchive.discoveryStyle.name}</strong>
+                    </span>
+                    {selectedArchive.rareStamp && (
+                      <span>
+                        {selectedArchive.rareStamp.label} ·{' '}
+                        <strong>{selectedArchive.rareStamp.name}</strong>
+                      </span>
+                    )}
+                  </div>
+                )}
                 <button className="primary-button" onClick={() => shareRecipe(selectedArchive)}>
                   生成分享卡片
                 </button>
