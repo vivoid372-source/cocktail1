@@ -9436,3 +9436,76 @@ body,
     max-height: none !important;
   }
 }
+
+
+/* =========================================================
+   V17.5.7 REMOVE LEGACY OUTER CONTAINER CROP
+   ========================================================= */
+
+/*
+  Older mobile rules still forced .local-photo-result to height:36svh
+  while .real-photo-result kept overflow:hidden. That clipped the
+  lower half even though the image itself used height:auto.
+*/
+
+.real-photo-result.large-result-photo,
+.local-photo-result.large-result-photo,
+.isolated-cocktail-result.large-result-photo {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  aspect-ratio: auto !important;
+}
+
+.large-result-photo .large-result-photo-stage {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  aspect-ratio: auto !important;
+}
+
+.large-result-photo .large-result-photo-stage .final-full-result-image {
+  position: static !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+}
+
+/* The parent column must also allow natural image height. */
+.result-v14-hero .hero-visual-column {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Remove old photo entrance animation transforms that can create clipping. */
+.large-result-photo .final-full-result-image {
+  animation: none !important;
+  filter: saturate(1.03) contrast(1.03);
+}
+
+@media (max-width: 560px) {
+  .real-photo-result.large-result-photo,
+  .local-photo-result.large-result-photo,
+  .isolated-cocktail-result.large-result-photo,
+  .large-result-photo .large-result-photo-stage,
+  .large-result-photo .large-result-photo-stage .final-full-result-image {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    aspect-ratio: auto !important;
+  }
+}
