@@ -9367,3 +9367,72 @@ body,
     height: 100% !important;
   }
 }
+
+
+/* =========================================================
+   V17.5.6 FINAL FULL IMAGE + NO DUPLICATE TITLE
+   ========================================================= */
+
+/* Result image container follows the real image ratio. */
+.large-result-photo-stage {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  aspect-ratio: auto !important;
+  overflow: visible !important;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(223,158,77,.12), transparent 52%),
+    linear-gradient(180deg, #1d100c 0%, #090504 100%);
+}
+
+/* Only one real photograph. It determines its own height. */
+.large-result-photo-stage .final-full-result-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: none !important;
+  border-radius: 22px;
+}
+
+/* Remove every old visual layer that could cover the photo. */
+.large-result-photo-stage::after,
+.large-result-photo-stage::before,
+.large-result-photo .real-photo-overlay,
+.large-result-photo .real-photo-caption,
+.large-result-photo .compact-photo-caption,
+.large-result-photo .real-photo-disclaimer {
+  display: none !important;
+}
+
+/* Decorative sparkles stay above the image without blocking the drink. */
+.large-result-photo-stage .cocktail-sparkle {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Prevent older mobile rules from forcing a cropped height. */
+@media (max-width: 560px) {
+  .large-result-photo-stage {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: auto !important;
+  }
+
+  .large-result-photo-stage .final-full-result-image {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}

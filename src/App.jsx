@@ -710,18 +710,14 @@ function CocktailPhotoResult({
         <span className="cocktail-sparkle sparkle-two">·</span>
         <span className="cocktail-sparkle sparkle-three">✧</span>
         <CompatibleCocktailImage
-          className="cocktail-portrait-main"
+          className="cocktail-portrait-main final-full-result-image"
           src={photo.src}
           alt={`${drinkName}的酒吧成品照`}
           loading="eager"
           fallbackText={drinkName}
         />
       </div>
-      <div className="real-photo-caption compact-photo-caption">
-        <small>ORIGINAL CREATION</small>
-        <strong>{drinkName}</strong>
-      </div>
-      <p className="real-photo-disclaimer">配方视觉示意</p>
+
     </div>
   )
 }
