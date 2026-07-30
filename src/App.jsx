@@ -688,30 +688,41 @@ function CocktailPhotoResult({
   drinkName,
   appearance,
   glass,
-  effects,
+  spirit,
+  ingredients,
+  signature,
 }) {
+  const photo = pickLocalCocktailPhoto({
+    spirit,
+    ingredients,
+    appearance,
+    glass,
+    signature,
+  })
+
   return (
-    <div className={`real-photo-result local-photo-result isolated-cocktail-result dynamic-cocktail-result scene-${appearance.family}`}>
-      <div className="cocktail-portrait-stage dynamic-glass-stage">
+    <div className={`real-photo-result local-photo-result isolated-cocktail-result large-result-photo scene-${appearance.family}`}>
+      <div className="cocktail-portrait-stage large-result-photo-stage">
+        <CompatibleCocktailImage
+          className="cocktail-portrait-blur"
+          src={photo.src}
+          alt=""
+          loading="eager"
+          fallbackText=""
+        />
         <span className="cocktail-glow cocktail-glow-one" />
         <span className="cocktail-glow cocktail-glow-two" />
         <span className="cocktail-sparkle sparkle-one">✦</span>
         <span className="cocktail-sparkle sparkle-two">·</span>
         <span className="cocktail-sparkle sparkle-three">✧</span>
-        <div className="result-glass-orbit orbit-one" />
-        <div className="result-glass-orbit orbit-two" />
-
-        <div className="result-complete-glass">
-          <GlassPreview
-            type={glass?.id ?? 'coupe'}
-            color={appearance}
-            effects={effects}
-          />
-        </div>
-
-        <div className="result-glass-reflection" />
+        <CompatibleCocktailImage
+          className="cocktail-portrait-main"
+          src={photo.src}
+          alt={`${drinkName}的酒吧成品照`}
+          loading="eager"
+          fallbackText={drinkName}
+        />
       </div>
-
       <div className="real-photo-caption compact-photo-caption">
         <small>ORIGINAL CREATION</small>
         <strong>{drinkName}</strong>
@@ -4530,7 +4541,7 @@ function App() {
             <button type="button" onClick={closeSharePreview}>← 返回</button>
             <div>
               <small>SHARE YOUR CREATION</small>
-              <strong>长按海报，直接发送给朋友</strong>
+              <strong>长按海报保存到相册</strong>
             </div>
           </div>
 
@@ -4545,7 +4556,7 @@ function App() {
           </div>
 
           <p className="share-preview-tip">
-            在微信里长按上方海报，选择“发送给朋友”即可。
+            在微信里长按上方图片，选择“保存图片”，然后即可发送给朋友。
           </p>
 
           <div className="share-preview-actions">
@@ -4556,13 +4567,14 @@ function App() {
             >
               复制分享文案
             </button>
-            <button
-              type="button"
-              className="primary-button"
-              onClick={closeSharePreview}
+            <a
+              className="primary-button share-original-link"
+              href={sharePreviewUrl}
+              target="_blank"
+              rel="noreferrer"
             >
-              返回结果
-            </button>
+              打开高清原图
+            </a>
           </div>
         </section>
       </main>
@@ -4697,7 +4709,9 @@ function App() {
                 drinkName={creativeReview.title}
                 appearance={drinkAppearance}
                 glass={selectedGlass}
-                effects={drinkEffects}
+                spirit={selectedSpirit}
+                ingredients={selectedIngredients}
+                signature={creativeReview.signature}
               />
             </div>
 
