@@ -2593,209 +2593,218 @@ function FlavorInterpretationCard({
     signature,
   })
 
+  const compactTags = interpretation.tags.slice(0, 4)
+  const keyContributions = interpretation.contributions.slice(0, 3)
+
   return (
-    <section className="result-card flavor-interpretation-card">
+    <section className="result-card flavor-interpretation-card compact-interpretation-card">
       <div className="result-card-heading interpretation-heading">
         <div>
-          <small>TASTING INTERPRETATION</small>
-          <h3>风味解读</h3>
+          <small>FLAVOR IMPRESSION</small>
+          <h3>风味印象</h3>
         </div>
         <span className="interpretation-style-badge">
           {interpretation.title}
         </span>
       </div>
 
-      <p className="interpretation-summary">{interpretation.summary}</p>
-
-      <div className="interpretation-tags">
-        {interpretation.tags.map((tag) => (
+      <div className="interpretation-tags compact-interpretation-tags">
+        {compactTags.map((tag) => (
           <span key={tag}>{tag}</span>
         ))}
       </div>
 
-      <div className="tasting-timeline">
-        <article>
-          <span>01</span>
-          <div>
-            <small>入口</small>
-            <p>{interpretation.opening}</p>
+      <p className="compact-interpretation-summary">
+        {interpretation.summary}
+      </p>
+
+      <div className="recipe-reading-card">
+        <small>RECIPE READING</small>
+        <h4>配方解读</h4>
+        <p>{interpretation.balance}</p>
+
+        {keyContributions.length > 0 && (
+          <div className="compact-contribution-list">
+            {keyContributions.map((item) => (
+              <article key={item.name}>
+                <strong>{item.name}</strong>
+                <span>{item.text}</span>
+              </article>
+            ))}
           </div>
-        </article>
-        <article>
-          <span>02</span>
-          <div>
-            <small>中段</small>
-            <p>{interpretation.middle}</p>
-          </div>
-        </article>
-        <article>
-          <span>03</span>
-          <div>
-            <small>收尾</small>
-            <p>{interpretation.finish}</p>
-          </div>
-        </article>
+        )}
       </div>
 
-      <div className="balance-diagnosis">
-        <small>BALANCE DIAGNOSIS</small>
-        <h4>平衡诊断</h4>
-        <p>{interpretation.balance}</p>
-        <div>
+      <details className="tasting-detail-disclosure">
+        <summary>查看完整风味过程</summary>
+
+        <div className="tasting-timeline compact-tasting-timeline">
+          <article>
+            <span>01</span>
+            <div>
+              <small>入口</small>
+              <p>{interpretation.opening}</p>
+            </div>
+          </article>
+          <article>
+            <span>02</span>
+            <div>
+              <small>中段</small>
+              <p>{interpretation.middle}</p>
+            </div>
+          </article>
+          <article>
+            <span>03</span>
+            <div>
+              <small>收尾</small>
+              <p>{interpretation.finish}</p>
+            </div>
+          </article>
+        </div>
+
+        <div className="compact-extra-notes">
           <span>{interpretation.drinkability}</span>
           <span>{interpretation.glassNote}</span>
         </div>
-      </div>
-
-      <div className="ingredient-contribution-section">
-        <small>INGREDIENT CONTRIBUTION</small>
-        <h4>关键辅料贡献</h4>
-        <div className="ingredient-contribution-list">
-          {interpretation.contributions.map((item) => (
-            <article key={item.name}>
-              <div>
-                <strong>{item.name}</strong>
-                <span>{item.amountText}</span>
-              </div>
-              <p>{item.text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-
-      <div className="adjustment-suggestion-box">
-        <small>NEXT VERSION</small>
-        <h4>下一版怎么调</h4>
-        <ul>
-          {interpretation.suggestions.map((suggestion) => (
-            <li key={suggestion}>{suggestion}</li>
-          ))}
-        </ul>
-      </div>
+      </details>
     </section>
   )
 }
 
 function FlavorRadar({ flavor }) {
-  const size = 320
+  const size = 260
   const center = size / 2
-  const radius = 92
-  const labelClasses = [
-    'label-top',
-    'label-top-right',
-    'label-bottom-right',
-    'label-bottom',
-    'label-bottom-left',
-    'label-top-left',
-  ]
+  const radius = 82
+  const labelRadius = 109
+
+  const anchorFor = (x) => {
+    if (x < center - 12) return 'end'
+    if (x > center + 12) return 'start'
+    return 'middle'
+  }
 
   const points = flavorAxes.map(([key, label], index) => {
     const angle = -Math.PI / 2 + (index * Math.PI * 2) / flavorAxes.length
-    const valueRadius = ((flavor[key] ?? 0) / 100) * radius
+    const rawValue = Math.max(0, Math.min(100, Number(flavor[key] ?? 0)))
+    const visualRatio = Math.sqrt(rawValue / 100)
+    const valueRadius = visualRatio * radius
 
     return {
       key,
       label,
-      value: flavor[key] ?? 0,
+      value: rawValue,
       x: center + Math.cos(angle) * valueRadius,
       y: center + Math.sin(angle) * valueRadius,
       axisX: center + Math.cos(angle) * radius,
       axisY: center + Math.sin(angle) * radius,
-      labelClass: labelClasses[index],
+      labelX: center + Math.cos(angle) * labelRadius,
+      labelY: center + Math.sin(angle) * labelRadius,
     }
   })
 
   const polygon = points.map((point) => `${point.x},${point.y}`).join(' ')
-  const gridLevels = [0.2, 0.4, 0.6, 0.8, 1]
+  const gridLevels = [0.25, 0.5, 0.75, 1]
 
   return (
-    <div className="flavor-radar-layout">
-      <div className="radar-shell">
-        <svg
-          className="flavor-radar"
-          viewBox={`0 0 ${size} ${size}`}
-          role="img"
-          aria-label="本杯鸡尾酒六维风味雷达"
-        >
-          <defs>
-            <radialGradient id="radarFill" cx="50%" cy="42%" r="70%">
-              <stop offset="0%" stopColor="#f2d19a" stopOpacity="0.58" />
-              <stop offset="100%" stopColor="#c78b45" stopOpacity="0.16" />
-            </radialGradient>
-            <filter id="radarGlow">
-              <feGaussianBlur stdDeviation="3.2" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
+    <div className="flavor-radar-layout compact-radar-layout">
+      <svg
+        className="flavor-radar compact-flavor-radar"
+        viewBox={`0 0 ${size} ${size}`}
+        role="img"
+        aria-label="本杯鸡尾酒六维风味雷达"
+      >
+        <defs>
+          <radialGradient id="radarFillCompact" cx="50%" cy="42%" r="70%">
+            <stop offset="0%" stopColor="#f6d89f" stopOpacity="0.68" />
+            <stop offset="100%" stopColor="#c78b45" stopOpacity="0.25" />
+          </radialGradient>
+          <filter id="radarGlowCompact">
+            <feGaussianBlur stdDeviation="2.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
 
-          {gridLevels.map((level) => {
-            const gridPoints = points
-              .map((_, index) => {
-                const angle =
-                  -Math.PI / 2 + (index * Math.PI * 2) / flavorAxes.length
+        {gridLevels.map((level) => {
+          const gridPoints = points
+            .map((_, index) => {
+              const angle =
+                -Math.PI / 2 + (index * Math.PI * 2) / flavorAxes.length
+              return `${center + Math.cos(angle) * radius * level},${
+                center + Math.sin(angle) * radius * level
+              }`
+            })
+            .join(' ')
 
-                return `${center + Math.cos(angle) * radius * level},${center + Math.sin(angle) * radius * level}`
-              })
-              .join(' ')
-
-            return (
-              <polygon
-                key={level}
-                points={gridPoints}
-                fill="none"
-                stroke="rgba(228, 189, 126, 0.22)"
-                strokeWidth="1.2"
-              />
-            )
-          })}
-
-          {points.map((point) => (
-            <line
-              key={point.key}
-              x1={center}
-              y1={center}
-              x2={point.axisX}
-              y2={point.axisY}
-              stroke="rgba(228, 189, 126, 0.18)"
-              strokeWidth="1.2"
+          return (
+            <polygon
+              key={level}
+              points={gridPoints}
+              fill="none"
+              stroke="rgba(228, 189, 126, 0.22)"
+              strokeWidth="1"
             />
-          ))}
-
-          <polygon
-            points={polygon}
-            fill="url(#radarFill)"
-            stroke="#f0ca84"
-            strokeWidth="2.5"
-            filter="url(#radarGlow)"
-          />
-
-          {points.map((point) => (
-            <circle
-              key={`${point.key}-dot`}
-              cx={point.x}
-              cy={point.y}
-              r="7.5"
-              fill="#f7d79c"
-              stroke="#8f5b26"
-              strokeWidth="2"
-            />
-          ))}
-        </svg>
+          )
+        })}
 
         {points.map((point) => (
-          <div key={`${point.key}-label`} className={`radar-vertex-label ${point.labelClass}`}>
-            <span>{point.label}</span>
-            <strong>{point.value}</strong>
-          </div>
+          <line
+            key={point.key}
+            x1={center}
+            y1={center}
+            x2={point.axisX}
+            y2={point.axisY}
+            stroke="rgba(228, 189, 126, 0.17)"
+            strokeWidth="1"
+          />
         ))}
-      </div>
+
+        <polygon
+          points={polygon}
+          fill="url(#radarFillCompact)"
+          stroke="#f0ca84"
+          strokeWidth="2.2"
+          filter="url(#radarGlowCompact)"
+        />
+
+        {points.map((point) => (
+          <circle
+            key={`${point.key}-dot`}
+            cx={point.x}
+            cy={point.y}
+            r="4.6"
+            fill="#f7d79c"
+            stroke="#8f5b26"
+            strokeWidth="1.5"
+          />
+        ))}
+
+        {points.map((point) => (
+          <g key={`${point.key}-label`}>
+            <text
+              x={point.labelX}
+              y={point.labelY - 3}
+              textAnchor={anchorFor(point.labelX)}
+              className="compact-radar-label"
+            >
+              {point.label}
+            </text>
+            <text
+              x={point.labelX}
+              y={point.labelY + 10}
+              textAnchor={anchorFor(point.labelX)}
+              className="compact-radar-value"
+            >
+              {point.value}
+            </text>
+          </g>
+        ))}
+      </svg>
     </div>
   )
 }
-
 
 const bartenderChallenges = [
   {
@@ -3477,7 +3486,11 @@ function ModeBanner({
 
 
 function recipeAmountLabel(amount) {
-  return amount === 'low' ? '少量' : amount === 'high' ? '较多' : '标准量'
+  return amount === 'small' || amount === 'low'
+    ? '少量'
+    : amount === 'large' || amount === 'high'
+      ? '较多'
+      : '标准量'
 }
 
 function buildArchiveRecord({ review, spirit, selectedIngredients, amounts, technique, glass, appearance, photo }) {
@@ -3512,6 +3525,19 @@ function loadImageForCanvas(src) {
     image.onerror = reject
     image.src = src
   })
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+}
+
+function isWeChatBrowser() {
+  return /MicroMessenger/i.test(navigator.userAgent)
 }
 
 async function createRecipeShareFile(record) {
@@ -3581,8 +3607,18 @@ async function createRecipeShareFile(record) {
   ctx.font = '20px sans-serif'
   ctx.fillText('风味调酒室 · 保存这张图，分享你的原创配方', 105, 1380)
 
-  const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 0.94))
-  return new File([blob], `${record.title || '原创鸡尾酒'}.png`, { type: 'image/png' })
+  const blob = await new Promise((resolve, reject) => {
+    canvas.toBlob((result) => {
+      if (result) resolve(result)
+      else reject(new Error('海报图片生成失败'))
+    }, 'image/png', 0.94)
+  })
+
+  return new File(
+    [blob],
+    `${record.title || '原创鸡尾酒'}.png`,
+    { type: 'image/png' },
+  )
 }
 
 
@@ -3707,6 +3743,9 @@ function App() {
   })
   const [selectedArchive, setSelectedArchive] = useState(null)
   const [shareNotice, setShareNotice] = useState('')
+  const [sharePreviewUrl, setSharePreviewUrl] = useState('')
+  const [sharePreviewRecord, setSharePreviewRecord] = useState(null)
+  const [shareReturnPage, setShareReturnPage] = useState('result')
 
   const [challengeProgress, setChallengeProgress] = useState(() => {
     try {
@@ -4071,29 +4110,36 @@ function App() {
 
   async function shareRecipe(record = currentArchiveRecord()) {
     if (!record) return
-    setShareNotice('正在生成分享卡片…')
+
+    setShareNotice('正在生成分享海报…')
+
     try {
       const file = await createRecipeShareFile(record)
-      if (
-        navigator.share &&
-        navigator.canShare?.({ files: [file] })
-      ) {
+      const previewUrl = await fileToDataUrl(file)
+
+      if (isWeChatBrowser()) {
+        setSharePreviewRecord(record)
+        setSharePreviewUrl(previewUrl)
+        setShareReturnPage(page)
+        setPage('share-preview')
+        setShareNotice('')
+        return
+      }
+
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           title: record.title,
           text: `我在风味调酒室调出了「${record.title}」`,
           files: [file],
         })
-        setShareNotice('分享卡片已生成')
+        setShareNotice('分享完成')
       } else {
-        const url = URL.createObjectURL(file)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = file.name
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        URL.revokeObjectURL(url)
-        setShareNotice('图片已保存，可发送到微信')
+        setSharePreviewRecord(record)
+        setSharePreviewUrl(previewUrl)
+        setShareReturnPage(page)
+        setPage('share-preview')
+        setShareNotice('')
+        return
       }
     } catch (error) {
       if (error?.name !== 'AbortError') {
@@ -4102,11 +4148,82 @@ function App() {
         setShareNotice('')
       }
     }
-    window.setTimeout(() => setShareNotice(''), 2400)
+
+    window.setTimeout(() => setShareNotice(''), 2000)
+  }
+
+  async function copyShareText() {
+    const record = sharePreviewRecord
+    if (!record) return
+
+    const text = `我在「风味调酒室」调出了一杯「${record.title}」。${
+      record.chapterTitle ? `\n${record.chapterTitle}` : ''
+    }\n你会调出什么酒？`
+
+    try {
+      await navigator.clipboard.writeText(text)
+      setShareNotice('分享文案已复制')
+    } catch {
+      setShareNotice('长按文案即可复制')
+    }
+
+    window.setTimeout(() => setShareNotice(''), 1800)
+  }
+
+  function closeSharePreview() {
+    const returnPage = shareReturnPage || 'result'
+    setPage(returnPage)
   }
 
 
 
+  if (page === 'share-preview' && sharePreviewUrl && sharePreviewRecord) {
+    return (
+      <main className="app share-preview-app">
+        <section className="share-preview-panel">
+          <div className="share-preview-topbar">
+            <button type="button" onClick={closeSharePreview}>← 返回</button>
+            <div>
+              <small>SHARE YOUR CREATION</small>
+              <strong>长按海报保存到相册</strong>
+            </div>
+          </div>
+
+          {shareNotice && <div className="share-toast">{shareNotice}</div>}
+
+          <div className="share-image-shell">
+            <img
+              src={sharePreviewUrl}
+              alt={`${sharePreviewRecord.title}分享海报`}
+              className="share-preview-image"
+            />
+          </div>
+
+          <p className="share-preview-tip">
+            在微信里长按上方图片，选择“保存图片”，然后即可发送给朋友。
+          </p>
+
+          <div className="share-preview-actions">
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={copyShareText}
+            >
+              复制分享文案
+            </button>
+            <a
+              className="primary-button share-original-link"
+              href={sharePreviewUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              打开高清原图
+            </a>
+          </div>
+        </section>
+      </main>
+    )
+  }
 
   if (page === 'result' && resultCocktail && creativeReview) {
     const isCollected = collection.some((item) => item.signature === creativeReview.signature)
@@ -4151,7 +4268,7 @@ function App() {
             <button className="back-button" onClick={() => setPage('glasses')}>
               ← 返回杯型
             </button>
-            <span className="step-label">RESULT V14</span>
+            <span className="step-label">原创作品</span>
           </div>
 
           {shareNotice && <div className="share-toast">{shareNotice}</div>}
@@ -4269,40 +4386,16 @@ function App() {
             </div>
           </section>
 
-          <section className="creative-dimension-card">
-            <div className="result-card-heading">
-              <div>
-                <small>CHARACTER</small>
-                <h3>酒的特点</h3>
-              </div>
+          <section className="compact-character-strip">
+            <div className="compact-character-heading">
+              <small>CHARACTER</small>
+              <h3>作品特点</h3>
             </div>
-
-            <div className="creative-dimension-grid">
-              <article>
-                <strong>{creativeReview.dimensions.balance}</strong>
-                <span>平衡感</span>
-                <p>甜、酸、苦与酒感之间的协调程度。</p>
-              </article>
-              <article>
-                <strong>{creativeReview.dimensions.layering}</strong>
-                <span>层次感</span>
-                <p>入口、中段和尾韵有没有变化。</p>
-              </article>
-              <article>
-                <strong>{creativeReview.dimensions.completion}</strong>
-                <span>完成度</span>
-                <p>工艺与杯型是否把味道撑起来。</p>
-              </article>
-              <article>
-                <strong>{creativeReview.dimensions.creativity}</strong>
-                <span>辨识度</span>
-                <p>这杯酒有没有自己的风格和记忆点。</p>
-              </article>
-              <article>
-                <strong>{creativeReview.dimensions.atmosphere}</strong>
-                <span>收口</span>
-                <p>尾韵与整体氛围是否舒服、耐喝。</p>
-              </article>
+            <div className="compact-character-values">
+              <span>平衡 {creativeReview.dimensions.balance}</span>
+              <span>层次 {creativeReview.dimensions.layering}</span>
+              <span>完成 {creativeReview.dimensions.completion}</span>
+              <span>辨识 {creativeReview.dimensions.creativity}</span>
             </div>
           </section>
 
@@ -4694,11 +4787,15 @@ function App() {
                     className={`compact-luxury-choice ${isSelected ? 'selected' : ''}`}
                     onClick={() => setSelectedGlass(glass)}
                   >
-                    <GlassPreview
-                      type={glass.id}
-                      color={drinkColor}
-                      effects={drinkEffects}
-                    />
+                    <div className="compact-glass-preview-frame">
+                      <div className="compact-glass-preview-scale">
+                        <GlassPreview
+                          type={glass.id}
+                          color={drinkColor}
+                          effects={drinkEffects}
+                        />
+                      </div>
+                    </div>
                     <strong>{glass.chinese}</strong>
                     <small>{glass.name}</small>
                   </button>
@@ -5189,17 +5286,16 @@ function App() {
             flavor={userFlavor}
           />
 
-          <div className="section-heading">
+          <div className="section-heading compact-spirit-heading">
             <p className="eyebrow">CHOOSE YOUR BASE</p>
-            <h2>选择基酒</h2>
-            <p>基酒决定鸡尾酒的主体风格。</p>
+            <h2>今晚从哪一种基酒开始？</h2>
           </div>
 
-          <div className="spirit-grid">
+          <div className="spirit-grid mobile-spirit-grid">
             {spirits.map((spirit) => (
               <button
                 key={spirit.id}
-                className={`spirit-card ${
+                className={`spirit-card mobile-spirit-card ${
                   selectedSpirit?.id === spirit.id ? 'selected' : ''
                 }`}
                 onClick={() => {
@@ -5209,12 +5305,18 @@ function App() {
                   setActiveGlassIndex(0)
                 }}
               >
-                <span className="spirit-icon">{spirit.icon}</span>
-                <span className="spirit-name">
-                  <strong>{spirit.name}</strong>
-                  <small>{spirit.chinese}</small>
+                <span className="mobile-spirit-icon" aria-hidden="true">
+                  {spirit.icon}
                 </span>
-                <span className="spirit-description">{spirit.description}</span>
+                <span className="mobile-spirit-chinese">
+                  {spirit.chinese}
+                </span>
+                <span className="mobile-spirit-english">
+                  {spirit.name}
+                </span>
+                {selectedSpirit?.id === spirit.id && (
+                  <span className="mobile-spirit-check">✓</span>
+                )}
               </button>
             ))}
           </div>
@@ -5272,10 +5374,12 @@ function App() {
             onClick={() => startMode('free')}
           >
             <span className="simple-mode-icon">🥃</span>
-            <small>FREE CREATION</small>
-            <h2>自由创作</h2>
-            <p>没有标准答案，随心搭配，调出只属于你的作品。</p>
-            <strong>开始创作 →</strong>
+            <span className="simple-mode-content">
+              <small>FREE CREATION</small>
+              <h2>自由创作</h2>
+              <p>调一杯只属于你的酒</p>
+              <strong>开始创作 →</strong>
+            </span>
           </button>
 
           <button
@@ -5284,10 +5388,12 @@ function App() {
             onClick={() => startMode('classic')}
           >
             <span className="simple-mode-icon">📜</span>
-            <small>CLASSIC CHALLENGE</small>
-            <h2>经典挑战</h2>
-            <p>根据线索，复刻世界经典鸡尾酒。</p>
-            <strong>进入挑战 →</strong>
+            <span className="simple-mode-content">
+              <small>CLASSIC CHALLENGE</small>
+              <h2>经典挑战</h2>
+              <p>根据线索复刻经典</p>
+              <strong>进入挑战 →</strong>
+            </span>
           </button>
 
           <button
@@ -5296,12 +5402,14 @@ function App() {
             onClick={() => startMode('bartender')}
           >
             <span className="simple-mode-icon">🎯</span>
-            <small>DAILY BARTENDER</small>
-            <h2>酒保挑战</h2>
-            <p>接受限定条件，完成今天的调酒任务。</p>
-            <strong>
-              {todayBartenderCompleted ? '今日已完成 ✓' : '接受任务 →'}
-            </strong>
+            <span className="simple-mode-content">
+              <small>DAILY BARTENDER</small>
+              <h2>酒保挑战</h2>
+              <p>接受今晚的限定任务</p>
+              <strong>
+                {todayBartenderCompleted ? '今日已完成 ✓' : '接受任务 →'}
+              </strong>
+            </span>
           </button>
         </div>
 
