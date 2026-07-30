@@ -9209,3 +9209,150 @@ body,
     max-height: 340px;
   }
 }
+
+
+/* =========================================================
+   V17.5.3 COMPLETE RESULT GLASS + DIRECT WECHAT FORWARD
+   ========================================================= */
+
+.dynamic-cocktail-result {
+  background:
+    radial-gradient(circle at 50% 34%, rgba(220,151,72,.19), transparent 38%),
+    linear-gradient(180deg, #21120d 0%, #0a0605 100%);
+}
+
+.dynamic-glass-stage {
+  min-height: 430px;
+  aspect-ratio: 4 / 5;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(238,183,95,.14), transparent 40%),
+    linear-gradient(180deg, rgba(64,33,20,.34), rgba(8,5,4,.64));
+}
+
+.dynamic-glass-stage::before {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  z-index: 0;
+  border: 1px solid rgba(224,181,106,.13);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 40px rgba(226,161,74,.05),
+    0 0 70px rgba(170,80,34,.07);
+}
+
+.result-complete-glass {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 300px;
+  height: 330px;
+  max-width: 86%;
+  overflow: visible;
+  filter:
+    drop-shadow(0 28px 24px rgba(0,0,0,.48))
+    drop-shadow(0 0 25px rgba(229,170,83,.2));
+}
+
+.result-complete-glass .glass-stage {
+  position: relative !important;
+  width: 260px !important;
+  height: 270px !important;
+  margin: 0 !important;
+  transform: scale(1.12) !important;
+  transform-origin: center !important;
+}
+
+.result-glass-orbit {
+  position: absolute;
+  z-index: 2;
+  border: 1px solid rgba(225,180,105,.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.orbit-one {
+  width: 72%;
+  height: 34%;
+  transform: rotate(-9deg);
+}
+
+.orbit-two {
+  width: 52%;
+  height: 68%;
+  transform: rotate(13deg);
+}
+
+.result-glass-reflection {
+  position: absolute;
+  z-index: 2;
+  bottom: 12%;
+  left: 28%;
+  width: 44%;
+  height: 8%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(244,211,148,.24), transparent 68%);
+  filter: blur(8px);
+}
+
+.dynamic-glass-stage .cocktail-glow-one {
+  top: 15%;
+  left: 18%;
+  width: 64%;
+  height: 62%;
+}
+
+.dynamic-glass-stage .cocktail-glow-two {
+  right: 20%;
+  bottom: 12%;
+  width: 46%;
+  height: 25%;
+}
+
+.share-preview-tip {
+  color: rgba(247,239,227,.72);
+}
+
+.share-preview-topbar strong {
+  color: #efd09a;
+}
+
+.share-preview-actions button.primary-button {
+  width: 100%;
+  border: 1px solid rgba(225,184,108,.46);
+  background:
+    linear-gradient(145deg, rgba(143,88,41,.76), rgba(73,39,21,.82));
+  color: #fff4dd;
+}
+
+@media (max-width: 560px) {
+  .dynamic-glass-stage {
+    min-height: 390px;
+  }
+
+  .result-complete-glass {
+    width: 280px;
+    height: 310px;
+    max-width: 88%;
+  }
+
+  .result-complete-glass .glass-stage {
+    transform: scale(1.03) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .dynamic-glass-stage {
+    min-height: 360px;
+  }
+
+  .result-complete-glass {
+    width: 250px;
+    height: 285px;
+  }
+
+  .result-complete-glass .glass-stage {
+    transform: scale(.94) !important;
+  }
+}
