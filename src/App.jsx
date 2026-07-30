@@ -16,6 +16,7 @@ const ingredients = [
   { id: 'orange-juice', name: 'Orange Juice', chinese: '橙汁', icon: '🍊', category: '果汁', role: '增加柔和甜感和柑橘果香，同时降低基酒的刺激感。' },
   { id: 'sugar-syrup', name: 'Sugar Syrup', chinese: '糖浆', icon: '🍯', category: '甜味', role: '平衡柠檬或青柠的酸度，使整体口感更加圆润。' },
   { id: 'honey-syrup', name: 'Honey Syrup', chinese: '蜂蜜糖浆', icon: '🐝', category: '甜味', role: '增加甜度、花香和厚度，口感比普通糖浆更温暖。' },
+  { id: 'cucumber', name: 'Cucumber', chinese: '黄瓜', icon: '🥒', category: '清爽', role: '带来水润、清凉和干净植物感，尤其适合金酒与苏打。' },
   { id: 'mint', name: 'Mint', chinese: '薄荷', icon: '🌱', category: '香草', role: '增加清凉感和草本香气，让鸡尾酒更轻盈、清新。' },
   { id: 'soda-water', name: 'Soda Water', chinese: '苏打水', icon: '🫧', category: '气泡', role: '延长酒体、降低酒精强度，并增加清爽的气泡感。' },
   { id: 'tonic-water', name: 'Tonic Water', chinese: '汤力水', icon: '💧', category: '气泡', role: '带来气泡和奎宁苦味，尤其适合搭配金酒。' },
@@ -31,9 +32,94 @@ const ingredients = [
   { id: 'grenadine', name: 'Grenadine', chinese: '红石榴糖浆', icon: '🔻', category: '甜味', role: '带来红色渐层、甜味和果香，常用于日出类鸡尾酒。' },
   { id: 'cream', name: 'Cream', chinese: '奶油', icon: '🥛', category: '质地', role: '增加奶香、厚度和丝滑感，适合甜点型鸡尾酒。' },
   { id: 'cacao-liqueur', name: 'Crème de Cacao', chinese: '可可利口酒', icon: '🍫', category: '利口酒', role: '增加巧克力、香草和甜感，是白兰地亚历山大的核心风味。' },
+  { id: 'grapefruit-juice', name: 'Grapefruit Juice', chinese: '西柚汁', icon: '🍊', category: '果香', role: '带来清爽酸苦和成熟柑橘香，适合龙舌兰、金酒与气泡长饮。' },
+  { id: 'apple-juice', name: 'Apple Juice', chinese: '苹果汁', icon: '🍎', category: '果香', role: '增加清甜果香和柔和酸度，适合白兰地、威士忌与茶香结构。' },
+  { id: 'pineapple-juice', name: 'Pineapple Juice', chinese: '菠萝汁', icon: '🍍', category: '果香', role: '带来明亮热带果香与柔和甜酸，适合朗姆及度假感配方。' },
+  { id: 'strawberry', name: 'Strawberry', chinese: '草莓', icon: '🍓', category: '果香', role: '增加柔和红果香与浪漫甜感，适合气泡、奶油和花香结构。' },
+  { id: 'raspberry', name: 'Raspberry', chinese: '覆盆子', icon: '🫐', category: '果香', role: '带来鲜明莓果酸香与宝石红色，适合香槟及法式风格。' },
+  { id: 'black-cherry', name: 'Black Cherry', chinese: '黑樱桃', icon: '🍒', category: '果香', role: '增加深色果香、成熟甜味和复古酒廊气息。' },
+  { id: 'vanilla-syrup', name: 'Vanilla Syrup', chinese: '香草糖浆', icon: '🌼', category: '甜味', role: '让酒体更圆润柔和，并带来甜点般的香草气息。' },
+  { id: 'sesame-syrup', name: 'Sesame Syrup', chinese: '芝麻糖浆', icon: '⚫', category: '甜味', role: '带来烘烤坚果香与东方甜点质感，适合茶香和深色基酒。' },
+  { id: 'osmanthus-syrup', name: 'Osmanthus Syrup', chinese: '桂花糖浆', icon: '🌼', category: '花香', role: '增加轻柔桂花香与东方甜润感，适合茶、柚子和气泡。' },
+  { id: 'rose-syrup', name: 'Rose Syrup', chinese: '玫瑰糖浆', icon: '🌹', category: '花香', role: '带来浪漫花香与柔和甜感，适合莓果、香槟和白色基酒。' },
+  { id: 'elderflower-liqueur', name: 'Elderflower Liqueur', chinese: '接骨木花利口酒', icon: '✿', category: '花香', role: '提供清雅花香、梨与荔枝般的轻甜感。' },
+  { id: 'violet-liqueur', name: 'Violet Liqueur', chinese: '紫罗兰利口酒', icon: '🪻', category: '花香', role: '带来紫罗兰花香和梦幻色彩，适合浪漫或奇幻风格。' },
+  { id: 'lillet-blanc', name: 'Lillet Blanc', chinese: '丽叶白', icon: '🥂', category: '加香酒', role: '提供葡萄、柑橘和轻微草本感，适合极简、优雅的烈酒结构。' },
+  { id: 'amaretto', name: 'Amaretto', chinese: '杏仁利口酒', icon: '🌰', category: '利口酒', role: '带来杏仁、坚果和柔和甜感，与威士忌和咖啡尤其协调。' },
+  { id: 'coffee-liqueur', name: 'Coffee Liqueur', chinese: '咖啡利口酒', icon: '☕', category: '利口酒', role: '增加深烘咖啡、焦糖和甜感，适合奶油、伏特加与甜点酒。' },
+  { id: 'absinthe', name: 'Absinthe', chinese: '苦艾酒', icon: '🧚', category: '草本', role: '少量即可带来强烈茴香、草本与神秘气息。' },
+  { id: 'apple-brandy', name: 'Apple Brandy', chinese: '苹果白兰地', icon: '🍏', category: '酒类辅料', role: '增加成熟苹果、木桶和温暖果香，适合文学复古风格。' },
+  { id: 'cognac', name: 'Cognac', chinese: '干邑', icon: '🏛️', category: '酒类辅料', role: '带来葡萄干、橡木和优雅暖香，适合法式与古典场景。' },
+  { id: 'sparkling-wine', name: 'Sparkling Wine', chinese: '起泡酒', icon: '🍾', category: '气泡', role: '增加细密气泡、庆祝感和干爽果香。' },
+  { id: 'earl-grey-tea', name: 'Earl Grey Tea', chinese: '伯爵茶', icon: '🫖', category: '茶香', role: '带来佛手柑与红茶香，适合英式、复古和书房场景。' },
+  { id: 'jasmine-tea', name: 'Jasmine Tea', chinese: '茉莉茶', icon: '🍵', category: '茶香', role: '提供清雅花茶香与东方留白感。' },
+  { id: 'yuzu', name: 'Yuzu', chinese: '柚子', icon: '🟡', category: '清爽', role: '带来明亮、细腻而独特的柑橘香，适合东方与清晨场景。' },
+  { id: 'plum', name: 'Plum', chinese: '梅子', icon: '🟣', category: '果香', role: '增加酸甜梅香和含蓄东方气息。' },
+  { id: 'rosemary', name: 'Rosemary', chinese: '迷迭香', icon: '🌿', category: '草本', role: '增加松针、木质与清冷草本香。' },
+  { id: 'orange-peel', name: 'Orange Peel', chinese: '橙皮', icon: '🟠', category: '装饰', role: '释放柑橘精油和成熟香气，适合威士忌、白兰地和苦味酒。' },
+  { id: 'lemon-peel', name: 'Lemon Peel', chinese: '柠檬皮', icon: '🟨', category: '装饰', role: '带来明亮柠檬精油香，适合马天尼和香槟结构。' },
+  { id: 'sea-salt', name: 'Sea Salt', chinese: '海盐', icon: '🧂', category: '特别风味', role: '少量强化果香与甜感，并增加海风般的矿物感。' },
+  { id: 'chili', name: 'Chili', chinese: '辣椒', icon: '🌶️', category: '特别风味', role: '带来热烈辛辣感，适合龙舌兰、热带水果和拉丁场景。' },
+  { id: 'cinnamon', name: 'Cinnamon', chinese: '肉桂', icon: '🪵', category: '特别风味', role: '增加温暖香料感，适合冬夜、咖啡和深色基酒。' },
 ]
 
 const ingredientMap = Object.fromEntries(ingredients.map((item) => [item.id, item]))
+
+const ingredientGroups = [
+  {
+    id: 'fresh',
+    name: '清爽',
+    icon: '✦',
+    ids: ['lime-juice', 'lemon-juice', 'grapefruit-juice', 'yuzu', 'mint', 'cucumber', 'soda-water'],
+  },
+  {
+    id: 'fruit',
+    name: '果香',
+    icon: '◌',
+    ids: ['orange-juice', 'pineapple-juice', 'cranberry-juice', 'apple-juice', 'strawberry', 'raspberry', 'black-cherry', 'plum', 'grenadine'],
+  },
+  {
+    id: 'sweet',
+    name: '甜味',
+    icon: '◇',
+    ids: ['sugar-syrup', 'honey-syrup', 'vanilla-syrup', 'sesame-syrup', 'osmanthus-syrup', 'rose-syrup'],
+  },
+  {
+    id: 'sparkling',
+    name: '气泡',
+    icon: '○',
+    ids: ['soda-water', 'tonic-water', 'ginger-beer', 'cola', 'sparkling-wine'],
+  },
+  {
+    id: 'herbal',
+    name: '草本与苦味',
+    icon: '❧',
+    ids: ['dry-vermouth', 'sweet-vermouth', 'campari', 'aromatic-bitters', 'absinthe', 'rosemary', 'earl-grey-tea', 'jasmine-tea', 'lillet-blanc'],
+  },
+  {
+    id: 'dessert',
+    name: '浓郁与甜点',
+    icon: '✧',
+    ids: ['cream', 'cacao-liqueur', 'coffee-liqueur', 'amaretto', 'egg-white', 'cinnamon'],
+  },
+  {
+    id: 'floral',
+    name: '花香与柔和',
+    icon: '❀',
+    ids: ['elderflower-liqueur', 'violet-liqueur', 'osmanthus-syrup', 'rose-syrup', 'jasmine-tea', 'vanilla-syrup'],
+  },
+  {
+    id: 'special',
+    name: '特别风味',
+    icon: '♢',
+    ids: ['triple-sec', 'apple-brandy', 'cognac', 'orange-peel', 'lemon-peel', 'sea-salt', 'chili', 'cinnamon'],
+  },
+]
+
+function groupIngredients(group) {
+  return group.ids.map((id) => ingredientMap[id]).filter(Boolean)
+}
+
 
 const techniques = [
   {
@@ -444,68 +530,30 @@ function GlassPreview({ type, color, effects }) {
 
 
 const localCocktailPhotos = [
-  {
-    id: 'amber-orange',
-    src: '/cocktails/amber-orange-cocktail-glass.png',
-    spiritAny: ['whisky', 'brandy', 'rum'],
-    ingredientAny: ['aromatic-bitters', 'sweet-vermouth', 'orange-juice', 'triple-sec'],
-    families: ['amber', 'gold', 'citrus'],
-  },
-  {
-    id: 'martini',
-    src: '/cocktails/classic-olive-martini.png',
-    spiritAny: ['gin', 'vodka'],
-    ingredientAny: ['dry-vermouth'],
-    families: ['crystal'],
-    glasses: ['martini'],
-  },
-  {
-    id: 'mule',
-    src: '/cocktails/copper-mint-lime-cocktail.png',
-    spiritAny: ['vodka', 'rum', 'tequila'],
-    ingredientAny: ['ginger-beer', 'lime-juice', 'mint'],
-    families: ['spice', 'herbal'],
-  },
-  {
-    id: 'champagne-citrus',
-    src: '/cocktails/lemon-champagne-bar.png',
-    spiritAny: ['gin', 'vodka', 'rum', 'tequila'],
-    ingredientAny: ['lemon-juice', 'soda-water', 'tonic-water'],
-    families: ['citrus', 'crystal', 'gold'],
-  },
-  {
-    id: 'mojito',
-    src: '/cocktails/mojito-highball-bar.png',
-    spiritAny: ['rum', 'gin', 'vodka'],
-    ingredientAny: ['mint', 'lime-juice', 'soda-water'],
-    ingredientAll: ['mint', 'lime-juice'],
-    families: ['herbal'],
-    glasses: ['highball'],
-  },
-  {
-    id: 'berry',
-    src: '/cocktails/pastel-berry-cocktail.png',
-    spiritAny: ['vodka', 'gin', 'rum', 'tequila'],
-    ingredientAny: ['cranberry-juice', 'grenadine'],
-    families: ['berry', 'sunrise', 'ruby'],
-  },
-  {
-    id: 'margarita',
-    src: '/cocktails/salt-rim-lime-margarita.png',
-    spiritAny: ['tequila'],
-    ingredientAny: ['lime-juice', 'triple-sec'],
-    ingredientAll: ['lime-juice', 'triple-sec'],
-    families: ['citrus', 'herbal'],
-    glasses: ['coupe', 'martini'],
-  },
-  {
-    id: 'whisky-orange',
-    src: '/cocktails/whisky-orange-closeup.png',
-    spiritAny: ['whisky', 'brandy'],
-    ingredientAny: ['orange-juice', 'aromatic-bitters', 'cola'],
-    families: ['amber', 'cola'],
-    glasses: ['old-fashioned'],
-  },
+  { id:'amber-orange', src:'/cocktails/amber-orange-cocktail-glass.png', spiritAny:['whisky','brandy','rum'], ingredientAny:['aromatic-bitters','sweet-vermouth','orange-juice','triple-sec','honey-syrup'], families:['amber','gold','citrus'], glasses:['old-fashioned','coupe'] },
+  { id:'amber-orange-close', src:'/cocktails/amber-orange-close.webp', spiritAny:['whisky','brandy'], ingredientAny:['orange-juice','aromatic-bitters','sweet-vermouth'], families:['amber','gold','citrus'], glasses:['old-fashioned'] },
+  { id:'amber-honey', src:'/cocktails/amber-honey.webp', spiritAny:['whisky','brandy','rum'], ingredientAny:['honey-syrup','aromatic-bitters'], ingredientAll:['honey-syrup'], families:['amber','gold'], glasses:['old-fashioned','coupe'] },
+  { id:'martini', src:'/cocktails/classic-olive-martini.png', spiritAny:['gin','vodka'], ingredientAny:['dry-vermouth'], ingredientAll:['dry-vermouth'], families:['crystal'], glasses:['martini'] },
+  { id:'martini-cold', src:'/cocktails/martini-cold.webp', spiritAny:['gin','vodka'], ingredientAny:['dry-vermouth','tonic-water'], families:['crystal','herbal'], glasses:['martini','coupe'] },
+  { id:'martini-herbal', src:'/cocktails/martini-herbal.webp', spiritAny:['gin'], ingredientAny:['dry-vermouth','mint','aromatic-bitters'], families:['crystal','herbal'], glasses:['martini'] },
+  { id:'mule', src:'/cocktails/copper-mint-lime-cocktail.png', spiritAny:['vodka','rum','tequila'], ingredientAny:['ginger-beer','lime-juice','mint'], families:['spice','herbal'], glasses:['highball','old-fashioned'] },
+  { id:'mule-ginger', src:'/cocktails/mule-ginger.webp', spiritAny:['vodka','rum','tequila'], ingredientAny:['ginger-beer','lime-juice'], ingredientAll:['ginger-beer'], families:['spice','citrus'], glasses:['highball'] },
+  { id:'mule-mint', src:'/cocktails/mule-mint.webp', spiritAny:['rum','vodka'], ingredientAny:['mint','ginger-beer','lime-juice'], ingredientAll:['mint'], families:['herbal','spice'], glasses:['highball'] },
+  { id:'champagne-citrus', src:'/cocktails/lemon-champagne-bar.png', spiritAny:['gin','vodka','rum','tequila'], ingredientAny:['lemon-juice','soda-water','tonic-water'], families:['citrus','crystal','gold'], glasses:['flute','highball','coupe'] },
+  { id:'lemon-bubbles', src:'/cocktails/lemon-bubbles.webp', spiritAny:['gin','vodka'], ingredientAny:['lemon-juice','soda-water','tonic-water'], ingredientAll:['lemon-juice'], families:['citrus','crystal'], glasses:['flute','highball'] },
+  { id:'golden-bubbles', src:'/cocktails/golden-bubbles.webp', spiritAny:['rum','brandy','tequila'], ingredientAny:['soda-water','ginger-beer','orange-juice'], families:['gold','citrus'], glasses:['flute','highball'] },
+  { id:'mojito', src:'/cocktails/mojito-highball-bar.png', spiritAny:['rum','gin','vodka'], ingredientAny:['mint','lime-juice','soda-water'], ingredientAll:['mint','lime-juice'], families:['herbal'], glasses:['highball'] },
+  { id:'mojito-lime', src:'/cocktails/mojito-lime.webp', spiritAny:['rum','gin'], ingredientAny:['mint','lime-juice','soda-water'], ingredientAll:['lime-juice'], families:['herbal','citrus'], glasses:['highball'] },
+  { id:'mojito-green', src:'/cocktails/mojito-green.webp', spiritAny:['rum','gin','vodka'], ingredientAny:['mint','lime-juice'], ingredientAll:['mint'], families:['herbal'], glasses:['highball'] },
+  { id:'berry', src:'/cocktails/pastel-berry-cocktail.png', spiritAny:['vodka','gin','rum','tequila'], ingredientAny:['cranberry-juice','grenadine'], families:['berry','sunrise','ruby'], glasses:['coupe','martini','highball'] },
+  { id:'berry-deep', src:'/cocktails/berry-deep.webp', spiritAny:['vodka','gin','rum'], ingredientAny:['cranberry-juice','grenadine','triple-sec'], ingredientAll:['cranberry-juice'], families:['berry','ruby'], glasses:['coupe','martini'] },
+  { id:'berry-soft', src:'/cocktails/berry-soft.webp', spiritAny:['vodka','rum','brandy'], ingredientAny:['grenadine','cream'], families:['berry','sunrise'], glasses:['coupe','martini'] },
+  { id:'margarita', src:'/cocktails/salt-rim-lime-margarita.png', spiritAny:['tequila'], ingredientAny:['lime-juice','triple-sec'], ingredientAll:['lime-juice','triple-sec'], families:['citrus','herbal'], glasses:['coupe','martini'] },
+  { id:'margarita-lime', src:'/cocktails/margarita-lime.webp', spiritAny:['tequila'], ingredientAny:['lime-juice','triple-sec','sugar-syrup'], ingredientAll:['lime-juice'], families:['citrus','herbal'], glasses:['coupe','martini'] },
+  { id:'margarita-gold', src:'/cocktails/margarita-gold.webp', spiritAny:['tequila'], ingredientAny:['orange-juice','triple-sec','lime-juice'], families:['gold','citrus'], glasses:['coupe','martini'] },
+  { id:'whisky-orange', src:'/cocktails/whisky-orange-closeup.png', spiritAny:['whisky','brandy'], ingredientAny:['orange-juice','aromatic-bitters','cola'], families:['amber','cola'], glasses:['old-fashioned'] },
+  { id:'cola-dark', src:'/cocktails/cola-dark.webp', spiritAny:['whisky','rum','brandy'], ingredientAny:['cola','aromatic-bitters'], ingredientAll:['cola'], families:['cola','amber'], glasses:['highball','old-fashioned'] },
+  { id:'orange-night', src:'/cocktails/orange-night.webp', spiritAny:['whisky','brandy','rum'], ingredientAny:['orange-juice','triple-sec','aromatic-bitters'], families:['amber','citrus','gold'], glasses:['old-fashioned','coupe'] },
 ]
 
 function hashLocalPhoto(value) {
@@ -532,9 +580,11 @@ function pickLocalCocktailPhoto({
       if (photo.glasses?.includes(glass?.id)) score += 8
 
       if (photo.ingredientAny) {
-        score +=
-          photo.ingredientAny.filter((id) => ingredientIds.includes(id)).length *
-          5
+        const matchedCount = photo.ingredientAny.filter((id) =>
+          ingredientIds.includes(id),
+        ).length
+        score += matchedCount * 7
+        if (matchedCount === 0) score -= 5
       }
 
       if (
@@ -1499,132 +1549,130 @@ function chooseNarrative(options, signature, salt) {
 }
 
 function buildCinematicNarrative(selection, flavor, signature) {
-  const ingredientIds = selection.ingredients.map((item) => item.id)
-  const hasBubbles = ingredientIds.some((id) =>
-    ['soda-water', 'tonic-water', 'cola', 'ginger-beer'].includes(id),
-  )
-  const hasCream = ingredientIds.includes('cream')
-  const hasCacao = ingredientIds.includes('cacao-liqueur')
-  const hasMint = ingredientIds.includes('mint')
-  const hasBerry = ingredientIds.some((id) =>
-    ['cranberry-juice', 'grenadine'].includes(id),
-  )
-  const hasCitrus = ingredientIds.some((id) =>
-    ['lemon-juice', 'lime-juice', 'orange-juice'].includes(id),
-  )
+  const ids = selection.ingredients.map((item) => item.id)
+  const spirit = selection.spirit?.id
+  const has = (...values) => values.some((value) => ids.includes(value))
+  const bubbles = has('soda-water', 'tonic-water', 'ginger-beer', 'sparkling-wine', 'cola')
+  const floral = has('elderflower-liqueur', 'violet-liqueur', 'rose-syrup', 'osmanthus-syrup', 'jasmine-tea')
+  const tea = has('earl-grey-tea', 'jasmine-tea')
+  const tropical = has('pineapple-juice', 'coconut-milk') || spirit === 'rum'
+  const dessert = has('cream', 'cacao-liqueur', 'coffee-liqueur', 'amaretto', 'vanilla-syrup')
+  const herbal = has('mint', 'cucumber', 'rosemary', 'dry-vermouth', 'lillet-blanc', 'absinthe')
+  const berry = has('cranberry-juice', 'grenadine', 'strawberry', 'raspberry', 'black-cherry')
+  const spicy = has('ginger-beer', 'chili', 'cinnamon')
+  const minimal = ids.length <= 2 && selection.technique?.id === 'stir'
+  const eastern = tea || has('yuzu', 'plum', 'osmanthus-syrup', 'sesame-syrup')
+  const celebratory = bubbles && (berry || floral || has('orange-juice', 'sparkling-wine'))
 
-  let chapterTitles = [
-    '这一杯，发生在夜里',
-    '杯里的冰，比告别融化得更慢',
-    '凌晨以后，故事才开始有味道',
-    '有些夜晚，适合把答案留在杯底',
-  ]
+  let style = 'urban'
+  if (minimal) style = 'minimal'
+  else if (eastern) style = 'eastern'
+  else if (dessert) style = 'healing'
+  else if (tropical) style = 'island'
+  else if (celebratory) style = 'celebration'
+  else if (floral || berry) style = 'romance'
+  else if (herbal) style = 'nature'
+  else if (spicy || spirit === 'tequila') style = 'adventure'
+  else if (has('absinthe', 'violet-liqueur')) style = 'mystery'
+  else if (spirit === 'whisky' || spirit === 'brandy') style = 'jazz'
 
-  let paragraphs = [
-    '夜已经很深了。吧台上的灯只照亮杯口，剩下的事情，都藏在冰块慢慢融化的声音里。',
-    '这杯酒没有急着解释自己。它只是停在那里，像一段没有说完的话，等你在某个安静的时刻重新想起。',
-  ]
-
-  let moodTags = ['夜色', '旧故事', '适合独饮']
-
-  if (selection.spirit?.id === 'tequila') {
-    chapterTitles = [
-      '这条公路，没有回程',
-      '傍晚的热气还没有散',
-      '有人在日落前离开了城市',
-    ]
-    paragraphs = [
-      '傍晚的公路还带着热气。车窗外的灯一盏一盏退后，像一些来不及告别的人。',
-      '龙舌兰把夜色拉得很长。你没有问终点，因为有些远行，本来就不是为了回来。',
-    ]
-    moodTags = ['公路', '远行', '未完成的告别']
-  } else if (selection.spirit?.id === 'whisky') {
-    chapterTitles = [
-      '那封旧信，后来没有寄出',
-      '琥珀色的夜，比往事更慢',
-      '有些事情，只适合在午夜想起',
-    ]
-    paragraphs = [
-      '他总在午夜以后点这一杯。灯光落在琥珀色酒液里，旧事忽然显得没有那么锋利。',
-      '杯底还留着一点温度。有人说时间会让一切过去，可有些味道，只是学会了不再开口。',
-    ]
-    moodTags = ['旧信', '琥珀灯光', '迟来的原谅']
-  } else if (selection.spirit?.id === 'gin') {
-    chapterTitles = [
-      '雨停以前，她没有离开',
-      '植物在夜里交换秘密',
-      '月光落进了空房间',
-    ]
-    paragraphs = [
-      '窗外下着一场很轻的雨。植物的气息从杯口经过，没有留下脚步。',
-      '房间里很安静，只有冰块偶尔碰一下杯壁。像某个人走了很久以后，空气还记得她来过。',
-    ]
-    moodTags = ['雨夜', '植物', '冷静的浪漫']
-  } else if (selection.spirit?.id === 'rum') {
-    chapterTitles = [
-      '夏天不应该用来等待',
-      '海风吹走了最后一句话',
-      '日落以后，岛屿还醒着',
-    ]
-    paragraphs = [
-      '海风从很远的地方来，带着一点潮湿和没有完成的夏天。',
-      '他喝完以后笑了一下，像是终于想起，有些晚上不必等谁，只需要让风继续吹。',
-    ]
-    moodTags = ['海风', '盛夏', '重新出发']
-  } else if (selection.spirit?.id === 'vodka') {
-    chapterTitles = [
-      '凌晨两点，城市仍然清醒',
-      '霓虹熄灭以前，谁也没有回头',
-      '她把答案留在了末班车上',
-    ]
-    paragraphs = [
-      '城市到了凌晨才显出真正的样子。街灯很冷，玻璃窗里的人看起来都像在等一条不会来的消息。',
-      '这杯酒很安静，也很直接。像一句删掉了很多次，最后还是没有发送的话。',
-    ]
-    moodTags = ['霓虹', '末班车', '克制']
-  } else if (selection.spirit?.id === 'brandy') {
-    chapterTitles = [
-      '店要打烊的时候，她又点了一杯',
-      '旧唱片转到最后一首',
-      '暖灯下面，时间走得很慢',
-    ]
-    paragraphs = [
-      '店要打烊的时候，她又点了一杯。灯光很暖，唱片也快转到最后一首。',
-      '她并不是在庆祝什么，只是今晚还不想回家。有些温柔，只够陪人坐到门外天亮。',
-    ]
-    moodTags = ['暖灯', '旧唱片', '不想回家']
+  const libraries = {
+    minimal: {
+      titles: ['它没有多余的话', '所有线条都停在刚刚好', '大理石吧台上的一束冷光'],
+      stories: [
+        '酒液清澈，结构克制。它像一件剪裁准确的黑色礼服，不需要额外装饰，也不急着获得谁的理解。',
+        '杯中没有拥挤的声音。每一种味道都保持距离，却在最后形成了安静而明确的轮廓。',
+      ],
+      tags: ['极简酒廊', '清澈线条', '克制锋利'],
+    },
+    eastern: {
+      titles: ['雨落过以后，庭院里只剩香气', '纸灯没有熄灭', '风经过木窗时很轻'],
+      stories: [
+        '茶香先停在杯口，花与柚子的明亮随后慢慢展开。它不急着结束，像雨后庭院里一盏仍亮着的纸灯。',
+        '这杯酒留了很多空白。梅子或茶的微涩藏在后面，前面只有一阵很轻的风，经过木窗，也经过安静的夜。',
+      ],
+      tags: ['雨后庭院', '东方香气', '安静余韵'],
+    },
+    healing: {
+      titles: ['窗外很冷，杯子里没有', '时间在暖灯下面慢下来', '今晚不必赶路'],
+      stories: [
+        '奶油、咖啡或坚果香把声音放低。它像冬夜里没有关掉的一盏灯，让人愿意再坐一会儿。',
+        '这一杯不负责解决问题，只负责让时间慢下来。甜香柔和，杯壁温暖，连窗外的风也显得没那么着急。',
+      ],
+      tags: ['冬夜书房', '暖灯', '慢慢松弛'],
+    },
+    island: {
+      titles: ['今天不谈明天', '海风替你关掉了闹钟', '岛屿在杯底醒来'],
+      stories: [
+        '热带果香把阳光带进杯里，朗姆或气泡像一阵慢下来的海风。它不适合赶路，只适合暂时离线。',
+        '第一口像沙滩上的光，第二口像棕榈树下的风。今晚没有计划，也没有必须回复的消息。',
+      ],
+      tags: ['海岛午后', '热带阳光', '暂时离线'],
+    },
+    celebration: {
+      titles: ['今晚不需要任何理由', '音乐刚好进入副歌', '气泡升起的时候，灯也亮了'],
+      stories: [
+        '果香在气泡里变得明亮。房间里的音乐刚好进入副歌，这杯酒没有秘密，只负责让今晚再闪耀一点。',
+        '杯底的气泡一颗颗升起，像庆祝正在发生。没有人需要解释为什么开心，举杯本身就是答案。',
+      ],
+      tags: ['屋顶派对', '明亮气泡', '不想散场'],
+    },
+    romance: {
+      titles: ['风刚好吹过她的裙角', '黄昏把时间染成柔软的颜色', '今晚的风，刚好适合心动'],
+      stories: [
+        '莓果与花香在杯中变得很轻。城市的灯从远处亮起，像一场还没有被命名的心动。',
+        '气味柔软，颜色明亮。她举起杯子的时候，黄昏刚好落在眼睛里，所有迟到的事情忽然都值得等待。',
+      ],
+      tags: ['黄昏露台', '柔软果香', '轻轻心动'],
+    },
+    nature: {
+      titles: ['雨停以后，植物开始呼吸', '风从玻璃温室里经过', '叶片上还留着水'],
+      stories: [
+        '黄瓜、薄荷或草本推开一扇凉爽的玻璃门。空气潮湿而清醒，像一场雨刚刚结束。',
+        '它像一座安静的温室。草木气息层层展开，气泡或柑橘让叶片上的水显得更明亮。',
+      ],
+      tags: ['雨后温室', '草木清香', '轻盈清醒'],
+    },
+    adventure: {
+      titles: ['地图在第一口以后展开', '这条路没有写终点', '热风从公路尽头吹来'],
+      stories: [
+        '青柠像方向，姜或辣椒像风。龙舌兰把地图摊开，剩下的路交给夜晚决定。',
+        '这一杯带着旅行的冲动。酸味让视野变亮，辛香催促脚步，公路尽头还有没有名字的城市。',
+      ],
+      tags: ['长途公路', '热风', '未知目的地'],
+    },
+    mystery: {
+      titles: ['这杯酒知道一些不能说的事', '月光翻开了最后一页', '门在午夜以后才会出现'],
+      stories: [
+        '草本、花香与苦味像一本没有署名的旧书。翻到最后一页时，仍有一句话没有被翻译。',
+        '它来自一间只在深夜营业的药房。香气先给出暗示，苦味却把真正的答案藏了起来。',
+      ],
+      tags: ['秘密药房', '月光', '未解谜语'],
+    },
+    jazz: {
+      titles: ['萨克斯在杯底停了一拍', '黄铜灯照着最后一张唱片', '低音走得比时间更慢'],
+      stories: [
+        '琥珀酒液像一段缓慢的低音。木桶、苦精或果干压低了声音，地下酒吧的灯也跟着暗了一点。',
+        '唱片转到最后一首，杯中的暖香仍然没有散去。它适合深色西装，也适合一段不必说完的独奏。',
+      ],
+      tags: ['地下爵士吧', '黄铜灯', '慢拍节奏'],
+    },
+    urban: {
+      titles: ['城市在玻璃后面保持安静', '夜色刚好落进杯里', '霓虹熄灭以前'],
+      stories: [
+        '酒液映着城市的灯，味道清楚而安静。今晚没有宏大的故事，只有一杯酒和一段属于自己的时间。',
+        '窗外的车灯缓慢经过。杯中风味逐渐展开，像城市在深夜终于放下了白天的语气。',
+      ],
+      tags: ['城市酒廊', '夜色', '独处时刻'],
+    },
   }
 
-  if (hasBerry) {
-    paragraphs = [
-      '她把最后一颗红色果实留在杯底，像留下一条没有发送的消息。',
-      '城市的灯很亮，可那天晚上，他们谁也没有真正看清对方。',
-    ]
-    moodTags = ['粉色霓虹', '短暂心动', '未发送的消息']
-  }
-
-  if (hasCream || hasCacao) {
-    paragraphs = [
-      '店里只剩最后一盏灯。奶油与可可让夜晚显得温柔，像一段被刻意放慢的时间。',
-      '她没有急着离开。杯子里的甜意很短，足够让人暂时忘记，门外还是同一座城市。',
-    ]
-    moodTags = ['午夜甜点', '暖灯', '不想回家']
-  }
-
-  if (hasMint && selection.spirit?.id !== 'gin') {
-    moodTags = ['薄荷夜风', '空房间', '短暂清醒']
-  }
-
-  if (hasBubbles) {
-    moodTags = [...moodTags.slice(0, 2), '灯光里的气泡']
-  } else if (hasCitrus) {
-    moodTags = [...moodTags.slice(0, 2), '一瞬明亮']
-  }
-
+  const selected = libraries[style]
   return {
-    chapterTitle: chooseNarrative(chapterTitles, signature, 'chapter-title'),
-    story: paragraphs.join(' '),
-    moodTags: [...new Set(moodTags)].slice(0, 3),
+    narrativeStyle: style,
+    chapterTitle: chooseNarrative(selected.titles, signature, `title-${style}`),
+    story: chooseNarrative(selected.stories, signature, `story-${style}`),
+    moodTags: selected.tags,
   }
 }
 
@@ -1800,6 +1848,7 @@ function buildCreativeReview(selection, flavor, classicReference) {
     chapterTitle: cinematicNarrative.chapterTitle,
     cinematicStory: cinematicNarrative.story,
     moodTags: cinematicNarrative.moodTags,
+    narrativeStyle: cinematicNarrative.narrativeStyle,
   }
 }
 
@@ -3426,6 +3475,205 @@ function ModeBanner({
   return null
 }
 
+
+function recipeAmountLabel(amount) {
+  return amount === 'low' ? '少量' : amount === 'high' ? '较多' : '标准量'
+}
+
+function buildArchiveRecord({ review, spirit, selectedIngredients, amounts, technique, glass, appearance, photo }) {
+  return {
+    id: `${Date.now()}-${review.signature}`,
+    signature: review.signature,
+    title: review.title,
+    chapterTitle: review.chapterTitle,
+    cinematicStory: review.cinematicStory,
+    moodTags: review.moodTags,
+    score: review.score,
+    scoreLabel: review.scoreLabel,
+    savedAt: new Date().toISOString(),
+    spirit: spirit ? { id: spirit.id, chinese: spirit.chinese, name: spirit.name } : null,
+    ingredients: selectedIngredients.map((item) => ({
+      id: item.id,
+      chinese: item.chinese,
+      name: item.name,
+      amount: amounts[item.id] ?? 'standard',
+    })),
+    technique: technique ? { id: technique.id, chinese: technique.chinese, name: technique.name } : null,
+    glass: glass ? { id: glass.id, chinese: glass.chinese, name: glass.name } : null,
+    appearance,
+    photoSrc: photo?.src ?? '',
+  }
+}
+
+function loadImageForCanvas(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = reject
+    image.src = src
+  })
+}
+
+async function createRecipeShareFile(record) {
+  const canvas = document.createElement('canvas')
+  canvas.width = 1080
+  canvas.height = 1440
+  const ctx = canvas.getContext('2d')
+  const gradient = ctx.createLinearGradient(0, 0, 0, 1440)
+  gradient.addColorStop(0, '#362119')
+  gradient.addColorStop(1, '#0d0908')
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, 1080, 1440)
+
+  if (record.photoSrc) {
+    try {
+      const image = await loadImageForCanvas(record.photoSrc)
+      const scale = Math.max(1080 / image.width, 570 / image.height)
+      const width = image.width * scale
+      const height = image.height * scale
+      ctx.drawImage(image, (1080 - width) / 2, (570 - height) / 2, width, height)
+      const shade = ctx.createLinearGradient(0, 0, 0, 610)
+      shade.addColorStop(0, 'rgba(10,7,6,.08)')
+      shade.addColorStop(1, 'rgba(10,7,6,.96)')
+      ctx.fillStyle = shade
+      ctx.fillRect(0, 0, 1080, 650)
+    } catch {}
+  }
+
+  ctx.textAlign = 'center'
+  ctx.fillStyle = '#ddb577'
+  ctx.font = '700 26px Arial'
+  ctx.fillText('COCKTAIL ODYSSEY', 540, 95)
+  ctx.fillStyle = '#fff7eb'
+  ctx.font = '64px serif'
+  ctx.fillText(record.title, 540, 500)
+  ctx.fillStyle = '#e8c997'
+  ctx.font = '36px serif'
+  ctx.fillText(record.chapterTitle || '这一杯，发生在夜里', 540, 570)
+
+  ctx.textAlign = 'left'
+  ctx.fillStyle = 'rgba(255,247,235,.82)'
+  ctx.font = '28px sans-serif'
+  let y = 690
+  const recipeLines = [
+    `基酒  ${record.spirit?.chinese ?? '自由创作'}`,
+    ...record.ingredients.slice(0, 6).map((item) => `${item.chinese}  ${recipeAmountLabel(item.amount)}`),
+    `工艺  ${record.technique?.chinese ?? '—'}    杯型  ${record.glass?.chinese ?? '—'}`,
+  ]
+  recipeLines.forEach((line) => {
+    ctx.fillText(line, 105, y)
+    y += 48
+  })
+
+  ctx.fillStyle = 'rgba(255,247,235,.58)'
+  ctx.font = '27px serif'
+  const story = String(record.cinematicStory || '').slice(0, 130)
+  const charsPerLine = 25
+  for (let i = 0; i < story.length && i < charsPerLine * 4; i += charsPerLine) {
+    ctx.fillText(story.slice(i, i + charsPerLine), 105, y + 45)
+    y += 46
+  }
+
+  ctx.fillStyle = '#d6a96d'
+  ctx.font = '24px sans-serif'
+  ctx.fillText((record.moodTags || []).join('  ·  '), 105, 1320)
+  ctx.fillStyle = 'rgba(255,255,255,.4)'
+  ctx.font = '20px sans-serif'
+  ctx.fillText('风味调酒室 · 保存这张图，分享你的原创配方', 105, 1380)
+
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png', 0.94))
+  return new File([blob], `${record.title || '原创鸡尾酒'}.png`, { type: 'image/png' })
+}
+
+
+function RecipeDock({
+  spirit,
+  ingredients,
+  amounts,
+  technique,
+  glass,
+  expanded,
+  onToggle,
+  onRemove,
+  onAmount,
+  onContinue,
+  continueLabel,
+  disabled,
+  stepLabel,
+}) {
+  const compactIngredients = ingredients.slice(0, 3).map((item) => item.chinese)
+  const remaining = Math.max(0, ingredients.length - compactIngredients.length)
+
+  return (
+    <aside className={`recipe-dock ${expanded ? 'expanded' : ''}`}>
+      <button className="recipe-dock-summary" type="button" onClick={onToggle}>
+        <span className="recipe-dock-gem">✦</span>
+        <span className="recipe-dock-copy">
+          <small>{stepLabel}</small>
+          <strong>
+            {spirit?.chinese ?? '未选基酒'}
+            {compactIngredients.length > 0 ? ` · ${compactIngredients.join(' / ')}` : ''}
+            {remaining > 0 ? ` +${remaining}` : ''}
+          </strong>
+        </span>
+        <span className="recipe-dock-chevron">{expanded ? '⌄' : '⌃'}</span>
+      </button>
+
+      {expanded && (
+        <div className="recipe-dock-detail">
+          <div className="dock-row">
+            <span>基酒</span>
+            <strong>{spirit ? `${spirit.chinese} · ${spirit.name}` : '尚未选择'}</strong>
+          </div>
+
+          <div className="dock-ingredient-chips">
+            {ingredients.length > 0 ? (
+              ingredients.map((item) => (
+                <span className="dock-chip" key={item.id}>
+                  <button type="button" onClick={() => onAmount?.(item.id)}>
+                    {item.chinese} · {
+                      amounts?.[item.id] === 'small'
+                        ? '少'
+                        : amounts?.[item.id] === 'large'
+                          ? '多'
+                          : '标准'
+                    }
+                  </button>
+                  <button type="button" onClick={() => onRemove?.(item)}>×</button>
+                </span>
+              ))
+            ) : (
+              <small className="dock-empty">还没有选择辅料</small>
+            )}
+          </div>
+
+          <div className="dock-meta-grid">
+            <div>
+              <span>工艺</span>
+              <strong>{technique?.chinese ?? '待选择'}</strong>
+            </div>
+            <div>
+              <span>杯型</span>
+              <strong>{glass?.chinese ?? '待选择'}</strong>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {onContinue && (
+        <button
+          className="recipe-dock-action"
+          type="button"
+          onClick={onContinue}
+          disabled={disabled}
+        >
+          {continueLabel}
+        </button>
+      )}
+    </aside>
+  )
+}
+
 function App() {
   const [page, setPage] = useState('home')
   const [gameMode, setGameMode] = useState('free')
@@ -3437,17 +3685,28 @@ function App() {
   const [selectedIngredients, setSelectedIngredients] = useState([])
   const [ingredientAmounts, setIngredientAmounts] = useState({})
   const [activeIngredientInfo, setActiveIngredientInfo] = useState(null)
+  const [activeIngredientGroup, setActiveIngredientGroup] = useState('fresh')
+  const [recipeDockExpanded, setRecipeDockExpanded] = useState(false)
   const [selectedTechnique, setSelectedTechnique] = useState(null)
   const [selectedGlass, setSelectedGlass] = useState(null)
   const [activeGlassIndex, setActiveGlassIndex] = useState(0)
   const [activeResultPhotoIndex, setActiveResultPhotoIndex] = useState(0)
   const [collection, setCollection] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('cocktail-collection') ?? '[]')
+      const stored = JSON.parse(
+        localStorage.getItem('cocktail-recipe-archive') ??
+          localStorage.getItem('cocktail-collection') ??
+          '[]',
+      )
+      return Array.isArray(stored)
+        ? stored.filter((item) => item && typeof item === 'object')
+        : []
     } catch {
       return []
     }
   })
+  const [selectedArchive, setSelectedArchive] = useState(null)
+  const [shareNotice, setShareNotice] = useState('')
 
   const [challengeProgress, setChallengeProgress] = useState(() => {
     try {
@@ -3580,6 +3839,13 @@ function App() {
         [ingredient.id]: 'standard',
       }))
     }
+  }
+
+
+  function cycleIngredientAmount(ingredientId) {
+    const current = ingredientAmounts[ingredientId] ?? 'standard'
+    const next = current === 'small' ? 'standard' : current === 'standard' ? 'large' : 'small'
+    setIngredientAmount(ingredientId, next)
   }
 
   function setIngredientAmount(ingredientId, level) {
@@ -3766,21 +4032,84 @@ function App() {
     }
   }, [page, creativeReview?.signature])
 
-  function addResultToCollection() {
-    if (!creativeReview) return
+  function currentArchiveRecord() {
+    if (!creativeReview) return null
+    const photo = pickLocalCocktailPhoto({
+      spirit: selectedSpirit,
+      ingredients: selectedIngredients,
+      appearance: drinkAppearance,
+      glass: selectedGlass,
+      signature: creativeReview.signature,
+    })
+    return buildArchiveRecord({
+      review: creativeReview,
+      spirit: selectedSpirit,
+      selectedIngredients,
+      amounts: ingredientAmounts,
+      technique: selectedTechnique,
+      glass: selectedGlass,
+      appearance: drinkAppearance,
+      photo,
+    })
+  }
 
-    const nextCollection = Array.from(
-      new Set([...collection, creativeReview.signature]),
-    )
+  function addResultToCollection() {
+    const record = currentArchiveRecord()
+    if (!record) return
+    const nextCollection = [
+      record,
+      ...collection.filter((item) => item.signature !== record.signature),
+    ]
     setCollection(nextCollection)
-    localStorage.setItem('cocktail-collection', JSON.stringify(nextCollection))
+    localStorage.setItem(
+      'cocktail-recipe-archive',
+      JSON.stringify(nextCollection),
+    )
+    setShareNotice('配方已保存到我的图鉴')
+    window.setTimeout(() => setShareNotice(''), 1800)
+  }
+
+  async function shareRecipe(record = currentArchiveRecord()) {
+    if (!record) return
+    setShareNotice('正在生成分享卡片…')
+    try {
+      const file = await createRecipeShareFile(record)
+      if (
+        navigator.share &&
+        navigator.canShare?.({ files: [file] })
+      ) {
+        await navigator.share({
+          title: record.title,
+          text: `我在风味调酒室调出了「${record.title}」`,
+          files: [file],
+        })
+        setShareNotice('分享卡片已生成')
+      } else {
+        const url = URL.createObjectURL(file)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = file.name
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        URL.revokeObjectURL(url)
+        setShareNotice('图片已保存，可发送到微信')
+      }
+    } catch (error) {
+      if (error?.name !== 'AbortError') {
+        setShareNotice('生成失败，请稍后再试')
+      } else {
+        setShareNotice('')
+      }
+    }
+    window.setTimeout(() => setShareNotice(''), 2400)
   }
 
 
 
 
   if (page === 'result' && resultCocktail && creativeReview) {
-    const isCollected = collection.includes(creativeReview.signature)
+    const isCollected = collection.some((item) => item.signature === creativeReview.signature)
     const colorPoetry = getColorPoetry(drinkAppearance)
     const selection = {
       spirit: selectedSpirit,
@@ -3824,6 +4153,8 @@ function App() {
             </button>
             <span className="step-label">RESULT V14</span>
           </div>
+
+          {shareNotice && <div className="share-toast">{shareNotice}</div>}
 
           {classicChallengeResult && (
             <section className="challenge-result-card classic-result-card">
@@ -4134,11 +4465,18 @@ function App() {
             </button>
 
             <button
+              className="secondary-button share-recipe-button"
+              onClick={() => shareRecipe()}
+            >
+              分享这杯酒
+            </button>
+
+            <button
               className="primary-button"
               disabled={isCollected}
               onClick={addResultToCollection}
             >
-              {isCollected ? '✓ 已收藏这杯作品' : '收藏这杯作品'}
+              {isCollected ? '✓ 配方已存档' : '保存配方'}
             </button>
           </div>
         </section>
@@ -4294,13 +4632,13 @@ function App() {
 
   if (page === 'techniques') {
     return (
-      <main className="app">
-        <section className="mixing-panel technique-panel">
-          <div className="top-bar">
+      <main className="app mobile-craft-app">
+        <section className="mixing-panel technique-panel luxury-panel compact-final-step">
+          <div className="top-bar compact-top-bar">
             <button className="back-button" onClick={() => setPage('ingredients')}>
-              ← 返回
+              ←
             </button>
-            <span className="step-label">STEP 3 / 4</span>
+            <span className="step-label">第 3 步 · 完成方式</span>
           </div>
 
           <ModeBanner
@@ -4314,87 +4652,92 @@ function App() {
             flavor={userFlavor}
           />
 
-          <div className="section-heading">
-            <p className="eyebrow">CHOOSE THE METHOD</p>
-            <h2>选择调酒工艺</h2>
-            <p>工艺会影响温度、稀释度、透明度和口感质地。</p>
+          <div className="section-heading compact-section-heading">
+            <p className="eyebrow">FINISH THE DRINK</p>
+            <h2>怎么完成这杯酒？</h2>
           </div>
 
-          <div className="recipe-overview">
-            <div>
-              <small>基酒</small>
-              <strong>{selectedSpirit?.chinese} · {selectedSpirit?.name}</strong>
+          <section className="compact-choice-section">
+            <div className="ornament-heading">
+              <span>01</span>
+              <h3>调制工艺</h3>
             </div>
-            <div>
-              <small>辅料</small>
-              <strong>{selectedIngredients.length} 种</strong>
+            <div className="compact-technique-grid">
+              {techniques.map((technique) => {
+                const isSelected = selectedTechnique?.id === technique.id
+                return (
+                  <button
+                    key={technique.id}
+                    className={`compact-luxury-choice ${isSelected ? 'selected' : ''}`}
+                    onClick={() => setSelectedTechnique(technique)}
+                  >
+                    <span>{technique.icon}</span>
+                    <strong>{technique.chinese}</strong>
+                    <small>{technique.name}</small>
+                  </button>
+                )
+              })}
             </div>
-          </div>
+          </section>
 
-          <div className="technique-list">
-            {techniques.map((technique) => {
-              const isSelected = selectedTechnique?.id === technique.id
+          <section className="compact-choice-section">
+            <div className="ornament-heading">
+              <span>02</span>
+              <h3>酒杯</h3>
+            </div>
+            <div className="compact-glass-grid">
+              {glasses.map((glass) => {
+                const isSelected = selectedGlass?.id === glass.id
+                return (
+                  <button
+                    key={glass.id}
+                    className={`compact-luxury-choice ${isSelected ? 'selected' : ''}`}
+                    onClick={() => setSelectedGlass(glass)}
+                  >
+                    <GlassPreview
+                      type={glass.id}
+                      color={drinkColor}
+                      effects={drinkEffects}
+                    />
+                    <strong>{glass.chinese}</strong>
+                    <small>{glass.name}</small>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
 
-              return (
-                <button
-                  key={technique.id}
-                  className={`technique-card ${isSelected ? 'selected' : ''}`}
-                  onClick={() => setSelectedTechnique(technique)}
-                >
-                  <span className="technique-icon">{technique.icon}</span>
-                  <span className="technique-content">
-                    <span className="technique-title">
-                      <strong>{technique.chinese}</strong>
-                      <small>{technique.name}</small>
-                    </span>
-                    <span className="technique-tagline">{technique.tagline}</span>
-                    <span className="technique-role">{technique.role}</span>
-                    <span className="effect-tags">
-                      {technique.effects.map((effect) => (
-                        <span key={effect}>{effect}</span>
-                      ))}
-                    </span>
-                  </span>
-                  <span className="technique-check">{isSelected ? '✓' : '＋'}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          <div className="selection-summary">
-            {selectedTechnique ? (
-              <>
-                <span>当前工艺</span>
-                <strong>
-                  {selectedTechnique.chinese} · {selectedTechnique.name}
-                </strong>
-              </>
-            ) : (
-              <span>请选择一种调酒工艺</span>
-            )}
-          </div>
-
-          <button
-            className="primary-button"
-            disabled={!selectedTechnique}
-            onClick={() => {
-              setActiveGlassIndex(0)
-              setSelectedGlass(glasses[0])
-              setPage('glasses')
-            }}
-          >
-            下一步：选择杯型
-          </button>
+          <div className="mobile-bottom-spacer final-spacer" />
         </section>
+
+        <RecipeDock
+          spirit={selectedSpirit}
+          ingredients={selectedIngredients}
+          amounts={ingredientAmounts}
+          technique={selectedTechnique}
+          glass={selectedGlass}
+          expanded={recipeDockExpanded}
+          onToggle={() => setRecipeDockExpanded((value) => !value)}
+          onRemove={toggleIngredient}
+          onAmount={cycleIngredientAmount}
+          stepLabel={
+            selectedTechnique && selectedGlass
+              ? '配方已完整'
+              : '请选择工艺与杯型'
+          }
+          continueLabel="完成这杯酒"
+          disabled={!selectedTechnique || !selectedGlass}
+          onContinue={finishMixing}
+        />
       </main>
     )
   }
 
   if (page === 'ingredients') {
     return (
-      <main className="app">
-        <section className="mixing-panel ingredient-panel">
-          <div className="top-bar">
+      <main className="app mobile-craft-app">
+        <section className="mixing-panel ingredient-panel luxury-panel">
+          <div className="top-bar compact-top-bar">
             <button
               className="back-button"
               onClick={() => {
@@ -4402,9 +4745,9 @@ function App() {
                 setActiveIngredientInfo(null)
               }}
             >
-              ← 返回
+              ←
             </button>
-            <span className="step-label">STEP 2 / 4</span>
+            <span className="step-label">第 2 步 · 选择风味</span>
           </div>
 
           <ModeBanner
@@ -4418,153 +4761,92 @@ function App() {
             flavor={userFlavor}
           />
 
-          <div className="section-heading">
-            <p className="eyebrow">BUILD THE FLAVOR</p>
-            <h2>添加辅料</h2>
-            <p>辅料负责调整酸、甜、苦、香气和质地。选择后再设定少量、标准或较多，最多 5 种。</p>
+          <div className="section-heading compact-section-heading">
+            <p className="eyebrow">FLAVOR CABINET</p>
+            <h2>想加入什么风味？</h2>
           </div>
 
-          <div className="current-base-card">
-            <span className="current-base-icon">{selectedSpirit?.icon}</span>
-            <div>
-              <small>当前基酒 · BASE SPIRIT</small>
-              <strong>{selectedSpirit?.chinese} · {selectedSpirit?.name}</strong>
-            </div>
-          </div>
-
-          <div className="ingredient-grid compact-grid">
-            {ingredients.map((ingredient) => {
-              const isSelected = selectedIngredients.some(
-                (item) => item.id === ingredient.id,
-              )
-              const isDisabled = selectedIngredients.length >= 5 && !isSelected
-              const showInfo = activeIngredientInfo === ingredient.id
+          <div className="ingredient-accordion">
+            {ingredientGroups.map((group) => {
+              const items = groupIngredients(group)
+              const selectedCount = items.filter((item) =>
+                selectedIngredients.some((selected) => selected.id === item.id),
+              ).length
+              const opened = activeIngredientGroup === group.id
 
               return (
-                <div
-                  key={ingredient.id}
-                  className="ingredient-card-wrapper"
-                  onMouseEnter={() => setActiveIngredientInfo(ingredient.id)}
-                  onMouseLeave={() => setActiveIngredientInfo(null)}
+                <section
+                  className={`ingredient-group ${opened ? 'open' : ''}`}
+                  key={group.id}
                 >
                   <button
-                    className={`ingredient-card compact-card ${
-                      isSelected ? 'selected' : ''
-                    }`}
-                    disabled={isDisabled}
-                    onClick={() => toggleIngredient(ingredient)}
-                  >
-                    <span className="ingredient-icon">{ingredient.icon}</span>
-                    <span className="compact-ingredient-name">
-                      <strong>{ingredient.chinese}</strong>
-                      <small>{ingredient.name}</small>
-                    </span>
-                    <span className="ingredient-category">{ingredient.category}</span>
-                    <span className="compact-action">{isSelected ? '✓' : '＋'}</span>
-                  </button>
-
-                  <button
                     type="button"
-                    className="info-button"
-                    aria-label={`查看${ingredient.chinese}的作用`}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      setActiveIngredientInfo(showInfo ? null : ingredient.id)
-                    }}
+                    className="ingredient-group-trigger"
+                    onClick={() =>
+                      setActiveIngredientGroup(opened ? null : group.id)
+                    }
                   >
-                    ⓘ
+                    <span className="ingredient-group-mark">{group.icon}</span>
+                    <strong>{group.name}</strong>
+                    {selectedCount > 0 && <small>已选 {selectedCount}</small>}
+                    <span>{opened ? '−' : '＋'}</span>
                   </button>
 
-                  {showInfo && (
-                    <div className="ingredient-tooltip">
-                      <div className="tooltip-heading">
-                        <span>{ingredient.icon}</span>
-                        <div>
-                          <strong>{ingredient.chinese}</strong>
-                          <small>{ingredient.name}</small>
-                        </div>
-                      </div>
-                      <span className="tooltip-category">
-                        主要作用 · {ingredient.category}
-                      </span>
-                      <p>{ingredient.role}</p>
+                  {opened && (
+                    <div className="ingredient-mini-grid">
+                      {items.map((ingredient) => {
+                        const isSelected = selectedIngredients.some(
+                          (item) => item.id === ingredient.id,
+                        )
+                        const isDisabled =
+                          selectedIngredients.length >= 5 && !isSelected
+
+                        return (
+                          <button
+                            key={ingredient.id}
+                            className={`ingredient-mini-card ${
+                              isSelected ? 'selected' : ''
+                            }`}
+                            disabled={isDisabled}
+                            onClick={() => toggleIngredient(ingredient)}
+                            title={ingredient.role}
+                          >
+                            <span>{ingredient.icon}</span>
+                            <strong>{ingredient.chinese}</strong>
+                            <small>{ingredient.name}</small>
+                            <i>{isSelected ? '✓' : '+'}</i>
+                          </button>
+                        )
+                      })}
                     </div>
                   )}
-                </div>
+                </section>
               )
             })}
           </div>
 
-          <div className="selected-recipe">
-            <div className="selected-recipe-heading">
-              <span>已选辅料</span>
-              <strong>{selectedIngredients.length} / 5</strong>
-            </div>
-
-            {selectedIngredients.length > 0 ? (
-              <div className="amount-editor-list">
-                {selectedIngredients.map((ingredient) => {
-                  const selectedLevel =
-                    ingredientAmounts[ingredient.id] ?? 'standard'
-
-                  return (
-                    <div className="amount-editor-row" key={ingredient.id}>
-                      <div className="amount-editor-name">
-                        <span>{ingredient.icon}</span>
-                        <div>
-                          <strong>{ingredient.chinese}</strong>
-                          <small>{ingredient.name}</small>
-                        </div>
-                      </div>
-
-                      <div className="amount-level-control">
-                        {amountLevels.map((level) => (
-                          <button
-                            type="button"
-                            key={level.id}
-                            className={
-                              selectedLevel === level.id ? 'active' : ''
-                            }
-                            onClick={() =>
-                              setIngredientAmount(ingredient.id, level.id)
-                            }
-                          >
-                            <strong>{level.chinese}</strong>
-                            <small>{amountLabel(ingredient.id, level.id)}</small>
-                          </button>
-                        ))}
-                      </div>
-
-                      <button
-                        type="button"
-                        className="amount-remove-button"
-                        onClick={() => toggleIngredient(ingredient)}
-                        aria-label={`移除${ingredient.chinese}`}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <p className="empty-selection">
-                暂未添加辅料，点击上方材料卡片进行选择。
-              </p>
-            )}
-          </div>
-
-          <button
-            className="primary-button"
-            disabled={selectedIngredients.length === 0}
-            onClick={() => {
-              setActiveIngredientInfo(null)
-              setPage('techniques')
-            }}
-          >
-            下一步：选择工艺
-          </button>
+          <div className="mobile-bottom-spacer" />
         </section>
+
+        <RecipeDock
+          spirit={selectedSpirit}
+          ingredients={selectedIngredients}
+          amounts={ingredientAmounts}
+          technique={selectedTechnique}
+          glass={selectedGlass}
+          expanded={recipeDockExpanded}
+          onToggle={() => setRecipeDockExpanded((value) => !value)}
+          onRemove={toggleIngredient}
+          onAmount={cycleIngredientAmount}
+          stepLabel={`已选 ${selectedIngredients.length} / 5 种辅料`}
+          continueLabel="决定工艺与杯型"
+          disabled={selectedIngredients.length === 0}
+          onContinue={() => {
+            setSelectedGlass(selectedGlass ?? glasses[0])
+            setPage('techniques')
+            setRecipeDockExpanded(false)
+          }}
+        />
       </main>
     )
   }
@@ -4580,8 +4862,8 @@ function App() {
 
           <div className="section-heading">
             <p className="eyebrow">COCKTAIL ARCHIVE</p>
-            <h2>我的调酒图鉴</h2>
-            <p>这里保存你收藏过的原创作品印章。</p>
+            <h2>我的配方图鉴</h2>
+            <p>这里保存你的原创酒名、完整配方、故事和成品图。</p>
             <div className="collection-level-chip">
               <span>当前身份</span>
               <strong>
@@ -4591,15 +4873,61 @@ function App() {
             </div>
           </div>
 
+          {shareNotice && <div className="share-toast collection-toast">{shareNotice}</div>}
+
+          {selectedArchive && (
+            <section className="archive-detail-card">
+              <button
+                className="archive-close-button"
+                onClick={() => setSelectedArchive(null)}
+              >
+                ×
+              </button>
+              <img src={selectedArchive.photoSrc} alt={selectedArchive.title} />
+              <div className="archive-detail-content">
+                <small>SAVED ORIGINAL RECIPE</small>
+                <h2>{selectedArchive.title}</h2>
+                <h3>{selectedArchive.chapterTitle}</h3>
+                <p>{selectedArchive.cinematicStory}</p>
+                <div className="archive-recipe-list">
+                  <div><span>基酒</span><strong>{selectedArchive.spirit?.chinese}</strong></div>
+                  {selectedArchive.ingredients.map((item) => (
+                    <div key={item.id}>
+                      <span>{item.chinese}</span>
+                      <strong>{recipeAmountLabel(item.amount)}</strong>
+                    </div>
+                  ))}
+                  <div><span>工艺</span><strong>{selectedArchive.technique?.chinese}</strong></div>
+                  <div><span>杯型</span><strong>{selectedArchive.glass?.chinese}</strong></div>
+                </div>
+                <div className="story-tags cinematic-story-tags">
+                  {(selectedArchive.moodTags || []).map((tag) => <span key={tag}>{tag}</span>)}
+                </div>
+                <button className="primary-button" onClick={() => shareRecipe(selectedArchive)}>
+                  生成分享卡片
+                </button>
+              </div>
+            </section>
+          )}
+
           {collection.length > 0 ? (
-            <div className="collection-stamp-grid">
-              {collection.map((signature, index) => (
-                <article className="collection-stamp-card" key={signature}>
-                  <div className="collection-stamp-icon">🍸</div>
-                  <small>ORIGINAL #{String(index + 1).padStart(2, '0')}</small>
-                  <h3>原创配方印章</h3>
-                  <p>{String(signature).slice(0, 28)}</p>
-                  <span>已收藏</span>
+            <div className="collection-recipe-grid">
+              {collection.map((record, index) => (
+                <article className="collection-recipe-card" key={record.id || record.signature}>
+                  <button className="collection-card-main" onClick={() => setSelectedArchive(record)}>
+                    <img src={record.photoSrc} alt={record.title} loading="lazy" />
+                    <div>
+                      <small>ORIGINAL #{String(collection.length - index).padStart(2, '0')}</small>
+                      <h3>{record.title}</h3>
+                      <p>
+                        {record.spirit?.chinese} · {record.ingredients.map((item) => item.chinese).slice(0, 3).join(' · ')}
+                      </p>
+                      <span>{record.technique?.chinese} · {record.glass?.chinese}</span>
+                    </div>
+                  </button>
+                  <button className="collection-share-mini" onClick={() => shareRecipe(record)}>
+                    分享
+                  </button>
                 </article>
               ))}
             </div>
@@ -4607,7 +4935,7 @@ function App() {
             <div className="empty-collection-v14">
               <span>🍹</span>
               <h3>图鉴还是空的</h3>
-              <p>完成一杯作品后，点击“收藏这杯酒”即可加入图鉴。</p>
+              <p>完成一杯作品后，点击“保存配方”即可加入图鉴。</p>
               <button
                 className="primary-button"
                 onClick={() => startMode('free')}
@@ -4847,7 +5175,7 @@ function App() {
         <section className="mixing-panel">
           <div className="top-bar">
             <button className="back-button" onClick={goHome}>← 返回</button>
-            <span className="step-label">STEP 1 / 4</span>
+            <span className="step-label">第 1 步 · 选择基酒</span>
           </div>
 
           <ModeBanner
@@ -4907,7 +5235,7 @@ function App() {
             disabled={!selectedSpirit}
             onClick={() => setPage('ingredients')}
           >
-            下一步：添加辅料
+            选择风味
           </button>
         </section>
       </main>
@@ -4988,7 +5316,7 @@ function App() {
           className="simple-gallery-button"
           onClick={() => setPage('collection')}
         >
-          我的调酒图鉴
+          我的配方图鉴
         </button>
       </section>
     </main>
