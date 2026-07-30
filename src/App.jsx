@@ -652,16 +652,27 @@ function CocktailPhotoResult({
   })
 
   return (
-    <div className={`real-photo-result local-photo-result scene-${appearance.family}`}>
-      <img src={photo.src} alt={`${drinkName}的酒吧成品照`} />
-      <div className="real-photo-overlay" />
-      <div className="real-photo-caption">
-        <small>LOCAL BAR PHOTO</small>
+    <div className={`real-photo-result local-photo-result isolated-cocktail-result scene-${appearance.family}`}>
+      <div className="cocktail-portrait-stage">
+        <img className="cocktail-portrait-blur" src={photo.src} alt="" aria-hidden="true" />
+        <span className="cocktail-glow cocktail-glow-one" />
+        <span className="cocktail-glow cocktail-glow-two" />
+        <span className="cocktail-sparkle sparkle-one">✦</span>
+        <span className="cocktail-sparkle sparkle-two">·</span>
+        <span className="cocktail-sparkle sparkle-three">✧</span>
+        <img
+          className="cocktail-portrait-main"
+          src={photo.src}
+          alt={`${drinkName}的酒吧成品照`}
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+      <div className="real-photo-caption compact-photo-caption">
+        <small>ORIGINAL CREATION</small>
         <strong>{drinkName}</strong>
       </div>
-      <p className="real-photo-disclaimer">
-        配方视觉示意，实际外观会受原料品牌、比例和操作影响。
-      </p>
+      <p className="real-photo-disclaimer">配方视觉示意</p>
     </div>
   )
 }
@@ -3540,87 +3551,245 @@ function isWeChatBrowser() {
   return /MicroMessenger/i.test(navigator.userAgent)
 }
 
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2)
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.arcTo(x + width, y, x + width, y + height, r)
+  ctx.arcTo(x + width, y + height, x, y + height, r)
+  ctx.arcTo(x, y + height, x, y, r)
+  ctx.arcTo(x, y, x + width, y, r)
+  ctx.closePath()
+}
+
+function drawImageContain(ctx, image, x, y, width, height, padding = 0) {
+  const innerWidth = Math.max(1, width - padding * 2)
+  const innerHeight = Math.max(1, height - padding * 2)
+  const scale = Math.min(innerWidth / image.width, innerHeight / image.height)
+  const drawWidth = image.width * scale
+  const drawHeight = image.height * scale
+  const drawX = x + (width - drawWidth) / 2
+  const drawY = y + (height - drawHeight) / 2
+  ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight)
+}
+
+function drawImageCover(ctx, image, x, y, width, height) {
+  const scale = Math.max(width / image.width, height / image.height)
+  const drawWidth = image.width * scale
+  const drawHeight = image.height * scale
+  ctx.drawImage(
+    image,
+    x + (width - drawWidth) / 2,
+    y + (height - drawHeight) / 2,
+    drawWidth,
+    drawHeight,
+  )
+}
+
+function wrapCanvasText(ctx, text, maxWidth, maxLines = 2) {
+  const chars = Array.from(String(text || ''))
+  const lines = []
+  let line = ''
+
+  chars.forEach((char) => {
+    const test = line + char
+    if (ctx.measureText(test).width > maxWidth && line) {
+      if (lines.length < maxLines) lines.push(line)
+      line = char
+    } else {
+      line = test
+    }
+  })
+
+  if (line && lines.length < maxLines) lines.push(line)
+  return lines.slice(0, maxLines)
+}
+
 async function createRecipeShareFile(record) {
   const canvas = document.createElement('canvas')
   canvas.width = 1080
   canvas.height = 1440
   const ctx = canvas.getContext('2d')
-  const gradient = ctx.createLinearGradient(0, 0, 0, 1440)
-  gradient.addColorStop(0, '#362119')
-  gradient.addColorStop(1, '#0d0908')
-  ctx.fillStyle = gradient
+
+  const base = ctx.createLinearGradient(0, 0, 1080, 1440)
+  base.addColorStop(0, '#2a1711')
+  base.addColorStop(0.46, '#140c09')
+  base.addColorStop(1, '#080504')
+  ctx.fillStyle = base
   ctx.fillRect(0, 0, 1080, 1440)
+
+  const warmGlow = ctx.createRadialGradient(540, 390, 20, 540, 390, 520)
+  warmGlow.addColorStop(0, 'rgba(226,165,82,.28)')
+  warmGlow.addColorStop(.45, 'rgba(123,62,30,.12)')
+  warmGlow.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.fillStyle = warmGlow
+  ctx.fillRect(0, 0, 1080, 900)
+
+  ctx.strokeStyle = 'rgba(226,184,111,.72)'
+  ctx.lineWidth = 3
+  drawRoundedRect(ctx, 38, 38, 1004, 1364, 28)
+  ctx.stroke()
+  ctx.strokeStyle = 'rgba(226,184,111,.2)'
+  ctx.lineWidth = 1
+  drawRoundedRect(ctx, 54, 54, 972, 1332, 22)
+  ctx.stroke()
+
+  ctx.textAlign = 'center'
+  ctx.fillStyle = '#dfb974'
+  ctx.font = '700 24px Arial'
+  ctx.fillText('COCKTAIL ODYSSEY', 540, 100)
+  ctx.fillStyle = 'rgba(255,246,229,.72)'
+  ctx.font = '28px serif'
+  ctx.fillText('风 味 调 酒 室', 540, 142)
+
+  ctx.strokeStyle = 'rgba(223,185,116,.45)'
+  ctx.lineWidth = 1.5
+  ctx.beginPath()
+  ctx.moveTo(210, 172)
+  ctx.lineTo(870, 172)
+  ctx.stroke()
+  ctx.fillStyle = '#d9ad69'
+  ctx.font = '24px serif'
+  ctx.fillText('◆', 540, 180)
+
+  const imageX = 105
+  const imageY = 210
+  const imageW = 870
+  const imageH = 610
+
+  ctx.save()
+  drawRoundedRect(ctx, imageX, imageY, imageW, imageH, 34)
+  ctx.clip()
 
   if (record.photoSrc) {
     try {
       const image = await loadImageForCanvas(record.photoSrc)
-      const scale = Math.max(1080 / image.width, 570 / image.height)
-      const width = image.width * scale
-      const height = image.height * scale
-      ctx.drawImage(image, (1080 - width) / 2, (570 - height) / 2, width, height)
-      const shade = ctx.createLinearGradient(0, 0, 0, 610)
-      shade.addColorStop(0, 'rgba(10,7,6,.08)')
-      shade.addColorStop(1, 'rgba(10,7,6,.96)')
+
+      ctx.save()
+      ctx.filter = 'blur(28px) brightness(.35) saturate(1.15)'
+      drawImageCover(ctx, image, imageX - 40, imageY - 40, imageW + 80, imageH + 80)
+      ctx.restore()
+
+      const shade = ctx.createLinearGradient(0, imageY, 0, imageY + imageH)
+      shade.addColorStop(0, 'rgba(28,15,11,.14)')
+      shade.addColorStop(.72, 'rgba(8,5,4,.22)')
+      shade.addColorStop(1, 'rgba(8,5,4,.62)')
       ctx.fillStyle = shade
-      ctx.fillRect(0, 0, 1080, 650)
-    } catch {}
+      ctx.fillRect(imageX, imageY, imageW, imageH)
+
+      const halo = ctx.createRadialGradient(540, 500, 10, 540, 500, 330)
+      halo.addColorStop(0, 'rgba(244,196,117,.31)')
+      halo.addColorStop(.4, 'rgba(186,98,43,.12)')
+      halo.addColorStop(1, 'rgba(0,0,0,0)')
+      ctx.fillStyle = halo
+      ctx.fillRect(imageX, imageY, imageW, imageH)
+
+      ctx.save()
+      ctx.shadowColor = 'rgba(243,190,99,.35)'
+      ctx.shadowBlur = 34
+      drawImageContain(ctx, image, imageX, imageY + 8, imageW, imageH - 16, 42)
+      ctx.restore()
+    } catch {
+      ctx.fillStyle = 'rgba(222,177,102,.08)'
+      ctx.fillRect(imageX, imageY, imageW, imageH)
+    }
   }
+
+  ctx.fillStyle = 'rgba(255,222,161,.86)'
+  ctx.font = '30px serif'
+  ctx.fillText('✦', 840, 318)
+  ctx.font = '18px serif'
+  ctx.fillText('✧', 242, 402)
+  ctx.font = '14px serif'
+  ctx.fillText('•', 895, 470)
+  ctx.restore()
+
+  ctx.strokeStyle = 'rgba(228,187,111,.5)'
+  ctx.lineWidth = 2
+  drawRoundedRect(ctx, imageX, imageY, imageW, imageH, 34)
+  ctx.stroke()
 
   ctx.textAlign = 'center'
-  ctx.fillStyle = '#ddb577'
-  ctx.font = '700 26px Arial'
-  ctx.fillText('COCKTAIL ODYSSEY', 540, 95)
-  ctx.fillStyle = '#fff7eb'
-  ctx.font = '64px serif'
-  ctx.fillText(record.title, 540, 500)
-  ctx.fillStyle = '#e8c997'
-  ctx.font = '36px serif'
-  ctx.fillText(record.chapterTitle || '这一杯，发生在夜里', 540, 570)
+  ctx.fillStyle = '#fff4df'
+  ctx.font = '700 68px serif'
+  ctx.fillText(String(record.title || '原创鸡尾酒').slice(0, 13), 540, 910)
 
-  ctx.textAlign = 'left'
-  ctx.fillStyle = 'rgba(255,247,235,.82)'
-  ctx.font = '28px sans-serif'
-  let y = 690
-  const recipeLines = [
-    `基酒  ${record.spirit?.chinese ?? '自由创作'}`,
-    ...record.ingredients.slice(0, 6).map((item) => `${item.chinese}  ${recipeAmountLabel(item.amount)}`),
-    `工艺  ${record.technique?.chinese ?? '—'}    杯型  ${record.glass?.chinese ?? '—'}`,
-  ]
-  recipeLines.forEach((line) => {
-    ctx.fillText(line, 105, y)
-    y += 48
+  ctx.fillStyle = '#dfb773'
+  ctx.font = '34px serif'
+  const chapterLines = wrapCanvasText(
+    ctx,
+    record.chapterTitle || '今晚，这杯酒只属于你',
+    820,
+    1,
+  )
+  ctx.fillText(chapterLines[0] || '', 540, 968)
+
+  ctx.fillStyle = 'rgba(255,244,226,.72)'
+  ctx.font = '27px serif'
+  const storyLines = wrapCanvasText(ctx, record.cinematicStory || '', 820, 2)
+  storyLines.forEach((line, index) => {
+    ctx.fillText(line, 540, 1024 + index * 42)
   })
 
-  ctx.fillStyle = 'rgba(255,247,235,.58)'
-  ctx.font = '27px serif'
-  const story = String(record.cinematicStory || '').slice(0, 130)
-  const charsPerLine = 25
-  for (let i = 0; i < story.length && i < charsPerLine * 4; i += charsPerLine) {
-    ctx.fillText(story.slice(i, i + charsPerLine), 105, y + 45)
-    y += 46
+  const tags = (record.moodTags || []).slice(0, 3)
+  if (tags.length) {
+    ctx.font = '22px sans-serif'
+    const label = tags.join('  ·  ')
+    const labelWidth = Math.min(760, ctx.measureText(label).width + 70)
+    ctx.fillStyle = 'rgba(217,173,105,.09)'
+    drawRoundedRect(ctx, (1080 - labelWidth) / 2, 1115, labelWidth, 52, 26)
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(217,173,105,.28)'
+    ctx.lineWidth = 1
+    drawRoundedRect(ctx, (1080 - labelWidth) / 2, 1115, labelWidth, 52, 26)
+    ctx.stroke()
+    ctx.fillStyle = '#dfba7d'
+    ctx.fillText(label, 540, 1148)
   }
 
-  ctx.fillStyle = '#d6a96d'
+  const recipeSummary = [
+    record.spirit?.chinese ?? '自由创作',
+    ...(record.ingredients || []).slice(0, 3).map((item) => item.chinese),
+  ].join(' · ')
+
+  ctx.fillStyle = 'rgba(255,244,226,.62)'
   ctx.font = '24px sans-serif'
-  ctx.fillText((record.moodTags || []).join('  ·  '), 105, 1320)
-  ctx.fillStyle = 'rgba(255,255,255,.4)'
+  ctx.fillText(recipeSummary, 540, 1227)
+
+  ctx.fillStyle = 'rgba(255,244,226,.44)'
+  ctx.font = '21px sans-serif'
+  ctx.fillText(
+    `${record.technique?.chinese ?? '自由工艺'} · ${record.glass?.chinese ?? '专属杯型'}`,
+    540,
+    1271,
+  )
+
+  ctx.strokeStyle = 'rgba(223,185,116,.26)'
+  ctx.beginPath()
+  ctx.moveTo(170, 1320)
+  ctx.lineTo(910, 1320)
+  ctx.stroke()
+
+  ctx.fillStyle = '#dfb974'
+  ctx.font = '700 22px Arial'
+  ctx.fillText('YOUR ORIGINAL COCKTAIL', 540, 1355)
+  ctx.fillStyle = 'rgba(255,246,229,.5)'
   ctx.font = '20px sans-serif'
-  ctx.fillText('风味调酒室 · 保存这张图，分享你的原创配方', 105, 1380)
+  ctx.fillText('cocktailplay.online', 540, 1385)
 
   const blob = await new Promise((resolve, reject) => {
     canvas.toBlob((result) => {
       if (result) resolve(result)
       else reject(new Error('海报图片生成失败'))
-    }, 'image/png', 0.94)
+    }, 'image/jpeg', 0.9)
   })
 
   return new File(
     [blob],
-    `${record.title || '原创鸡尾酒'}.png`,
-    { type: 'image/png' },
+    `${record.title || '原创鸡尾酒'}.jpg`,
+    { type: 'image/jpeg' },
   )
 }
-
 
 function RecipeDock({
   spirit,
@@ -3746,6 +3915,7 @@ function App() {
   const [sharePreviewUrl, setSharePreviewUrl] = useState('')
   const [sharePreviewRecord, setSharePreviewRecord] = useState(null)
   const [shareReturnPage, setShareReturnPage] = useState('result')
+  const sharePosterCacheRef = useRef(new Map())
 
   const [challengeProgress, setChallengeProgress] = useState(() => {
     try {
@@ -4110,6 +4280,28 @@ function App() {
     window.setTimeout(() => setShareNotice(''), 1800)
   }
 
+  async function getPreparedSharePoster(record) {
+    const cacheKey = record?.signature || record?.id || record?.title
+    if (!cacheKey) throw new Error('缺少海报缓存标识')
+
+    const cached = sharePosterCacheRef.current.get(cacheKey)
+    if (cached) return cached
+
+    const preparing = (async () => {
+      const { file, previewUrl } = await getPreparedSharePoster(record)
+      return { file, previewUrl }
+    })()
+
+    sharePosterCacheRef.current.set(cacheKey, preparing)
+
+    try {
+      return await preparing
+    } catch (error) {
+      sharePosterCacheRef.current.delete(cacheKey)
+      throw error
+    }
+  }
+
   async function shareRecipe(record = currentArchiveRecord()) {
     if (!record) return
 
@@ -4178,6 +4370,25 @@ function App() {
   }
 
 
+
+  useEffect(() => {
+    if (page !== 'result' || !creativeReview) return undefined
+
+    const record = currentArchiveRecord()
+    if (!record) return undefined
+
+    const prepare = () => {
+      getPreparedSharePoster(record).catch(() => {})
+    }
+
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(prepare, { timeout: 1600 })
+      return () => window.cancelIdleCallback?.(idleId)
+    }
+
+    const timer = window.setTimeout(prepare, 350)
+    return () => window.clearTimeout(timer)
+  }, [page, creativeReview?.signature, activeResultPhotoIndex])
 
   if (page === 'share-preview' && sharePreviewUrl && sharePreviewRecord) {
     return (

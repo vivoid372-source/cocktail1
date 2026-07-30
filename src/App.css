@@ -8974,3 +8974,154 @@ body,
     padding: 2px 9px;
   }
 }
+
+
+/* =========================================================
+   V17.5 FULL COCKTAIL PORTRAIT + BLACK GOLD SHARE POSTER
+   ========================================================= */
+
+.isolated-cocktail-result {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 36%, rgba(210,143,71,.16), transparent 42%),
+    linear-gradient(180deg, #21130e 0%, #0b0706 100%);
+}
+
+.cocktail-portrait-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  min-height: 320px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cocktail-portrait-blur {
+  position: absolute;
+  inset: -9%;
+  width: 118%;
+  height: 118%;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(30px) brightness(.32) saturate(1.18);
+  opacity: .72;
+  transform: scale(1.08);
+}
+
+.cocktail-portrait-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(9,6,5,.05), rgba(9,6,5,.12) 58%, rgba(9,6,5,.62)),
+    radial-gradient(circle at 50% 38%, rgba(235,178,94,.15), transparent 44%);
+  pointer-events: none;
+}
+
+.cocktail-portrait-main {
+  position: relative;
+  z-index: 3;
+  display: block;
+  width: 88%;
+  height: 88%;
+  object-fit: contain !important;
+  object-position: center !important;
+  filter:
+    drop-shadow(0 22px 22px rgba(0,0,0,.48))
+    drop-shadow(0 0 20px rgba(222,158,74,.18));
+}
+
+.cocktail-glow {
+  position: absolute;
+  z-index: 2;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.cocktail-glow-one {
+  top: 17%;
+  left: 20%;
+  width: 60%;
+  height: 55%;
+  background: radial-gradient(circle, rgba(246,197,113,.25), rgba(176,84,35,.08) 48%, transparent 72%);
+  filter: blur(10px);
+}
+
+.cocktail-glow-two {
+  right: 23%;
+  bottom: 13%;
+  width: 38%;
+  height: 24%;
+  background: radial-gradient(circle, rgba(245,211,144,.2), transparent 70%);
+  filter: blur(12px);
+}
+
+.cocktail-sparkle {
+  position: absolute;
+  z-index: 4;
+  color: rgba(255,220,151,.88);
+  text-shadow: 0 0 12px rgba(255,190,93,.65);
+  pointer-events: none;
+}
+
+.sparkle-one { top: 18%; right: 18%; font-size: 22px; }
+.sparkle-two { top: 32%; left: 16%; font-size: 24px; }
+.sparkle-three { right: 27%; bottom: 27%; font-size: 15px; }
+
+.compact-photo-caption {
+  position: relative;
+  z-index: 5;
+  margin-top: -56px;
+  padding: 22px 18px 13px;
+  background: linear-gradient(180deg, transparent, rgba(9,6,5,.92) 48%);
+}
+
+.real-photo-disclaimer {
+  position: relative;
+  z-index: 5;
+}
+
+.compact-result-summary .cinematic-summary-copy > p,
+.cinematic-summary-copy > p {
+  display: block !important;
+  max-height: none !important;
+  overflow: visible !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.archive-detail-card > img,
+.collection-card-main > img {
+  object-fit: contain !important;
+  object-position: center !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(220,155,78,.14), transparent 44%),
+    #100a08;
+}
+
+.share-preview-image {
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
+@media (max-width: 560px) {
+  .cocktail-portrait-stage {
+    min-height: 350px;
+    aspect-ratio: 4 / 5;
+  }
+
+  .cocktail-portrait-main {
+    width: 92%;
+    height: 92%;
+  }
+
+  .compact-result-summary .cinematic-summary-copy > p {
+    font-size: 12px;
+    line-height: 1.68;
+  }
+}
