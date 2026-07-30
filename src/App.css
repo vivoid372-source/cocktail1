@@ -9125,3 +9125,87 @@ body,
     line-height: 1.68;
   }
 }
+
+
+/* =========================================================
+   V17.5.2 RESULT PAGE IMAGE COMPATIBILITY FIX
+   ========================================================= */
+
+.cocktail-image-fallback {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(222,158,74,.18), transparent 42%),
+    linear-gradient(180deg, #21130e, #0b0706);
+  color: rgba(236,194,119,.72);
+}
+
+.fallback-cocktail-icon {
+  font-family: Georgia, serif;
+  font-size: 46px;
+  text-shadow: 0 0 20px rgba(225,163,77,.32);
+}
+
+.cocktail-image-fallback small {
+  max-width: 80%;
+  overflow: hidden;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cocktail-portrait-stage > .cocktail-image-fallback.cocktail-portrait-blur {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: .35;
+}
+
+.cocktail-portrait-stage > .cocktail-image-fallback.cocktail-portrait-main {
+  position: relative;
+  z-index: 3;
+  width: 88%;
+  height: 88%;
+  min-height: 0;
+  border: 1px solid rgba(223,181,105,.12);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(232,177,92,.17), transparent 48%),
+    rgba(17,10,8,.72);
+}
+
+.archive-detail-image,
+.collection-thumb-image {
+  display: block;
+  width: 100%;
+  object-fit: contain !important;
+  object-position: center !important;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(220,155,78,.14), transparent 44%),
+    #100a08;
+}
+
+.archive-detail-image {
+  max-height: 420px;
+}
+
+.collection-thumb-image {
+  height: 100%;
+  min-height: 118px;
+}
+
+@media (max-width: 560px) {
+  .cocktail-portrait-stage > .cocktail-image-fallback.cocktail-portrait-main {
+    width: 92%;
+    height: 92%;
+  }
+
+  .archive-detail-image {
+    max-height: 340px;
+  }
+}

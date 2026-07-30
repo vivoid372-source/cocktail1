@@ -635,6 +635,55 @@ function pickLocalCocktailPhoto({
   )
 }
 
+function CompatibleCocktailImage({
+  src,
+  alt,
+  className = '',
+  loading = 'lazy',
+  fallbackText = '鸡尾酒视觉示意',
+}) {
+  const primarySrc = posterImageSource(src)
+  const [currentSrc, setCurrentSrc] = useState(primarySrc || src)
+  const [attempt, setAttempt] = useState(0)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    setCurrentSrc(primarySrc || src)
+    setAttempt(0)
+    setFailed(false)
+  }, [src, primarySrc])
+
+  function handleError() {
+    if (attempt === 0 && src && currentSrc !== src) {
+      setCurrentSrc(src)
+      setAttempt(1)
+      return
+    }
+
+    setFailed(true)
+  }
+
+  if (failed || !currentSrc) {
+    return (
+      <div className={`cocktail-image-fallback ${className}`} role="img" aria-label={alt}>
+        <span className="fallback-cocktail-icon">♢</span>
+        <small>{fallbackText}</small>
+      </div>
+    )
+  }
+
+  return (
+    <img
+      className={className}
+      src={currentSrc}
+      alt={alt}
+      loading={loading}
+      decoding="async"
+      onError={handleError}
+    />
+  )
+}
+
 function CocktailPhotoResult({
   drinkName,
   appearance,
@@ -654,18 +703,24 @@ function CocktailPhotoResult({
   return (
     <div className={`real-photo-result local-photo-result isolated-cocktail-result scene-${appearance.family}`}>
       <div className="cocktail-portrait-stage">
-        <img className="cocktail-portrait-blur" src={photo.src} alt="" aria-hidden="true" />
+        <CompatibleCocktailImage
+          className="cocktail-portrait-blur"
+          src={photo.src}
+          alt=""
+          loading="eager"
+          fallbackText=""
+        />
         <span className="cocktail-glow cocktail-glow-one" />
         <span className="cocktail-glow cocktail-glow-two" />
         <span className="cocktail-sparkle sparkle-one">✦</span>
         <span className="cocktail-sparkle sparkle-two">·</span>
         <span className="cocktail-sparkle sparkle-three">✧</span>
-        <img
+        <CompatibleCocktailImage
           className="cocktail-portrait-main"
           src={photo.src}
           alt={`${drinkName}的酒吧成品照`}
           loading="eager"
-          decoding="async"
+          fallbackText={drinkName}
         />
       </div>
       <div className="real-photo-caption compact-photo-caption">
@@ -3526,16 +3581,101 @@ function buildArchiveRecord({ review, spirit, selectedIngredients, amounts, tech
     glass: glass ? { id: glass.id, chinese: glass.chinese, name: glass.name } : null,
     appearance,
     photoSrc: photo?.src ?? '',
+    posterPhotoSrc: posterImageSource(photo?.src ?? ''),
   }
 }
 
-function loadImageForCanvas(src) {
-  return new Promise((resolve, reject) => {
-    const image = new Image()
-    image.onload = () => resolve(image)
-    image.onerror = reject
-    image.src = src
-  })
+function posterImageSource(src) {
+  const clean = String(src || '').split('?')[0]
+  const fileName = clean.split('/').pop() || ''
+  const stem = fileName.replace(/\.[^.]+$/, '')
+  return stem ? `/poster-cocktails/${stem}.jpg` : ''
+}
+
+async function loadImageForCanvas(src) {
+  const tryLoad = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image()
+      image.decoding = 'async'
+      image.onload = () => resolve(image)
+      image.onerror = () => reject(new Error(`图片加载失败：${url}`))
+      image.src = url
+    })
+
+  const urls = [posterImageSource(src), src].filter(Boolean)
+  let lastError = null
+
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { cache: 'force-cache' })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const blob = await response.blob()
+      const objectUrl = URL.createObjectURL(blob)
+
+      try {
+        const image = await tryLoad(objectUrl)
+        image.__objectUrl = objectUrl
+        return image
+      } catch (error) {
+        URL.revokeObjectURL(objectUrl)
+        throw error
+      }
+    } catch (error) {
+      lastError = error
+    }
+  }
+
+  throw lastError || new Error('海报图片加载失败')
+}
+
+function releaseCanvasImage(image) {
+  if (image?.__objectUrl) URL.revokeObjectURL(image.__objectUrl)
+}
+
+function drawFallbackCocktail(ctx, x, y, width, height) {
+  const cx = x + width / 2
+  const top = y + height * 0.18
+  const bowlW = width * 0.42
+  const bowlH = height * 0.26
+  const stemBottom = y + height * 0.82
+
+  const glow = ctx.createRadialGradient(cx, y + height * .44, 10, cx, y + height * .44, width * .32)
+  glow.addColorStop(0, 'rgba(237,180,94,.28)')
+  glow.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.fillStyle = glow
+  ctx.fillRect(x, y, width, height)
+
+  ctx.strokeStyle = 'rgba(255,238,205,.86)'
+  ctx.lineWidth = 7
+  ctx.beginPath()
+  ctx.ellipse(cx, top, bowlW / 2, bowlH * .18, 0, 0, Math.PI * 2)
+  ctx.moveTo(cx - bowlW / 2, top)
+  ctx.quadraticCurveTo(cx - bowlW * .42, top + bowlH, cx, top + bowlH)
+  ctx.quadraticCurveTo(cx + bowlW * .42, top + bowlH, cx + bowlW / 2, top)
+  ctx.stroke()
+
+  const liquid = ctx.createLinearGradient(0, top, 0, top + bowlH)
+  liquid.addColorStop(0, '#ef7a3b')
+  liquid.addColorStop(1, '#8e241d')
+  ctx.fillStyle = liquid
+  ctx.beginPath()
+  ctx.ellipse(cx, top + bowlH * .23, bowlW * .44, bowlH * .12, 0, 0, Math.PI * 2)
+  ctx.quadraticCurveTo(cx + bowlW * .37, top + bowlH * .78, cx, top + bowlH * .88)
+  ctx.quadraticCurveTo(cx - bowlW * .37, top + bowlH * .78, cx - bowlW * .44, top + bowlH * .23)
+  ctx.fill()
+
+  ctx.strokeStyle = 'rgba(255,238,205,.84)'
+  ctx.lineWidth = 7
+  ctx.beginPath()
+  ctx.moveTo(cx, top + bowlH)
+  ctx.lineTo(cx, stemBottom)
+  ctx.moveTo(cx - bowlW * .25, stemBottom)
+  ctx.quadraticCurveTo(cx, stemBottom + height * .05, cx + bowlW * .25, stemBottom)
+  ctx.stroke()
+
+  ctx.fillStyle = 'rgba(255,220,145,.9)'
+  ctx.font = `${Math.round(width * .04)}px serif`
+  ctx.fillText('✦', cx + bowlW * .38, top + bowlH * .12)
 }
 
 function fileToDataUrl(file) {
@@ -3661,13 +3801,15 @@ async function createRecipeShareFile(record) {
   drawRoundedRect(ctx, imageX, imageY, imageW, imageH, 34)
   ctx.clip()
 
-  if (record.photoSrc) {
+  if (record.posterPhotoSrc || record.photoSrc) {
+    let posterImage = null
+
     try {
-      const image = await loadImageForCanvas(record.photoSrc)
+      posterImage = await loadImageForCanvas(record.posterPhotoSrc || record.photoSrc)
 
       ctx.save()
       ctx.filter = 'blur(28px) brightness(.35) saturate(1.15)'
-      drawImageCover(ctx, image, imageX - 40, imageY - 40, imageW + 80, imageH + 80)
+      drawImageCover(ctx, posterImage, imageX - 40, imageY - 40, imageW + 80, imageH + 80)
       ctx.restore()
 
       const shade = ctx.createLinearGradient(0, imageY, 0, imageY + imageH)
@@ -3687,11 +3829,12 @@ async function createRecipeShareFile(record) {
       ctx.save()
       ctx.shadowColor = 'rgba(243,190,99,.35)'
       ctx.shadowBlur = 34
-      drawImageContain(ctx, image, imageX, imageY + 8, imageW, imageH - 16, 42)
+      drawImageContain(ctx, posterImage, imageX, imageY + 8, imageW, imageH - 16, 42)
       ctx.restore()
     } catch {
-      ctx.fillStyle = 'rgba(222,177,102,.08)'
-      ctx.fillRect(imageX, imageY, imageW, imageH)
+      drawFallbackCocktail(ctx, imageX, imageY, imageW, imageH)
+    } finally {
+      releaseCanvasImage(posterImage)
     }
   }
 
@@ -5141,7 +5284,13 @@ function App() {
               >
                 ×
               </button>
-              <img src={selectedArchive.photoSrc} alt={selectedArchive.title} />
+              <CompatibleCocktailImage
+                src={selectedArchive.photoSrc}
+                alt={selectedArchive.title}
+                className="archive-detail-image"
+                loading="eager"
+                fallbackText={selectedArchive.title}
+              />
               <div className="archive-detail-content">
                 <small>SAVED ORIGINAL RECIPE</small>
                 <h2>{selectedArchive.title}</h2>
@@ -5173,7 +5322,13 @@ function App() {
               {collection.map((record, index) => (
                 <article className="collection-recipe-card" key={record.id || record.signature}>
                   <button className="collection-card-main" onClick={() => setSelectedArchive(record)}>
-                    <img src={record.photoSrc} alt={record.title} loading="lazy" />
+                    <CompatibleCocktailImage
+                      src={record.photoSrc}
+                      alt={record.title}
+                      className="collection-thumb-image"
+                      loading="lazy"
+                      fallbackText={record.title}
+                    />
                     <div>
                       <small>ORIGINAL #{String(collection.length - index).padStart(2, '0')}</small>
                       <h3>{record.title}</h3>
