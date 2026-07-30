@@ -3721,7 +3721,7 @@ function App() {
   const [selectedIngredients, setSelectedIngredients] = useState([])
   const [ingredientAmounts, setIngredientAmounts] = useState({})
   const [activeIngredientInfo, setActiveIngredientInfo] = useState(null)
-  const [activeIngredientGroup, setActiveIngredientGroup] = useState('fresh')
+  const [activeIngredientGroup, setActiveIngredientGroup] = useState(null)
   const [recipeDockExpanded, setRecipeDockExpanded] = useState(false)
   const [selectedTechnique, setSelectedTechnique] = useState(null)
   const [selectedGlass, setSelectedGlass] = useState(null)
@@ -3899,6 +3899,8 @@ function App() {
     setSelectedIngredients([])
     setIngredientAmounts({})
     setActiveIngredientInfo(null)
+    setActiveIngredientGroup(null)
+    setRecipeDockExpanded(false)
     setSelectedTechnique(null)
     setSelectedGlass(null)
     setActiveGlassIndex(0)
@@ -4359,12 +4361,7 @@ function App() {
               />
             </div>
 
-            <div className="result-v8-summary">
-              <div className="result-score-badge">
-                <strong>{creativeReview.score}</strong>
-                <span>{creativeReview.scoreLabel}</span>
-              </div>
-
+            <div className="result-v8-summary compact-result-summary">
               <div className="result-summary-copy cinematic-summary-copy">
                 <small>ORIGINAL DRINK</small>
                 <h2>{creativeReview.title}</h2>
@@ -4372,30 +4369,23 @@ function App() {
                 <p>{creativeReview.cinematicStory}</p>
 
                 <div className="story-tags cinematic-story-tags">
-                  {creativeReview.moodTags.map((tag) => (
+                  {creativeReview.moodTags.slice(0, 3).map((tag) => (
                     <span key={tag}>{tag}</span>
                   ))}
                 </div>
               </div>
-
-              <div className="color-poetry-card">
-                <small>MOOD</small>
-                <strong>{drinkEffects.colorNote}</strong>
-                <p>{colorPoetry}</p>
-              </div>
             </div>
           </section>
 
-          <section className="compact-character-strip">
+          <section className="compact-character-strip ultra-compact-character">
             <div className="compact-character-heading">
               <small>CHARACTER</small>
               <h3>作品特点</h3>
             </div>
             <div className="compact-character-values">
-              <span>平衡 {creativeReview.dimensions.balance}</span>
-              <span>层次 {creativeReview.dimensions.layering}</span>
-              <span>完成 {creativeReview.dimensions.completion}</span>
-              <span>辨识 {creativeReview.dimensions.creativity}</span>
+              {creativeReview.tags.slice(0, 4).map((tag) => (
+                <span key={tag}>{tag}</span>
+              ))}
             </div>
           </section>
 
@@ -4420,123 +4410,98 @@ function App() {
               signature={creativeReview.signature}
             />
 
-            <section className="result-card compare-card-v13">
-              <div className="compare-heading-v13">
+            <section className="result-card compact-classic-compare">
+              <div className="compact-classic-head">
                 <div>
-                  <small>CLASSIC VS YOUR DRINK</small>
-                  <h3>最像的经典酒 vs 我的配方</h3>
+                  <small>MOST SIMILAR CLASSIC</small>
+                  <h3>最像：{displayClassic.chinese}</h3>
                 </div>
-
-                <div className="similarity-badge-v13">
-                  <small>SIMILARITY</small>
-                  <strong>{similarity}%</strong>
-                  <span>
-                    {similarity >= 85
-                      ? '非常接近经典范式'
-                      : similarity >= 70
-                        ? '能明显喝出经典影子'
-                        : '有经典轮廓，更偏个人版本'}
-                  </span>
-                </div>
+                <strong>{similarity}%</strong>
               </div>
 
-              <div className="recipe-compare-grid-v13">
-                <article className="recipe-compare-column-v13 classic">
-                  <div className="compare-column-head-v13">
-                    <small>CLASSIC</small>
-                    <h4>
-                      {displayClassic.chinese} · {displayClassic.name}
-                    </h4>
-                    <p>{displayClassic.description}</p>
-                  </div>
-
-                  <ul className="recipe-compare-list-v13">
-                    {displayClassic.ingredients.map((id) => (
-                      <li key={id}>
-                        <span>{ingredientMap[id]?.icon ?? '•'}</span>
-                        <div>
-                          <strong>{ingredientMap[id]?.chinese ?? id}</strong>
-                          <small>{ingredientMap[id]?.name ?? id}</small>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="compare-meta-v13">
-                    <span>
-                      <small>工艺</small>
-                      <strong>
-                        {classicTechnique?.chinese} · {classicTechnique?.name}
-                      </strong>
-                    </span>
-                    <span>
-                      <small>杯型</small>
-                      <strong>
-                        {classicGlasses
-                          .map((item) => item.chinese)
-                          .join(' / ')}
-                      </strong>
-                    </span>
-                  </div>
+              <div className="compact-compare-columns">
+                <article>
+                  <h4>经典配方</h4>
+                  <dl>
+                    <div>
+                      <dt>基酒</dt>
+                      <dd>{ingredientMap[displayClassic.spirit]?.chinese ?? displayClassic.spirit}</dd>
+                    </div>
+                    <div>
+                      <dt>配料</dt>
+                      <dd>
+                        {displayClassic.ingredients
+                          .slice(0, 4)
+                          .map((id) => ingredientMap[id]?.chinese ?? id)
+                          .join('、')}
+                        {displayClassic.ingredients.length > 4
+                          ? `，另有${displayClassic.ingredients.length - 4}种`
+                          : ''}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>工艺</dt>
+                      <dd>{classicTechnique?.chinese ?? '—'}</dd>
+                    </div>
+                    <div>
+                      <dt>杯型</dt>
+                      <dd>{classicGlasses.map((item) => item.chinese).join(' / ')}</dd>
+                    </div>
+                  </dl>
                 </article>
 
-                <article className="recipe-compare-column-v13 mine">
-                  <div className="compare-column-head-v13">
-                    <small>MINE</small>
-                    <h4>{creativeReview.title}</h4>
-                    <p>{creativeReview.shortIntro}</p>
-                  </div>
-
-                  <ul className="recipe-compare-list-v13">
-                    {selectedIngredients.map((ingredient) => (
-                      <li key={ingredient.id}>
-                        <span>{ingredient.icon}</span>
-                        <div>
-                          <strong>{ingredient.chinese}</strong>
-                          <small>
-                            {amountLevelName(
-                              ingredientAmounts[ingredient.id] ?? 'standard',
-                            )}{' '}
-                            {amountLabel(
-                              ingredient.id,
-                              ingredientAmounts[ingredient.id] ?? 'standard',
-                            )}
-                          </small>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="compare-meta-v13">
-                    <span>
-                      <small>基酒</small>
-                      <strong>
-                        {selectedSpirit.chinese} · {selectedSpirit.name}
-                      </strong>
-                    </span>
-                    <span>
-                      <small>工艺 / 杯型</small>
-                      <strong>
-                        {selectedTechnique.chinese} · {selectedGlass.chinese}
-                      </strong>
-                    </span>
-                  </div>
+                <article>
+                  <h4>我的配方</h4>
+                  <dl>
+                    <div>
+                      <dt>基酒</dt>
+                      <dd>{selectedSpirit.chinese}</dd>
+                    </div>
+                    <div>
+                      <dt>配料</dt>
+                      <dd>
+                        {selectedIngredients
+                          .slice(0, 4)
+                          .map((item) => item.chinese)
+                          .join('、')}
+                        {selectedIngredients.length > 4
+                          ? `，另有${selectedIngredients.length - 4}种`
+                          : ''}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>工艺</dt>
+                      <dd>{selectedTechnique.chinese}</dd>
+                    </div>
+                    <div>
+                      <dt>杯型</dt>
+                      <dd>{selectedGlass.chinese}</dd>
+                    </div>
+                  </dl>
                 </article>
               </div>
             </section>
+
           </div>
 
-          <div className="result-actions result-v8-actions">
-            {gameMode !== 'free' && (
-              <button
-                className="secondary-button challenge-edit-button"
-                onClick={() => setPage('ingredients')}
-              >
-                返回修改配方
-              </button>
-            )}
+          <div className="result-actions result-v8-actions compact-result-actions">
             <button
-              className="secondary-button"
+              className="primary-button"
+              disabled={isCollected}
+              onClick={addResultToCollection}
+            >
+              {isCollected ? '✓ 已保存' : '保存配方'}
+            </button>
+
+            <button
+              className="secondary-button share-recipe-button"
+              onClick={() => shareRecipe()}
+            >
+              分享作品
+            </button>
+
+            <button
+              className="text-action-button"
               onClick={() => {
                 resetRecipeSelection()
                 setActiveResultPhotoIndex(0)
@@ -4551,25 +4516,10 @@ function App() {
               }}
             >
               {gameMode === 'classic'
-                ? '挑战另一杯经典'
+                ? '挑战另一杯'
                 : gameMode === 'bartender'
-                  ? '再接一个挑战'
-                  : '再创作一杯'}
-            </button>
-
-            <button
-              className="secondary-button share-recipe-button"
-              onClick={() => shareRecipe()}
-            >
-              分享这杯酒
-            </button>
-
-            <button
-              className="primary-button"
-              disabled={isCollected}
-              onClick={addResultToCollection}
-            >
-              {isCollected ? '✓ 配方已存档' : '保存配方'}
+                  ? '再接挑战'
+                  : '再调一杯'}
             </button>
           </div>
         </section>
@@ -5370,45 +5320,46 @@ function App() {
         <div className="simple-mode-grid">
           <button
             type="button"
-            className="simple-mode-card simple-free-card"
+            className="simple-mode-card simple-menu-card simple-free-card"
             onClick={() => startMode('free')}
           >
-            <span className="simple-mode-icon">🥃</span>
-            <span className="simple-mode-content">
+            <span className="simple-menu-title">
+              <strong>自由创作</strong>
               <small>FREE CREATION</small>
-              <h2>自由创作</h2>
-              <p>调一杯只属于你的酒</p>
-              <strong>开始创作 →</strong>
+            </span>
+            <span className="simple-menu-bottom">
+              <span>调一杯只属于你的酒</span>
+              <b>开始创作 →</b>
             </span>
           </button>
 
           <button
             type="button"
-            className="simple-mode-card simple-classic-card"
+            className="simple-mode-card simple-menu-card simple-classic-card"
             onClick={() => startMode('classic')}
           >
-            <span className="simple-mode-icon">📜</span>
-            <span className="simple-mode-content">
+            <span className="simple-menu-title">
+              <strong>经典挑战</strong>
               <small>CLASSIC CHALLENGE</small>
-              <h2>经典挑战</h2>
-              <p>根据线索复刻经典</p>
-              <strong>进入挑战 →</strong>
+            </span>
+            <span className="simple-menu-bottom">
+              <span>根据线索复刻经典</span>
+              <b>进入挑战 →</b>
             </span>
           </button>
 
           <button
             type="button"
-            className="simple-mode-card simple-bartender-card"
+            className="simple-mode-card simple-menu-card simple-bartender-card"
             onClick={() => startMode('bartender')}
           >
-            <span className="simple-mode-icon">🎯</span>
-            <span className="simple-mode-content">
-              <small>DAILY BARTENDER</small>
-              <h2>酒保挑战</h2>
-              <p>接受今晚的限定任务</p>
-              <strong>
-                {todayBartenderCompleted ? '今日已完成 ✓' : '接受任务 →'}
-              </strong>
+            <span className="simple-menu-title">
+              <strong>酒保挑战</strong>
+              <small>BARTENDER CHALLENGE</small>
+            </span>
+            <span className="simple-menu-bottom">
+              <span>接受今晚的限定任务</span>
+              <b>{todayBartenderCompleted ? '今日已完成 ✓' : '接受任务 →'}</b>
             </span>
           </button>
         </div>
